@@ -305,6 +305,7 @@ const (
 	// while making decisions.
 	BalanceAttachedNodeVolumes utilfeature.Feature = "BalanceAttachedNodeVolumes"
 
+<<<<<<< d70e7844ba8e24fa68a6030c400e5a06ee51a5c6
 	// owner @freehan
 	// beta: v1.11
 	//
@@ -343,6 +344,13 @@ const (
 	//
 	// Enables CSI to use raw block storage volumes
 	CSIBlockVolume utilfeature.Feature = "CSIBlockVolume"
+=======
+        // owner: @xing-yang
+        // alpha: v1.11
+        //
+        // Enable volume snapshot support.
+        VolumeSnapshot utilfeature.Feature = "VolumeSnapshot"
+>>>>>>> Move Snapshot support in-tree
 )
 
 func init() {
@@ -395,12 +403,16 @@ var defaultKubernetesFeatureGates = map[utilfeature.Feature]utilfeature.FeatureS
 	RunAsGroup:                                  {Default: false, PreRelease: utilfeature.Alpha},
 	VolumeSubpath:                               {Default: true, PreRelease: utilfeature.GA},
 	BalanceAttachedNodeVolumes:                  {Default: false, PreRelease: utilfeature.Alpha},
+<<<<<<< d70e7844ba8e24fa68a6030c400e5a06ee51a5c6
 	DynamicProvisioningScheduling:               {Default: false, PreRelease: utilfeature.Alpha},
 	PodReadinessGates:                           {Default: false, PreRelease: utilfeature.Beta},
 	VolumeSubpathEnvExpansion:                   {Default: false, PreRelease: utilfeature.Alpha},
 	KubeletPluginsWatcher:                       {Default: false, PreRelease: utilfeature.Alpha},
 	ResourceQuotaScopeSelectors:                 {Default: false, PreRelease: utilfeature.Alpha},
 	CSIBlockVolume:                              {Default: false, PreRelease: utilfeature.Alpha},
+=======
+        VolumeSnapshot:                              {Default: true, PreRelease: utilfeature.Alpha},
+>>>>>>> Move Snapshot support in-tree
 
 	// inherited features from generic apiserver, relisted here to get a conflict if it is changed
 	// unintentionally on either side:
