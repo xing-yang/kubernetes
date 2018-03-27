@@ -56,6 +56,7 @@ import (
 	persistentvolumecontroller "k8s.io/kubernetes/pkg/controller/volume/persistentvolume"
 	"k8s.io/kubernetes/pkg/controller/volume/pvcprotection"
 	"k8s.io/kubernetes/pkg/controller/volume/pvprotection"
+        "k8s.io/kubernetes/pkg/controller/volume/snapshot"
 	"k8s.io/kubernetes/pkg/features"
 	"k8s.io/kubernetes/pkg/quota/generic"
 	quotainstall "k8s.io/kubernetes/pkg/quota/install"
@@ -411,4 +412,15 @@ func startPVProtectionController(ctx ControllerContext) (bool, error) {
 		utilfeature.DefaultFeatureGate.Enabled(features.StorageObjectInUseProtection),
 	).Run(1, ctx.Stop)
 	return true, nil
+}
+
+func startSnapshotController(ctx ControllerContext) (bool, error) {
+        if utilfeature.DefaultFeatureGate.Enabled(features.VolumeSnapshot) {
+                go snapshot.NewSnapshotController(
+                        ctx.InformerFactory.Core().V1().VolumeSnapshots(),
+                        ctx.ClientBuilder.ClientOrDie("snapshot-controller"),
+                ).Run(1, ctx.Stop)
+                return true, nil
+        }
+        return false, nil
 }
