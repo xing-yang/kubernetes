@@ -174,6 +174,8 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Core().V1().Services().Informer()}, nil
 	case core_v1.SchemeGroupVersion.WithResource("serviceaccounts"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Core().V1().ServiceAccounts().Informer()}, nil
+        case core_v1.SchemeGroupVersion.WithResource("volumesnapshots"):
+                return &genericInformer{resource: resource.GroupResource(), informer: f.Core().V1().VolumeSnapshots().Informer()}, nil
 
 		// Group=events.k8s.io, Version=v1beta1
 	case events_v1beta1.SchemeGroupVersion.WithResource("events"):
