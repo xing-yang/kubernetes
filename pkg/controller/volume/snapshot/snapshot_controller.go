@@ -18,189 +18,291 @@ package snapshot
 
 import (
 	"fmt"
+	"net"
 	"time"
 
 	"github.com/golang/glog"
 	"k8s.io/api/core/v1"
-	apierrs "k8s.io/apimachinery/pkg/api/errors"
-	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
-	"k8s.io/apimachinery/pkg/util/wait"
+
+	"k8s.io/apimachinery/pkg/types"
 	coreinformers "k8s.io/client-go/informers/core/v1"
 	clientset "k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/kubernetes/scheme"
+	v1core "k8s.io/client-go/kubernetes/typed/core/v1"
 	corelisters "k8s.io/client-go/listers/core/v1"
 	"k8s.io/client-go/tools/cache"
+	"k8s.io/client-go/tools/record"
 	"k8s.io/client-go/util/workqueue"
+	"k8s.io/kubernetes/pkg/cloudprovider"
 	"k8s.io/kubernetes/pkg/controller"
-	//"k8s.io/kubernetes/pkg/util/slice"
-	//volumeutil "k8s.io/kubernetes/pkg/volume/util"
+	vscache "k8s.io/kubernetes/pkg/controller/volume/snapshot/cache"
+	"k8s.io/kubernetes/pkg/controller/volume/snapshot/populator"
+	"k8s.io/kubernetes/pkg/controller/volume/snapshot/reconciler"
+	"k8s.io/kubernetes/pkg/controller/volume/snapshot/snapshotter"
+	"k8s.io/kubernetes/pkg/util/goroutinemap"
+	"k8s.io/kubernetes/pkg/util/io"
+	"k8s.io/kubernetes/pkg/util/mount"
+	"k8s.io/kubernetes/pkg/volume"
 )
 
-// Controller is controller that creates/deletes snapshots from PVCs. 
+const (
+	reconcilerLoopPeriod time.Duration = 100 * time.Millisecond
+
+	// desiredStateOfWorldPopulatorLoopSleepPeriod is the amount of time the
+	// DesiredStateOfWorldPopulator loop waits between successive executions
+	desiredStateOfWorldPopulatorLoopSleepPeriod time.Duration = 1 * time.Minute
+
+	// desiredStateOfWorldPopulatorListPodsRetryDuration is the amount of
+	// time the DesiredStateOfWorldPopulator loop waits between list snapshots
+	// calls.
+	desiredStateOfWorldPopulatorListSnapshotsRetryDuration time.Duration = 3 * time.Minute
+
+	defaultSyncDuration time.Duration = 60 * time.Second
+)
+
+// Controller is controller that creates/deletes snapshots from PVCs.
 type Controller struct {
 	client clientset.Interface
 
 	vsLister       corelisters.VolumeSnapshotLister
 	vsListerSynced cache.InformerSynced
 
+	vsdLister       corelisters.VolumeSnapshotDataLister
+	vsdListerSynced cache.InformerSynced
+
 	queue workqueue.RateLimitingInterface
+
+	// cloud provider used by volume host
+	cloud cloudprovider.Interface
+
+	// volumePluginMgr used to initialize and fetch volume plugins
+	volumePluginMgr volume.VolumePluginMgr
+
+	// Map of scheduled/running operations.
+	runningOperations goroutinemap.GoRoutineMap
+
+	// recorder is used to record events in the API server
+	recorder record.EventRecorder
+
+	// desiredStateOfWorld is a data structure containing the desired state of
+	// the world according to this controller: i.e. what VolumeSnapshots need
+	// the VolumeSnapshotData to be created, what VolumeSnapshotData and their
+	// representing "on-disk" snapshots to be removed.
+	desiredStateOfWorld vscache.DesiredStateOfWorld
+
+	// actualStateOfWorld is a data structure containing the actual state of
+	// the world according to this controller: i.e. which VolumeSnapshots and
+	// VolumeSnapshot data exist and to which PV/PVCs are associated.
+	actualStateOfWorld vscache.ActualStateOfWorld
+
+	// reconciler is used to run an asynchronous periodic loop to create and delete
+	// VolumeSnapshotData for the user created and deleted VolumeSnapshot objects and
+	// trigger the actual snapshot creation in the volume backends.
+	reconciler reconciler.Reconciler
+
+	// Volume snapshotter is responsible for talking to the backend and creating, removing
+	// or promoting the snapshots.
+	snapshotter snapshotter.VolumeSnapshotter
+
+	// desiredStateOfWorldPopulator runs an asynchronous periodic loop to
+	// populate the current snapshots using snapshotInformer.
+	desiredStateOfWorldPopulator populator.DesiredStateOfWorldPopulator
 }
 
 // NewSnapshotController returns a new *Controller.
-func NewSnapshotController(vsInformer coreinformers.VolumeSnapshotInformer, cl clientset.Interface) *Controller {
-	e := &Controller{
-		client: cl,
-		queue:  workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "snapshot"),
+func NewSnapshotController(
+	vsInformer coreinformers.VolumeSnapshotInformer,
+	vsdInformer coreinformers.VolumeSnapshotDataInformer,
+	kubeClient clientset.Interface,
+	cloud cloudprovider.Interface,
+	plugins []volume.VolumePlugin) (*Controller, error) {
+
+	eventBroadcaster := record.NewBroadcaster()
+	eventBroadcaster.StartLogging(glog.Infof)
+	eventBroadcaster.StartRecordingToSink(&v1core.EventSinkImpl{Interface: v1core.New(kubeClient.CoreV1().RESTClient()).Events("")})
+	recorder := eventBroadcaster.NewRecorder(scheme.Scheme, v1.EventSource{Component: "volume_expand"})
+
+	ssc := &Controller{
+		client:         kubeClient,
+		cloud:          cloud,
+		recorder:       recorder,
+		vsLister:       vsInformer.Lister(),
+		vsListerSynced: vsInformer.Informer().HasSynced,
 	}
 
-	e.vsLister = vsInformer.Lister()
-	e.vsListerSynced = vsInformer.Informer().HasSynced
-	vsInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: e.vsAddedUpdated,
-		UpdateFunc: func(old, new interface{}) {
-			e.vsAddedUpdated(new)
-		},
-		//DeleteFunc: e.vsDeletedUpdated,
-	})
+	if err := ssc.volumePluginMgr.InitPlugins(plugins, nil, ssc); err != nil {
+		return nil, fmt.Errorf("Could not initialize volume plugins for snapshot Controller : %v", err)
+	}
 
-	return e
+	vsInformer.Informer().AddEventHandlerWithResyncPeriod(
+		cache.ResourceEventHandlerFuncs{
+			AddFunc:    ssc.onSnapshotAdd,
+			UpdateFunc: ssc.onSnapshotUpdate,
+			DeleteFunc: ssc.onSnapshotDelete,
+		}, time.Minute*60)
+
+	ssc.desiredStateOfWorld = vscache.NewDesiredStateOfWorld()
+	ssc.actualStateOfWorld = vscache.NewActualStateOfWorld()
+
+	ssc.snapshotter = snapshotter.NewVolumeSnapshotter(
+		kubeClient,
+		ssc.actualStateOfWorld,
+		ssc.volumePluginMgr)
+
+	ssc.reconciler = reconciler.NewReconciler(
+		reconcilerLoopPeriod,
+		defaultSyncDuration,
+		false, /* disableReconciliationSync */
+		ssc.desiredStateOfWorld,
+		ssc.actualStateOfWorld,
+		ssc.snapshotter)
+
+	ssc.desiredStateOfWorldPopulator = populator.NewDesiredStateOfWorldPopulator(
+		desiredStateOfWorldPopulatorLoopSleepPeriod,
+		desiredStateOfWorldPopulatorListSnapshotsRetryDuration,
+		ssc.vsLister,
+		ssc.desiredStateOfWorld,
+	)
+
+	return ssc, nil
 }
 
-// Run runs the controller goroutines.
-func (c *Controller) Run(workers int, stopCh <-chan struct{}) {
-	defer utilruntime.HandleCrash()
-	defer c.queue.ShutDown()
-
-	glog.Infof("Starting volume snapshot controller")
-	defer glog.Infof("Shutting down volume snapshot controller")
-
-	if !controller.WaitForCacheSync("volume snapshot", stopCh, c.vsListerSynced) {
+// Run starts an Snapshot resource controller
+func (c *Controller) Run(stopCh <-chan struct{}) {
+	glog.Infof("Starting snapshot controller")
+	if !controller.WaitForCacheSync("snapshot-controller", stopCh, c.vsListerSynced) {
 		return
 	}
 
-	for i := 0; i < workers; i++ {
-		go wait.Until(c.runWorker, time.Second, stopCh)
-	}
+	go c.reconciler.Run(stopCh)
+	go c.desiredStateOfWorldPopulator.Run(stopCh)
 
-	<-stopCh
 }
 
-func (c *Controller) runWorker() {
-	for c.processNextWorkItem() {
+func (c *Controller) onSnapshotAdd(obj interface{}) {
+	// Add snapshot: Add snapshot to DesiredStateOfWorld, then ask snapshotter to create
+	// the actual snapshot
+	snapshotObj, ok := obj.(*v1.VolumeSnapshot)
+	if !ok {
+		glog.Warning("expecting type VolumeSnapshot but received type %T", obj)
+		return
+	}
+	snapshot := snapshotObj.DeepCopy()
+
+	glog.Infof("[CONTROLLER] OnAdd %s, Snapshot %#v", snapshot.ObjectMeta.SelfLink, snapshot)
+	c.desiredStateOfWorld.AddSnapshot(snapshot)
+}
+
+func (c *Controller) onSnapshotUpdate(oldObj, newObj interface{}) {
+	oldSnapshot := oldObj.(*v1.VolumeSnapshot)
+	newSnapshot := newObj.(*v1.VolumeSnapshot)
+	glog.Infof("[CONTROLLER] OnUpdate oldObj: %#v", oldSnapshot.Spec)
+	glog.Infof("[CONTROLLER] OnUpdate newObj: %#v", newSnapshot.Spec)
+	if oldSnapshot.Spec.SnapshotDataName != newSnapshot.Spec.SnapshotDataName {
+		c.desiredStateOfWorld.AddSnapshot(newSnapshot)
 	}
 }
 
-// processNextWorkItem deals with one vsKey off the queue.  It returns false when it's time to quit.
-func (c *Controller) processNextWorkItem() bool {
-	vsKey, quit := c.queue.Get()
-	if quit {
-		return false
-	}
-	defer c.queue.Done(vsKey)
-
-	vsName := vsKey.(string)
-
-	err := c.processVS(vsName)
-	if err == nil {
-		c.queue.Forget(vsKey)
-		return true
-	}
-
-	utilruntime.HandleError(fmt.Errorf("Volume snapshot %v failed with : %v", vsKey, err))
-	c.queue.AddRateLimited(vsKey)
-
-	return true
-}
-
-func (c *Controller) processVS(vsName string) error {
-	glog.V(4).Infof("Processing volume snapshot %s", vsName)
-	startTime := time.Now()
-	defer func() {
-		glog.V(4).Infof("Finished processing volume snapshot %s (%v)", vsName, time.Now().Sub(startTime))
-	}()
-
-	vs, err := c.vsLister.Get(vsName)
-	if apierrs.IsNotFound(err) {
-		glog.V(4).Infof("Volume snapshot %s not found, ignoring", vsName)
-		return nil
-	}
-	if err != nil {
-		return err
-	}
-
-	glog.V(4).Infof("Print out volume snapshot info %v", vs)
-
-	/*if isDeletionCandidate(vs) {
-		// Volume snapshot should be deleted. Check if it's used and remove finalizer if
-		// it's not.
-		isUsed := c.isBeingUsed(vs)
-		if !isUsed {
-			return c.removeFinalizer(vs)
+func (c *Controller) onSnapshotDelete(obj interface{}) {
+	deletedSnapshot, ok := obj.(*v1.VolumeSnapshot)
+	if !ok {
+		// DeletedFinalStateUnkown is an expected data type here
+		deletedState, isState := obj.(cache.DeletedFinalStateUnknown)
+		if !isState {
+			glog.Errorf("Error: unkown type passed as snapshot for deletion: %T", obj)
+			return
+		}
+		deletedSnapshot, ok = deletedState.Obj.(*v1.VolumeSnapshot)
+		if !ok {
+			glog.Errorf("Error: unkown data type in DeletedState: %T", deletedState.Obj)
+			return
 		}
 	}
+	// Delete snapshot: Remove the snapshot from DesiredStateOfWorld, then ask snapshotter to delete
+	// the snapshot itself
+	snapshot := deletedSnapshot.DeepCopy()
+	glog.Infof("[CONTROLLER] OnDelete %s, snapshot name: %s/%s\n", snapshot.ObjectMeta.SelfLink, snapshot.ObjectMeta.Namespace, snapshot.ObjectMeta.Name)
+	c.desiredStateOfWorld.DeleteSnapshot(vscache.MakeSnapshotName(snapshot.ObjectMeta.Namespace, snapshot.ObjectMeta.Name))
 
-	if needToAddFinalizer(vs) {
-		// Volume snapshot is not being deleted -> it should have the finalizer. The
-		// finalizer should be added by admission plugin, this is just to add
-		// the finalizer to old volume snapshots that were created before the admission
-		// plugin was enabled.
-		return c.addFinalizer(vs)
-	}*/
+}
+
+// Implementing VolumeHost interface
+func (c *Controller) GetPluginDir(pluginName string) string {
+	return ""
+}
+
+func (c *Controller) GetVolumeDevicePluginDir(pluginName string) string {
+	return ""
+}
+
+func (c *Controller) GetPodVolumeDir(podUID types.UID, pluginName string, volumeName string) string {
+	return ""
+}
+
+func (c *Controller) GetPodVolumeDeviceDir(podUID types.UID, pluginName string) string {
+	return ""
+}
+
+func (c *Controller) GetPodPluginDir(podUID types.UID, pluginName string) string {
+	return ""
+}
+
+func (c *Controller) GetKubeClient() clientset.Interface {
+	return c.client
+}
+
+func (c *Controller) NewWrapperMounter(volName string, spec volume.Spec, pod *v1.Pod, opts volume.VolumeOptions) (volume.Mounter, error) {
+	return nil, fmt.Errorf("NewWrapperMounter not supported by expand controller's VolumeHost implementation")
+}
+
+func (c *Controller) NewWrapperUnmounter(volName string, spec volume.Spec, podUID types.UID) (volume.Unmounter, error) {
+	return nil, fmt.Errorf("NewWrapperUnmounter not supported by expand controller's VolumeHost implementation")
+}
+
+func (c *Controller) GetCloudProvider() cloudprovider.Interface {
+	return c.cloud
+}
+
+func (c *Controller) GetMounter(pluginName string) mount.Interface {
 	return nil
 }
 
-/*func (c *Controller) addFinalizer(vs *v1.VolumeSnapshot) error {
-	vsClone := pv.DeepCopy()
-	vsClone.ObjectMeta.Finalizers = append(vsClone.ObjectMeta.Finalizers, volumeutil.VSProtectionFinalizer)
-	_, err := c.client.CoreV1().VolumeSnapshots().Update(vsClone)
-	if err != nil {
-		glog.V(3).Infof("Error adding protection finalizer to volume snapshot %s: %v", vs.Name)
-		return err
-	}
-	glog.V(3).Infof("Added finalizer to volume snapshot %s", vs.Name)
-	return nil
-}*/
-
-/*func (c *Controller) removeFinalizer(pv *v1.VolumeSnapshot) error {
-	vsClone := vs.DeepCopy()
-	vsClone.ObjectMeta.Finalizers = slice.RemoveString(vsClone.ObjectMeta.Finalizers, volumeutil.VSProtectionFinalizer, nil)
-	_, err := c.client.CoreV1().VolumeSnapshots().Update(vsClone)
-	if err != nil {
-		glog.V(3).Infof("Error removing finalizer from volume snapshot %s: %v", vs.Name, err)
-		return err
-	}
-	glog.V(3).Infof("Removed protection finalizer from volume snapshot %s", vs.Name)
-	return nil
-}*/
-
-/*func (c *Controller) isBeingUsed(pv *v1.VolumeSnapshot) bool {
-	// check if volume snapshot is being bound to a PVC by its status
-	// the status will be updated by PV controller
-	if pv.Status.Phase == v1.VolumeBound {
-		// the PV is being used now
-		return true
-	}
-
-	return false
-}*/
-
-// vsAddedUpdated reacts to vs added/updated events
-func (c *Controller) vsAddedUpdated(obj interface{}) {
-	vs, ok := obj.(*v1.VolumeSnapshot)
-	if !ok {
-		utilruntime.HandleError(fmt.Errorf("VolumeSnapshot informer returned non-VS object: %#v", obj))
-		return
-	}
-	glog.V(4).Infof("Got event on VolumeSnapshot %s", vs.Metadata.Name)
-
-	//if needToAddFinalizer(vs) || isDeletionCandidate(vs) {
-	//	c.queue.Add(vs.Metadata.Name)
-	//}
+func (c *Controller) GetExec(pluginName string) mount.Exec {
+	return mount.NewOsExec()
 }
 
-/*func isDeletionCandidate(pv *v1.PersistentVolume) bool {
-	return pv.ObjectMeta.DeletionTimestamp != nil && slice.ContainsString(pv.ObjectMeta.Finalizers, volumeutil.PVProtectionFinalizer, nil)
+func (c *Controller) GetWriter() io.Writer {
+	return nil
 }
 
-func needToAddFinalizer(pv *v1.PersistentVolume) bool {
-	return pv.ObjectMeta.DeletionTimestamp == nil && !slice.ContainsString(pv.ObjectMeta.Finalizers, volumeutil.PVProtectionFinalizer, nil)
-}*/
+func (c *Controller) GetHostName() string {
+	return ""
+}
+
+func (c *Controller) GetHostIP() (net.IP, error) {
+	return nil, fmt.Errorf("GetHostIP not supported by expand controller's VolumeHost implementation")
+}
+
+func (c *Controller) GetNodeAllocatable() (v1.ResourceList, error) {
+	return v1.ResourceList{}, nil
+}
+
+func (c *Controller) GetSecretFunc() func(namespace, name string) (*v1.Secret, error) {
+	return func(_, _ string) (*v1.Secret, error) {
+		return nil, fmt.Errorf("GetSecret unsupported in Controller")
+	}
+}
+
+func (c *Controller) GetConfigMapFunc() func(namespace, name string) (*v1.ConfigMap, error) {
+	return func(_, _ string) (*v1.ConfigMap, error) {
+		return nil, fmt.Errorf("GetConfigMap unsupported in Controller")
+	}
+}
+
+func (c *Controller) GetNodeLabels() (map[string]string, error) {
+	return nil, fmt.Errorf("GetNodeLabels unsupported in Controller")
+}
+
+func (c *Controller) GetNodeName() types.NodeName {
+	return ""
+}
