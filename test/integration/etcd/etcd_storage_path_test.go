@@ -118,6 +118,14 @@ var etcdStorageData = map[schema.GroupVersionResource]struct {
 		stub:             `{"metadata": {"name": "pvc1"}, "spec": {"accessModes": ["ReadWriteOnce"], "resources": {"limits": {"storage": "1M"}, "requests": {"storage": "2M"}}, "selector": {"matchLabels": {"pvc": "stuff"}}}}`,
 		expectedEtcdPath: "/registry/persistentvolumeclaims/etcdstoragepathtestnamespace/pvc1",
 	},
+	gvr("", "v1", "volumesnapshots"): {
+		stub:             `{"metadata": {"name": "vs1name"}, "spec": {"persistentVolumeClaimName": "pvc1name"}}`,
+		expectedEtcdPath: "/registry/volumesnapshots/vs1name",
+	},
+	gvr("", "v1", "volumesnapshotdatas"): {
+		stub:             `{"metadata": {"name": "vsd1name"}, "spec": {"hostPath": {"path": "/tmp/test/"}}}`,
+		expectedEtcdPath: "/registry/volumesnapshotdatas/vsd1name",
+	},
 	gvr("", "v1", "serviceaccounts"): {
 		stub:             `{"metadata": {"name": "sa1name"}, "secrets": [{"name": "secret00"}]}`,
 		expectedEtcdPath: "/registry/serviceaccounts/etcdstoragepathtestnamespace/sa1name",
