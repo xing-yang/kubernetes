@@ -198,6 +198,21 @@ type Deleter interface {
 	Delete() error
 }
 
+// Snapshotter is an interface that can create or delete the volume snapshot
+// in the infrastructure provider.
+type Snapshotter interface {
+	// SnapshotCreate creates a VolumeSnapshot from a PersistentVolumeSpec
+	SnapshotCreate(*v1.PersistentVolume, *map[string]string) (*v1.VolumeSnapshotDataSource, *[]v1.VolumeSnapshotCondition, error)
+	// SnapshotDelete deletes a VolumeSnapshot
+	// PersistentVolume is provided for volume types, if any, that need PV Spec to delete snapshot
+	SnapshotDelete(*v1.VolumeSnapshotDataSource, *v1.PersistentVolume) error
+	// Describe an EBS volume snapshot status for create or delete.
+	// return status (completed or pending or error), and error
+	DescribeSnapshot(snapshotData *v1.VolumeSnapshotData) (snapConditions *[]v1.VolumeSnapshotCondition, isCompleted bool, err error)
+	// FindSnapshot finds a VolumeSnapshot by matching metadata
+	FindSnapshot(tags *map[string]string) (*v1.VolumeSnapshotDataSource, *[]v1.VolumeSnapshotCondition, error)
+}
+
 // Attacher can attach a volume to a node.
 type Attacher interface {
 	// Attaches the volume specified by the given spec to the node with the given Name.
