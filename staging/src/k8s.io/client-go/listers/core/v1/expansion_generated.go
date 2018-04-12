@@ -111,5 +111,13 @@ type ServiceAccountListerExpansion interface{}
 type ServiceAccountNamespaceListerExpansion interface{}
 
 // VolumeSnapshotListerExpansion allows custom methods to be added to
-// VolumeSnaphsotLister.
+// VolumeSnapshotLister.
 type VolumeSnapshotListerExpansion interface{}
+
+// VolumeSnapshotNamespaceListerExpansion allows custom methods to be added to
+// VolumeSnapshotNamespaceLister.
+type VolumeSnapshotNamespaceListerExpansion interface{}
+
+// VolumeSnapshotDataListerExpansion allows custom methods to be added to
+// VolumeSnapshotDataLister.
+type VolumeSnapshotDataListerExpansion interface{}
