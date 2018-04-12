@@ -56,7 +56,7 @@ import (
 	persistentvolumecontroller "k8s.io/kubernetes/pkg/controller/volume/persistentvolume"
 	"k8s.io/kubernetes/pkg/controller/volume/pvcprotection"
 	"k8s.io/kubernetes/pkg/controller/volume/pvprotection"
-        "k8s.io/kubernetes/pkg/controller/volume/snapshot"
+	"k8s.io/kubernetes/pkg/controller/volume/snapshot"
 	"k8s.io/kubernetes/pkg/features"
 	"k8s.io/kubernetes/pkg/quota/generic"
 	quotainstall "k8s.io/kubernetes/pkg/quota/install"
@@ -415,12 +415,19 @@ func startPVProtectionController(ctx ControllerContext) (bool, error) {
 }
 
 func startSnapshotController(ctx ControllerContext) (bool, error) {
-        if utilfeature.DefaultFeatureGate.Enabled(features.VolumeSnapshot) {
-                go snapshot.NewSnapshotController(
-                        ctx.InformerFactory.Core().V1().VolumeSnapshots(),
-                        ctx.ClientBuilder.ClientOrDie("snapshot-controller"),
-                ).Run(1, ctx.Stop)
-                return true, nil
-        }
-        return false, nil
+	if utilfeature.DefaultFeatureGate.Enabled(features.VolumeSnapshot) {
+		ssc, err := snapshot.NewSnapshotController(
+			ctx.InformerFactory.Core().V1().VolumeSnapshots(),
+			ctx.InformerFactory.Core().V1().VolumeSnapshotDatas(),
+			ctx.ClientBuilder.ClientOrDie("snapshot-controller"),
+			ctx.Cloud,
+			ProbeSnapshottableVolumePlugins(ctx.ComponentConfig.VolumeConfiguration),
+		)
+		if err != nil {
+			return true, fmt.Errorf("Failed to start volume snapshot controller : %v", err)
+		}
+		go ssc.Run(ctx.Stop)
+		return true, nil
+	}
+	return false, nil
 }
