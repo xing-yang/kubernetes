@@ -1661,20 +1661,20 @@ type CSIPersistentVolumeSource struct {
 }
 
 const (
-        // VolumeSnapshotDataResourcePlural is "volumesnapshotdatas"
-        VolumeSnapshotDataResourcePlural = "volumesnapshotdatas"
-        // VolumeSnapshotResourcePlural is "volumesnapshots"
-        VolumeSnapshotResourcePlural = "volumesnapshots"
+	// VolumeSnapshotDataResourcePlural is "volumesnapshotdatas"
+	VolumeSnapshotDataResourcePlural = "volumesnapshotdatas"
+	// VolumeSnapshotResourcePlural is "volumesnapshots"
+	VolumeSnapshotResourcePlural = "volumesnapshots"
 )
 
 // VolumeSnapshotStatus is the status of the VolumeSnapshot
 type VolumeSnapshotStatus struct {
-        // The time the snapshot was successfully created
-        // +optional
-        CreationTimestamp metav1.Time
+	// The time the snapshot was successfully created
+	// +optional
+	CreationTimestamp metav1.Time
 
-        // Represent the latest available observations about the volume snapshot
-        Conditions []VolumeSnapshotCondition
+	// Represent the latest available observations about the volume snapshot
+	Conditions []VolumeSnapshotCondition
 }
 
 // VolumeSnapshotConditionType is the type of VolumeSnapshot conditions
@@ -1682,93 +1682,94 @@ type VolumeSnapshotConditionType string
 
 // These are valid conditions of a volume snapshot.
 const (
-        // VolumeSnapshotConditionPending means the snapshot is cut and the application
-        // can resume accessing data if ConditionStatus is True. It corresponds
-        // to "Uploading" in GCE PD or "Pending" in AWS and ConditionStatus is True.
-        // It also corresponds to "Creating" in OpenStack Cinder and ConditionStatus
-        // is Unknown.
-        VolumeSnapshotConditionPending VolumeSnapshotConditionType = "Pending"
-        // VolumeSnapshotConditionReady is added when the snapshot has been successfully created and is ready to be used.
-        VolumeSnapshotConditionReady VolumeSnapshotConditionType = "Ready"
-        // VolumeSnapshotConditionError means an error occurred during snapshot creation.
-        VolumeSnapshotConditionError VolumeSnapshotConditionType = "Error"
+	// VolumeSnapshotConditionPending means the snapshot is cut and the application
+	// can resume accessing data if ConditionStatus is True. It corresponds
+	// to "Uploading" in GCE PD or "Pending" in AWS and ConditionStatus is True.
+	// It also corresponds to "Creating" in OpenStack Cinder and ConditionStatus
+	// is Unknown.
+	VolumeSnapshotConditionPending VolumeSnapshotConditionType = "Pending"
+	// VolumeSnapshotConditionReady is added when the snapshot has been successfully created and is ready to be used.
+	VolumeSnapshotConditionReady VolumeSnapshotConditionType = "Ready"
+	// VolumeSnapshotConditionError means an error occurred during snapshot creation.
+	VolumeSnapshotConditionError VolumeSnapshotConditionType = "Error"
 )
 
 // VolumeSnapshotCondition describes the state of a volume snapshot  at a certain point.
 type VolumeSnapshotCondition struct {
-        // Type of replication controller condition.
-        Type VolumeSnapshotConditionType
-        // Status of the condition, one of True, False, Unknown.
-        Status ConditionStatus
-        // The last time the condition transitioned from one status to another.
-        // +optional
-        LastTransitionTime metav1.Time
-        // The reason for the condition's last transition.
-        // +optional
-        Reason string
-        // A human readable message indicating details about the transition.
-        // +optional
-        Message string
+	// Type of replication controller condition.
+	Type VolumeSnapshotConditionType
+	// Status of the condition, one of True, False, Unknown.
+	Status ConditionStatus
+	// The last time the condition transitioned from one status to another.
+	// +optional
+	LastTransitionTime metav1.Time
+	// The reason for the condition's last transition.
+	// +optional
+	Reason string
+	// A human readable message indicating details about the transition.
+	// +optional
+	Message string
 }
 
-// +genclient=true
+// +genclient
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // VolumeSnapshot is the volume snapshot object accessible to the user. Upon succesful creation of the actual
 // snapshot by the volume provider it is bound to the corresponding VolumeSnapshotData through
 // the VolumeSnapshotSpec
 type VolumeSnapshot struct {
-        metav1.TypeMeta
-        //Metadata        metav1.ObjectMeta `json:"metadata"`
-        // +optional
-        Metadata metav1.ObjectMeta
+	metav1.TypeMeta
+	// +optional
+	metav1.ObjectMeta
 
-        // Spec represents the desired state of the snapshot
-        // +optional
-        Spec VolumeSnapshotSpec
+	// Spec represents the desired state of the snapshot
+	// +optional
+	Spec VolumeSnapshotSpec
 
-        // Status represents the latest observer state of the snapshot
-        // +optional
-        Status VolumeSnapshotStatus
+	// Status represents the latest observer state of the snapshot
+	// +optional
+	Status VolumeSnapshotStatus
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // VolumeSnapshotList is a list of VolumeSnapshot objects
 type VolumeSnapshotList struct {
-        metav1.TypeMeta
-        Metadata metav1.ListMeta
-        Items []VolumeSnapshot
+	metav1.TypeMeta
+	// +optional
+	metav1.ListMeta
+	Items []VolumeSnapshot
 }
 
 // VolumeSnapshotSpec is the desired state of the volume snapshot
 type VolumeSnapshotSpec struct {
-        // PersistentVolumeClaimName is the name of the PVC being snapshotted
-        // +optional
-        PersistentVolumeClaimName string `json:"persistentVolumeClaimName" protobuf:"bytes,1,opt,name=persistentVolumeClaimName"`
+	// PersistentVolumeClaimName is the name of the PVC being snapshotted
+	// +optional
+	PersistentVolumeClaimName string
 
-        // SnapshotDataName binds the VolumeSnapshot object with the VolumeSnapshotData
-        // +optional
-        SnapshotDataName string `json:"snapshotDataName" protobuf:"bytes,2,opt,name=snapshotDataName"`
+	// SnapshotDataName binds the VolumeSnapshot object with the VolumeSnapshotData
+	// +optional
+	SnapshotDataName string
 }
 
 // VolumeSnapshotDataStatus is the actual state of the volume snapshot
 type VolumeSnapshotDataStatus struct {
-        // The time the snapshot was successfully created
-        // +optional
-        CreationTimestamp metav1.Time `json:"creationTimestamp" protobuf:"bytes,1,opt,name=creationTimestamp"`
+	// The time the snapshot was successfully created
+	// +optional
+	CreationTimestamp metav1.Time
 
-        // Representes the lates available observations about the volume snapshot
-        Conditions []VolumeSnapshotDataCondition `json:"conditions" protobuf:"bytes,2,rep,name=conditions"`
+	// Representes the lates available observations about the volume snapshot
+	Conditions []VolumeSnapshotDataCondition
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // VolumeSnapshotDataList is a list of VolumeSnapshotData objects
 type VolumeSnapshotDataList struct {
-        metav1.TypeMeta `json:",inline"`
-        Metadata        metav1.ListMeta      `json:"metadata"`
-        Items           []VolumeSnapshotData `json:"items"`
+	metav1.TypeMeta
+	// +optional
+	metav1.ListMeta
+	Items []VolumeSnapshotData
 }
 
 // VolumeSnapshotDataConditionType is the type of the VolumeSnapshotData condition
@@ -1776,119 +1777,119 @@ type VolumeSnapshotDataConditionType string
 
 // These are valid conditions of a volume snapshot.
 const (
-        // VolumeSnapshotDataReady is added when the on-disk snapshot has been successfully created.
-        VolumeSnapshotDataConditionReady VolumeSnapshotDataConditionType = "Ready"
-        // VolumeSnapshotDataPending is added when the on-disk snapshot has been successfully created but is not available to use.
-        VolumeSnapshotDataConditionPending VolumeSnapshotDataConditionType = "Pending"
-        // VolumeSnapshotDataError is added but the on-disk snapshot is failed to created
-        VolumeSnapshotDataConditionError VolumeSnapshotDataConditionType = "Error"
+	// VolumeSnapshotDataReady is added when the on-disk snapshot has been successfully created.
+	VolumeSnapshotDataConditionReady VolumeSnapshotDataConditionType = "Ready"
+	// VolumeSnapshotDataPending is added when the on-disk snapshot has been successfully created but is not available to use.
+	VolumeSnapshotDataConditionPending VolumeSnapshotDataConditionType = "Pending"
+	// VolumeSnapshotDataError is added but the on-disk snapshot is failed to created
+	VolumeSnapshotDataConditionError VolumeSnapshotDataConditionType = "Error"
 )
 
 // VolumeSnapshotDataCondition describes the state of a volume snapshot  at a certain point.
 type VolumeSnapshotDataCondition struct {
-        // Type of volume snapshot condition.
-        Type VolumeSnapshotDataConditionType `json:"type" protobuf:"bytes,1,opt,name=type,casttype=VolumeSnapshotDataConditionType"`
-        // Status of the condition, one of True, False, Unknown.
-        Status ConditionStatus `json:"status" protobuf:"bytes,2,opt,name=status,casttype=ConditionStatus"`
-        // The last time the condition transitioned from one status to another.
-        // +optional
-        LastTransitionTime metav1.Time `json:"lastTransitionTime" protobuf:"bytes,3,opt,name=lastTransitionTime"`
-        // The reason for the condition's last transition.
-        // +optional
-        Reason string `json:"reason" protobuf:"bytes,4,opt,name=reason"`
-        // A human readable message indicating details about the transition.
-        // +optional
-        Message string `json:"message" protobuf:"bytes,5,opt,name=message"`
+	// Type of volume snapshot condition.
+	Type VolumeSnapshotDataConditionType
+	// Status of the condition, one of True, False, Unknown.
+	Status ConditionStatus
+	// The last time the condition transitioned from one status to another.
+	// +optional
+	LastTransitionTime metav1.Time
+	// The reason for the condition's last transition.
+	// +optional
+	Reason string
+	// A human readable message indicating details about the transition.
+	// +optional
+	Message string
 }
 
-// +genclient=true
-// +nonNamespaced=true
+// +genclient
+// +genclient:nonNamespaced
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // VolumeSnapshotData represents the actual "on-disk" snapshot object
 type VolumeSnapshotData struct {
-        metav1.TypeMeta `json:",inline"`
-        // +optional
-        Metadata metav1.ObjectMeta `json:"metadata"`
+	metav1.TypeMeta
+	// +optional
+	metav1.ObjectMeta
 
-        // Spec represents the desired state of the snapshot
-        // +optional
-        Spec VolumeSnapshotDataSpec `json:"spec" protobuf:"bytes,2,opt,name=spec"`
+	// Spec represents the desired state of the snapshot
+	// +optional
+	Spec VolumeSnapshotDataSpec
 
-        // Status represents the latest observed state of the snapshot
-        // +optional
-        Status VolumeSnapshotDataStatus `json:"status" protobuf:"bytes,3,opt,name=status"`
+	// Status represents the latest observed state of the snapshot
+	// +optional
+	Status VolumeSnapshotDataStatus
 }
 
 // VolumeSnapshotDataSpec is the spec of the volume snapshot data
 type VolumeSnapshotDataSpec struct {
-        // Source represents the location and type of the volume snapshot
-        VolumeSnapshotDataSource `json:",inline" protobuf:"bytes,1,opt,name=volumeSnapshotDataSource"`
+	// Source represents the location and type of the volume snapshot
+	VolumeSnapshotDataSource
 
-        // VolumeSnapshotRef is part of bi-directional binding between VolumeSnapshot
-        // and VolumeSnapshotData
-        // +optional
-        VolumeSnapshotRef *ObjectReference `json:"volumeSnapshotRef" protobuf:"bytes,2,opt,name=volumeSnapshotRef"`
+	// VolumeSnapshotRef is part of bi-directional binding between VolumeSnapshot
+	// and VolumeSnapshotData
+	// +optional
+	VolumeSnapshotRef *ObjectReference
 
-        // PersistentVolumeRef represents the PersistentVolume that the snapshot has been
-        // taken from
-        // +optional
-        PersistentVolumeRef *ObjectReference `json:"persistentVolumeRef" protobuf:"bytes,3,opt,name=persistentVolumeRef"`
+	// PersistentVolumeRef represents the PersistentVolume that the snapshot has been
+	// taken from
+	// +optional
+	PersistentVolumeRef *ObjectReference
 }
 
 // HostPathVolumeSnapshotSource is HostPath volume snapshot source
 type HostPathVolumeSnapshotSource struct {
-        // Path represents a tar file that stores the HostPath volume source
-        Path string `json:"snapshot"`
+	// Path represents a tar file that stores the HostPath volume source
+	Path string
 }
 
 // GlusterVolumeSnapshotSource is Gluster volume snapshot source
 type GlusterVolumeSnapshotSource struct {
-        // UniqueID represents a snapshot resource.
-        SnapshotID string `json:"snapshotId"`
+	// UniqueID represents a snapshot resource.
+	SnapshotID string
 }
 
 // AWSElasticBlockStoreVolumeSnapshotSource is AWS EBS volume snapshot source
 type AWSElasticBlockStoreVolumeSnapshotSource struct {
-        // Unique id of the persistent disk snapshot resource. Used to identify the disk snapshot in AWS
-        SnapshotID string `json:"snapshotId"`
+	// Unique id of the persistent disk snapshot resource. Used to identify the disk snapshot in AWS
+	SnapshotID string
 }
 
 // CinderVolumeSnapshotSource is Cinder volume snapshot source
 type CinderVolumeSnapshotSource struct {
-        // Unique id of the cinder volume snapshot resource. Used to identify the snapshot in OpenStack
-        SnapshotID string `json:"snapshotId"`
+	// Unique id of the cinder volume snapshot resource. Used to identify the snapshot in OpenStack
+	SnapshotID string
 }
 
 // GCEPersistentDiskSnapshotSource is GCE PD volume snapshot source
 type GCEPersistentDiskSnapshotSource struct {
-        // Unique id of the persistent disk snapshot resource. Used to identify the disk snapshot in GCE
-        SnapshotName string `json:"snapshotId"`
+	// Unique id of the persistent disk snapshot resource. Used to identify the disk snapshot in GCE
+	SnapshotName string
 }
 
 // VolumeSnapshotDataSource represents the actual location and type of the snapshot. Only one of its members may be specified.
 type VolumeSnapshotDataSource struct {
-        // HostPath represents a directory on the host.
-        // Provisioned by a developer or tester.
-        // This is useful for single-node development and testing only!
-        // On-host storage is not supported in any way and WILL NOT WORK in a multi-node cluster.
-        // More info: https://kubernetes.io/docs/concepts/storage/volumes#hostpath
-        // +optional
-        HostPath *HostPathVolumeSnapshotSource `json:"hostPath,omitempty"`
-        // AWSElasticBlockStore represents an AWS Disk resource that is attached to a
-        // kubelet's host machine and then exposed to the pod.
-        // More info: https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore
-        // +optional
-        //GlusterSnapshotSource represents a gluster snapshot resource
-        GlusterSnapshotVolume *GlusterVolumeSnapshotSource `json:"glusterSnapshotVolume,omitempty"`
-        // +optional
-        AWSElasticBlockStore *AWSElasticBlockStoreVolumeSnapshotSource `json:"awsElasticBlockStore,omitempty"`
-        // GCEPersistentDiskSnapshotSource represents an GCE PD snapshot resource
-        // +optional
-        GCEPersistentDiskSnapshot *GCEPersistentDiskSnapshotSource `json:"gcePersistentDisk,omitempty"`
-        // CinderVolumeSnapshotSource represents Cinder snapshot resource
-        // +optional
-        CinderSnapshot *CinderVolumeSnapshotSource `json:"cinderVolume,omitempty"`
+	// HostPath represents a directory on the host.
+	// Provisioned by a developer or tester.
+	// This is useful for single-node development and testing only!
+	// On-host storage is not supported in any way and WILL NOT WORK in a multi-node cluster.
+	// More info: https://kubernetes.io/docs/concepts/storage/volumes#hostpath
+	// +optional
+	HostPath *HostPathVolumeSnapshotSource
+	// AWSElasticBlockStore represents an AWS Disk resource that is attached to a
+	// kubelet's host machine and then exposed to the pod.
+	// More info: https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore
+	// +optional
+	//GlusterSnapshotSource represents a gluster snapshot resource
+	GlusterSnapshotVolume *GlusterVolumeSnapshotSource
+	// +optional
+	AWSElasticBlockStore *AWSElasticBlockStoreVolumeSnapshotSource
+	// GCEPersistentDiskSnapshotSource represents an GCE PD snapshot resource
+	// +optional
+	GCEPersistentDiskSnapshot *GCEPersistentDiskSnapshotSource
+	// CinderVolumeSnapshotSource represents Cinder snapshot resource
+	// +optional
+	CinderSnapshot *CinderVolumeSnapshotSource
 }
 
 // ContainerPort represents a network port in a single container
