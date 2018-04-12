@@ -125,6 +125,10 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Core().InternalVersion().Services().Informer()}, nil
 	case core.SchemeGroupVersion.WithResource("serviceaccounts"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Core().InternalVersion().ServiceAccounts().Informer()}, nil
+	case core.SchemeGroupVersion.WithResource("volumesnapshots"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Core().InternalVersion().VolumeSnapshots().Informer()}, nil
+	case core.SchemeGroupVersion.WithResource("volumesnapshotdatas"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Core().InternalVersion().VolumeSnapshotDatas().Informer()}, nil
 
 		// Group=extensions, Version=internalVersion
 	case extensions.SchemeGroupVersion.WithResource("daemonsets"):

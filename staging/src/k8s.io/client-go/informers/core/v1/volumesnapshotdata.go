@@ -31,59 +31,58 @@ import (
 	cache "k8s.io/client-go/tools/cache"
 )
 
-// VolumeSnapshotInformer provides access to a shared informer and lister for
-// VolumeSnapshots.
-type VolumeSnapshotInformer interface {
+// VolumeSnapshotDataInformer provides access to a shared informer and lister for
+// VolumeSnapshotDatas.
+type VolumeSnapshotDataInformer interface {
 	Informer() cache.SharedIndexInformer
-	Lister() v1.VolumeSnapshotLister
+	Lister() v1.VolumeSnapshotDataLister
 }
 
-type volumeSnapshotInformer struct {
+type volumeSnapshotDataInformer struct {
 	factory          internalinterfaces.SharedInformerFactory
 	tweakListOptions internalinterfaces.TweakListOptionsFunc
-	namespace        string
 }
 
-// NewVolumeSnapshotInformer constructs a new informer for VolumeSnapshot type.
+// NewVolumeSnapshotDataInformer constructs a new informer for VolumeSnapshotData type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewVolumeSnapshotInformer(client kubernetes.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
-	return NewFilteredVolumeSnapshotInformer(client, namespace, resyncPeriod, indexers, nil)
+func NewVolumeSnapshotDataInformer(client kubernetes.Interface, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
+	return NewFilteredVolumeSnapshotDataInformer(client, resyncPeriod, indexers, nil)
 }
 
-// NewFilteredVolumeSnapshotInformer constructs a new informer for VolumeSnapshot type.
+// NewFilteredVolumeSnapshotDataInformer constructs a new informer for VolumeSnapshotData type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewFilteredVolumeSnapshotInformer(client kubernetes.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
+func NewFilteredVolumeSnapshotDataInformer(client kubernetes.Interface, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
 	return cache.NewSharedIndexInformer(
 		&cache.ListWatch{
 			ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.CoreV1().VolumeSnapshots(namespace).List(options)
+				return client.CoreV1().VolumeSnapshotDatas().List(options)
 			},
 			WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.CoreV1().VolumeSnapshots(namespace).Watch(options)
+				return client.CoreV1().VolumeSnapshotDatas().Watch(options)
 			},
 		},
-		&core_v1.VolumeSnapshot{},
+		&core_v1.VolumeSnapshotData{},
 		resyncPeriod,
 		indexers,
 	)
 }
 
-func (f *volumeSnapshotInformer) defaultInformer(client kubernetes.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
-	return NewFilteredVolumeSnapshotInformer(client, f.namespace, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
+func (f *volumeSnapshotDataInformer) defaultInformer(client kubernetes.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
+	return NewFilteredVolumeSnapshotDataInformer(client, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
 }
 
-func (f *volumeSnapshotInformer) Informer() cache.SharedIndexInformer {
-	return f.factory.InformerFor(&core_v1.VolumeSnapshot{}, f.defaultInformer)
+func (f *volumeSnapshotDataInformer) Informer() cache.SharedIndexInformer {
+	return f.factory.InformerFor(&core_v1.VolumeSnapshotData{}, f.defaultInformer)
 }
 
-func (f *volumeSnapshotInformer) Lister() v1.VolumeSnapshotLister {
-	return v1.NewVolumeSnapshotLister(f.Informer().GetIndexer())
+func (f *volumeSnapshotDataInformer) Lister() v1.VolumeSnapshotDataLister {
+	return v1.NewVolumeSnapshotDataLister(f.Informer().GetIndexer())
 }

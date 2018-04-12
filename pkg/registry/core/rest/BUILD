@@ -49,6 +49,8 @@ go_library(
         "//pkg/registry/core/service/portallocator:go_default_library",
         "//pkg/registry/core/service/storage:go_default_library",
         "//pkg/registry/core/serviceaccount/storage:go_default_library",
+        "//pkg/registry/core/volumesnapshot/storage:go_default_library",
+        "//pkg/registry/core/volumesnapshotdata/storage:go_default_library",
         "//pkg/serviceaccount:go_default_library",
         "//vendor/github.com/golang/glog:go_default_library",
         "//vendor/k8s.io/apimachinery/pkg/runtime/schema:go_default_library",
