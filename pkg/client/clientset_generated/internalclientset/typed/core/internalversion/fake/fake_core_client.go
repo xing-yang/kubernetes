@@ -92,6 +92,14 @@ func (c *FakeCore) ServiceAccounts(namespace string) internalversion.ServiceAcco
 	return &FakeServiceAccounts{c, namespace}
 }
 
+func (c *FakeCore) VolumeSnapshots(namespace string) internalversion.VolumeSnapshotInterface {
+	return &FakeVolumeSnapshots{c, namespace}
+}
+
+func (c *FakeCore) VolumeSnapshotDatas() internalversion.VolumeSnapshotDataInterface {
+	return &FakeVolumeSnapshotDatas{c}
+}
+
 // RESTClient returns a RESTClient that is used to communicate
 // with API server by this client implementation.
 func (c *FakeCore) RESTClient() rest.Interface {

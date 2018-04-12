@@ -5578,7 +5578,7 @@ func Convert_core_VolumeProjection_To_v1_VolumeProjection(in *core.VolumeProject
 }
 
 func autoConvert_v1_VolumeSnapshot_To_core_VolumeSnapshot(in *v1.VolumeSnapshot, out *core.VolumeSnapshot, s conversion.Scope) error {
-	out.Metadata = in.Metadata
+	out.ObjectMeta = in.ObjectMeta
 	if err := Convert_v1_VolumeSnapshotSpec_To_core_VolumeSnapshotSpec(&in.Spec, &out.Spec, s); err != nil {
 		return err
 	}
@@ -5594,7 +5594,7 @@ func Convert_v1_VolumeSnapshot_To_core_VolumeSnapshot(in *v1.VolumeSnapshot, out
 }
 
 func autoConvert_core_VolumeSnapshot_To_v1_VolumeSnapshot(in *core.VolumeSnapshot, out *v1.VolumeSnapshot, s conversion.Scope) error {
-	out.Metadata = in.Metadata
+	out.ObjectMeta = in.ObjectMeta
 	if err := Convert_core_VolumeSnapshotSpec_To_v1_VolumeSnapshotSpec(&in.Spec, &out.Spec, s); err != nil {
 		return err
 	}
@@ -5638,7 +5638,7 @@ func Convert_core_VolumeSnapshotCondition_To_v1_VolumeSnapshotCondition(in *core
 }
 
 func autoConvert_v1_VolumeSnapshotData_To_core_VolumeSnapshotData(in *v1.VolumeSnapshotData, out *core.VolumeSnapshotData, s conversion.Scope) error {
-	out.Metadata = in.Metadata
+	out.ObjectMeta = in.ObjectMeta
 	if err := Convert_v1_VolumeSnapshotDataSpec_To_core_VolumeSnapshotDataSpec(&in.Spec, &out.Spec, s); err != nil {
 		return err
 	}
@@ -5654,7 +5654,7 @@ func Convert_v1_VolumeSnapshotData_To_core_VolumeSnapshotData(in *v1.VolumeSnaps
 }
 
 func autoConvert_core_VolumeSnapshotData_To_v1_VolumeSnapshotData(in *core.VolumeSnapshotData, out *v1.VolumeSnapshotData, s conversion.Scope) error {
-	out.Metadata = in.Metadata
+	out.ObjectMeta = in.ObjectMeta
 	if err := Convert_core_VolumeSnapshotDataSpec_To_v1_VolumeSnapshotDataSpec(&in.Spec, &out.Spec, s); err != nil {
 		return err
 	}
@@ -5698,7 +5698,7 @@ func Convert_core_VolumeSnapshotDataCondition_To_v1_VolumeSnapshotDataCondition(
 }
 
 func autoConvert_v1_VolumeSnapshotDataList_To_core_VolumeSnapshotDataList(in *v1.VolumeSnapshotDataList, out *core.VolumeSnapshotDataList, s conversion.Scope) error {
-	out.Metadata = in.Metadata
+	out.ListMeta = in.ListMeta
 	out.Items = *(*[]core.VolumeSnapshotData)(unsafe.Pointer(&in.Items))
 	return nil
 }
@@ -5709,7 +5709,7 @@ func Convert_v1_VolumeSnapshotDataList_To_core_VolumeSnapshotDataList(in *v1.Vol
 }
 
 func autoConvert_core_VolumeSnapshotDataList_To_v1_VolumeSnapshotDataList(in *core.VolumeSnapshotDataList, out *v1.VolumeSnapshotDataList, s conversion.Scope) error {
-	out.Metadata = in.Metadata
+	out.ListMeta = in.ListMeta
 	out.Items = *(*[]v1.VolumeSnapshotData)(unsafe.Pointer(&in.Items))
 	return nil
 }
@@ -5798,7 +5798,7 @@ func Convert_core_VolumeSnapshotDataStatus_To_v1_VolumeSnapshotDataStatus(in *co
 }
 
 func autoConvert_v1_VolumeSnapshotList_To_core_VolumeSnapshotList(in *v1.VolumeSnapshotList, out *core.VolumeSnapshotList, s conversion.Scope) error {
-	out.Metadata = in.Metadata
+	out.ListMeta = in.ListMeta
 	out.Items = *(*[]core.VolumeSnapshot)(unsafe.Pointer(&in.Items))
 	return nil
 }
@@ -5809,7 +5809,7 @@ func Convert_v1_VolumeSnapshotList_To_core_VolumeSnapshotList(in *v1.VolumeSnaps
 }
 
 func autoConvert_core_VolumeSnapshotList_To_v1_VolumeSnapshotList(in *core.VolumeSnapshotList, out *v1.VolumeSnapshotList, s conversion.Scope) error {
-	out.Metadata = in.Metadata
+	out.ListMeta = in.ListMeta
 	out.Items = *(*[]v1.VolumeSnapshot)(unsafe.Pointer(&in.Items))
 	return nil
 }
