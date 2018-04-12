@@ -92,6 +92,10 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 		&RangeAllocation{},
 		&ConfigMap{},
 		&ConfigMapList{},
+		&VolumeSnapshot{},
+		&VolumeSnapshotList{},
+		&VolumeSnapshotData{},
+		&VolumeSnapshotDataList{},
 	)
 
 	return nil
