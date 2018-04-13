@@ -306,3 +306,7 @@ func (c *Controller) GetNodeLabels() (map[string]string, error) {
 func (c *Controller) GetNodeName() types.NodeName {
 	return ""
 }
+
+func (c *Controller) GetEventRecorder() record.EventRecorder {
+        return c.recorder
+}

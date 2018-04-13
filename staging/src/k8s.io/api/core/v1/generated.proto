@@ -4348,7 +4348,7 @@ message VolumeSnapshot {
 
 // VolumeSnapshotCondition describes the state of a volume snapshot  at a certain point.
 message VolumeSnapshotCondition {
-  // Type of replication controller condition.
+  // Type of VolumeSnapshot condition.
   optional string type = 1;
 
   // Status of the condition, one of True, False, Unknown.
