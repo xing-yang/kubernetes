@@ -1588,7 +1588,7 @@ const (
 
 // VolumeSnapshotCondition describes the state of a volume snapshot  at a certain point.
 type VolumeSnapshotCondition struct {
-	// Type of replication controller condition.
+	// Type of VolumeSnapshot condition.
 	Type VolumeSnapshotConditionType
 	// Status of the condition, one of True, False, Unknown.
 	Status ConditionStatus

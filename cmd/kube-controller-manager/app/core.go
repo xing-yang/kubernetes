@@ -414,7 +414,7 @@ func startSnapshotController(ctx ControllerContext) (bool, error) {
 			ctx.InformerFactory.Core().V1().VolumeSnapshotDatas(),
 			ctx.ClientBuilder.ClientOrDie("snapshot-controller"),
 			ctx.Cloud,
-			ProbeSnapshottableVolumePlugins(ctx.ComponentConfig.VolumeConfiguration),
+			ProbeSnapshottableVolumePlugins(ctx.ComponentConfig.PersistentVolumeBinderController.VolumeConfiguration),
 		)
 		if err != nil {
 			return true, fmt.Errorf("Failed to start volume snapshot controller : %v", err)

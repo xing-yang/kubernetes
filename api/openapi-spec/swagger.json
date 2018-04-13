@@ -81958,7 +81958,7 @@
       "type": "string"
      },
      "type": {
-      "description": "Type of replication controller condition.",
+      "description": "Type of VolumeSnapshot condition.",
       "type": "string"
      }
     }

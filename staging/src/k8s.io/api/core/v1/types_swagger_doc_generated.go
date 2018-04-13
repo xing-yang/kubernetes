@@ -2317,7 +2317,7 @@ func (VolumeSnapshot) SwaggerDoc() map[string]string {
 
 var map_VolumeSnapshotCondition = map[string]string{
 	"":                   "VolumeSnapshotCondition describes the state of a volume snapshot  at a certain point.",
-	"type":               "Type of replication controller condition.",
+	"type":               "Type of VolumeSnapshot condition.",
 	"status":             "Status of the condition, one of True, False, Unknown.",
 	"lastTransitionTime": "The last time the condition transitioned from one status to another.",
 	"reason":             "The reason for the condition's last transition.",

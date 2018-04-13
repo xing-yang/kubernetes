@@ -1676,7 +1676,7 @@ const (
 
 // VolumeSnapshotCondition describes the state of a volume snapshot  at a certain point.
 type VolumeSnapshotCondition struct {
-	// Type of replication controller condition.
+	// Type of VolumeSnapshot condition.
 	Type VolumeSnapshotConditionType `json:"type" protobuf:"bytes,1,opt,name=type,casttype=VolumeSnapshotConditionType"`
 	// Status of the condition, one of True, False, Unknown.
 	Status ConditionStatus `json:"status" protobuf:"bytes,2,opt,name=status,casttype=ConditionStatus"`
