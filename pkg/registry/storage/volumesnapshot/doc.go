@@ -14,4 +14,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package volumesnapshot // import "k8s.io/kubernetes/pkg/registry/core/volumesnapshot"
+package volumesnapshot // import "k8s.io/kubernetes/pkg/registry/storage/volumesnapshot"

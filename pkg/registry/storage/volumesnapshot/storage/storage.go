@@ -23,11 +23,11 @@ import (
 	"k8s.io/apiserver/pkg/registry/generic"
 	genericregistry "k8s.io/apiserver/pkg/registry/generic/registry"
 	"k8s.io/apiserver/pkg/registry/rest"
-	api "k8s.io/kubernetes/pkg/apis/core"
+	storageapi "k8s.io/kubernetes/pkg/apis/storage"
 	"k8s.io/kubernetes/pkg/printers"
 	printersinternal "k8s.io/kubernetes/pkg/printers/internalversion"
 	printerstorage "k8s.io/kubernetes/pkg/printers/storage"
-	"k8s.io/kubernetes/pkg/registry/core/volumesnapshot"
+	"k8s.io/kubernetes/pkg/registry/storage/volumesnapshot"
 )
 
 type REST struct {
@@ -37,10 +37,10 @@ type REST struct {
 // NewREST returns a RESTStorage object that will work against volume snapshots.
 func NewREST(optsGetter generic.RESTOptionsGetter) (*REST, *StatusREST) {
 	store := &genericregistry.Store{
-		NewFunc:                  func() runtime.Object { return &api.VolumeSnapshot{} },
-		NewListFunc:              func() runtime.Object { return &api.VolumeSnapshotList{} },
+		NewFunc:                  func() runtime.Object { return &storageapi.VolumeSnapshot{} },
+		NewListFunc:              func() runtime.Object { return &storageapi.VolumeSnapshotList{} },
 		PredicateFunc:            volumesnapshot.MatchVolumeSnapshots,
-		DefaultQualifiedResource: api.Resource("volumesnapshots"),
+		DefaultQualifiedResource: storageapi.Resource("volumesnapshots"),
 
 		CreateStrategy:      volumesnapshot.Strategy,
 		UpdateStrategy:      volumesnapshot.Strategy,
@@ -74,7 +74,7 @@ type StatusREST struct {
 }
 
 func (r *StatusREST) New() runtime.Object {
-	return &api.VolumeSnapshot{}
+	return &storageapi.VolumeSnapshot{}
 }
 
 // Get retrieves the object from the storage. It is required to support Patch.

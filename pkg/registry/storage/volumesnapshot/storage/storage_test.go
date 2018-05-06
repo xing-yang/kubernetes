@@ -17,9 +17,11 @@ limitations under the License.
 package storage
 
 import (
-	"fmt"
 	"testing"
 
+	api "k8s.io/kubernetes/pkg/apis/core"
+	storageapi "k8s.io/kubernetes/pkg/apis/storage"
+	"k8s.io/kubernetes/pkg/registry/registrytest"
 	apiequality "k8s.io/apimachinery/pkg/api/equality"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/fields"
@@ -31,54 +33,45 @@ import (
 	genericregistrytest "k8s.io/apiserver/pkg/registry/generic/testing"
 	"k8s.io/apiserver/pkg/registry/rest"
 	etcdtesting "k8s.io/apiserver/pkg/storage/etcd/testing"
-	api "k8s.io/kubernetes/pkg/apis/core"
-	"k8s.io/kubernetes/pkg/registry/registrytest"
 )
 
 func newStorage(t *testing.T) (*REST, *StatusREST, *etcdtesting.EtcdTestServer) {
-	etcdStorage, server := registrytest.NewEtcdStorage(t, "")
+	etcdStorage, server := registrytest.NewEtcdStorage(t, storageapi.GroupName)
 	restOptions := generic.RESTOptions{
 		StorageConfig:           etcdStorage,
 		Decorator:               generic.UndecoratedStorage,
 		DeleteCollectionWorkers: 1,
-		ResourcePrefix:          "volumesnapshotdatas",
+		ResourcePrefix:          "volumesnapshots",
 	}
-	volumeSnapshotDataStorage, statusStorage := NewREST(restOptions)
-	return volumeSnapshotDataStorage, statusStorage, server
+	volumeSnapshotStorage, statusStorage := NewREST(restOptions)
+	return volumeSnapshotStorage, statusStorage, server
 }
 
-func newHostPathType(pathType string) *api.HostPathType {
-	hostPathType := new(api.HostPathType)
-	*hostPathType = api.HostPathType(pathType)
-	return hostPathType
-}
-
-func validNewVolumeSnapshotData(name string) *api.VolumeSnapshotData {
-	vsd := &api.VolumeSnapshotData{
+func validNewVolumeSnapshot(name, ns string) *storageapi.VolumeSnapshot {
+	vs := &storageapi.VolumeSnapshot{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: name,
+			Name:      name,
+			Namespace: ns,
 		},
-		Spec: api.VolumeSnapshotDataSpec{
-			VolumeSnapshotDataSource: api.VolumeSnapshotDataSource{
-				HostPath: &api.HostPathVolumeSnapshotSource{Path: "/foo"},
-			},
+		Spec: storageapi.VolumeSnapshotSpec{
+			PersistentVolumeClaimName: "bar",
 		},
 	}
-	return vsd
+	return vs
 }
 
 func TestCreate(t *testing.T) {
 	storage, _, server := newStorage(t)
 	defer server.Terminate(t)
 	defer storage.Store.DestroyFunc()
-	test := genericregistrytest.New(t, storage.Store).ClusterScope()
-	vsd := validNewVolumeSnapshotData("foo")
-	vsd.ObjectMeta = metav1.ObjectMeta{GenerateName: "foo"}
+	test := genericregistrytest.New(t, storage.Store)
+	vs := validNewVolumeSnapshot("foo", metav1.NamespaceDefault)
+	vs.ObjectMeta = metav1.ObjectMeta{}
 	test.TestCreate(
 		// valid
-		vsd,
+		vs,
 		// invalid
-		&api.VolumeSnapshotData{
+		&storageapi.VolumeSnapshot{
 			ObjectMeta: metav1.ObjectMeta{Name: "*BadName!"},
 		},
 	)
@@ -88,17 +81,14 @@ func TestUpdate(t *testing.T) {
 	storage, _, server := newStorage(t)
 	defer server.Terminate(t)
 	defer storage.Store.DestroyFunc()
-	test := genericregistrytest.New(t, storage.Store).ClusterScope()
+	test := genericregistrytest.New(t, storage.Store)
 	test.TestUpdate(
 		// valid
-		validNewVolumeSnapshotData("foo"),
+		validNewVolumeSnapshot("foo", metav1.NamespaceDefault),
 		// updateFunc
 		func(obj runtime.Object) runtime.Object {
-			object := obj.(*api.VolumeSnapshotData)
-			object.Spec.VolumeSnapshotRef = &api.ObjectReference{
-				Kind: "VolumeSnapshot",
-				Name: "snapshotname",
-			}
+			object := obj.(*storageapi.VolumeSnapshot)
+			object.Spec.SnapshotDataName = "test"
 			return object
 		},
 	)
@@ -108,33 +98,33 @@ func TestDelete(t *testing.T) {
 	storage, _, server := newStorage(t)
 	defer server.Terminate(t)
 	defer storage.Store.DestroyFunc()
-	test := genericregistrytest.New(t, storage.Store).ClusterScope().ReturnDeletedObject()
-	test.TestDelete(validNewVolumeSnapshotData("foo"))
+	test := genericregistrytest.New(t, storage.Store).ReturnDeletedObject()
+	test.TestDelete(validNewVolumeSnapshot("foo", metav1.NamespaceDefault))
 }
 
 func TestGet(t *testing.T) {
 	storage, _, server := newStorage(t)
 	defer server.Terminate(t)
 	defer storage.Store.DestroyFunc()
-	test := genericregistrytest.New(t, storage.Store).ClusterScope()
-	test.TestGet(validNewVolumeSnapshotData("foo"))
+	test := genericregistrytest.New(t, storage.Store)
+	test.TestGet(validNewVolumeSnapshot("foo", metav1.NamespaceDefault))
 }
 
 func TestList(t *testing.T) {
 	storage, _, server := newStorage(t)
 	defer server.Terminate(t)
 	defer storage.Store.DestroyFunc()
-	test := genericregistrytest.New(t, storage.Store).ClusterScope()
-	test.TestList(validNewVolumeSnapshotData("foo"))
+	test := genericregistrytest.New(t, storage.Store)
+	test.TestList(validNewVolumeSnapshot("foo", metav1.NamespaceDefault))
 }
 
 func TestWatch(t *testing.T) {
 	storage, _, server := newStorage(t)
 	defer server.Terminate(t)
 	defer storage.Store.DestroyFunc()
-	test := genericregistrytest.New(t, storage.Store).ClusterScope()
+	test := genericregistrytest.New(t, storage.Store)
 	test.TestWatch(
-		validNewVolumeSnapshotData("foo"),
+		validNewVolumeSnapshot("foo", metav1.NamespaceDefault),
 		// matching labels
 		[]labels.Set{},
 		// not matching labels
@@ -157,30 +147,31 @@ func TestUpdateStatus(t *testing.T) {
 	storage, statusStorage, server := newStorage(t)
 	defer server.Terminate(t)
 	defer storage.Store.DestroyFunc()
-	ctx := genericapirequest.NewContext()
-	key, _ := storage.KeyFunc(ctx, "foo")
-	vsdStart := validNewVolumeSnapshotData("foo")
-	err := storage.Storage.Create(ctx, key, vsdStart, nil, 0)
-	if err != nil {
-		t.Errorf("unexpected error: %v", err)
-	}
+	ctx := genericapirequest.NewDefaultContext()
 
-	vsdIn := &api.VolumeSnapshotData{
+	key, _ := storage.KeyFunc(ctx, "foo")
+	pvcStart := validNewVolumeSnapshot("foo", metav1.NamespaceDefault)
+	err := storage.Storage.Create(ctx, key, pvcStart, nil, 0)
+
+	vs := &storageapi.VolumeSnapshot{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "foo",
+			Name:      "foo",
+			Namespace: metav1.NamespaceDefault,
 		},
-		Status: api.VolumeSnapshotDataStatus{
-			Conditions: []api.VolumeSnapshotDataCondition{
+		Spec: storageapi.VolumeSnapshotSpec{
+			PersistentVolumeClaimName: "bar",
+		},
+		Status: storageapi.VolumeSnapshotStatus{
+			Conditions: []storageapi.VolumeSnapshotCondition{
 				{
 					Status:  api.ConditionTrue,
-					Message: fmt.Sprintf("Failed to create the snapshot date"),
-					Type:    api.VolumeSnapshotDataConditionError,
+					Message: "Failed to create the snapshot date",
+					Type:    storageapi.VolumeSnapshotConditionError,
 				},
 			},
 		},
 	}
-
-	_, _, err = statusStorage.Update(ctx, vsdIn.Name, rest.DefaultUpdatedObjectInfo(vsdIn), rest.ValidateAllObjectFunc, rest.ValidateAllObjectUpdateFunc)
+	_, _, err = statusStorage.Update(ctx, vs.Name, rest.DefaultUpdatedObjectInfo(vs), rest.ValidateAllObjectFunc, rest.ValidateAllObjectUpdateFunc)
 	if err != nil {
 		t.Fatalf("Unexpected error: %v", err)
 	}
@@ -188,10 +179,10 @@ func TestUpdateStatus(t *testing.T) {
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
 	}
-	vsdOut := obj.(*api.VolumeSnapshotData)
-	// only compare the relevant change b/c metadata will differ
-	if !apiequality.Semantic.DeepEqual(vsdIn.Status, vsdOut.Status) {
-		t.Errorf("unexpected object: %s", diff.ObjectDiff(vsdIn.Status, vsdOut.Status))
+	vsOut := obj.(*storageapi.VolumeSnapshot)
+	// only compare relevant changes b/c of difference in metadata
+	if !apiequality.Semantic.DeepEqual(vs.Status, vsOut.Status) {
+		t.Errorf("unexpected object: %s", diff.ObjectDiff(vs.Status, vsOut.Status))
 	}
 }
 
@@ -199,6 +190,6 @@ func TestShortNames(t *testing.T) {
 	storage, _, server := newStorage(t)
 	defer server.Terminate(t)
 	defer storage.Store.DestroyFunc()
-	expected := []string{"vsd"}
+	expected := []string{"vs"}
 	registrytest.AssertShortNames(t, storage, expected)
 }
