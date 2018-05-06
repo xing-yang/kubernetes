@@ -28,8 +28,8 @@ import (
 	"k8s.io/apiserver/pkg/storage"
 	"k8s.io/apiserver/pkg/storage/names"
 	"k8s.io/kubernetes/pkg/api/legacyscheme"
-	api "k8s.io/kubernetes/pkg/apis/core"
-	"k8s.io/kubernetes/pkg/apis/core/validation"
+	storageapi "k8s.io/kubernetes/pkg/apis/storage"
+	"k8s.io/kubernetes/pkg/apis/storage/validation"
 )
 
 // volumesnapshotStrategy implements behavior for VolumeSnapshot objects
@@ -48,12 +48,12 @@ func (volumesnapshotStrategy) NamespaceScoped() bool {
 
 // ResetBeforeCreate clears the Status field which is not allowed to be set by end users on creation.
 func (volumesnapshotStrategy) PrepareForCreate(ctx genericapirequest.Context, obj runtime.Object) {
-	vs := obj.(*api.VolumeSnapshot)
-	vs.Status = api.VolumeSnapshotStatus{}
+	vs := obj.(*storageapi.VolumeSnapshot)
+	vs.Status = storageapi.VolumeSnapshotStatus{}
 }
 
 func (volumesnapshotStrategy) Validate(ctx genericapirequest.Context, obj runtime.Object) field.ErrorList {
-	volumeSnapshot := obj.(*api.VolumeSnapshot)
+	volumeSnapshot := obj.(*storageapi.VolumeSnapshot)
 	return validation.ValidateVolumeSnapshot(volumeSnapshot)
 }
 
@@ -67,15 +67,15 @@ func (volumesnapshotStrategy) AllowCreateOnUpdate() bool {
 
 // PrepareForUpdate sets the Status fields which is not allowed to be set by an end user updating a VS
 func (volumesnapshotStrategy) PrepareForUpdate(ctx genericapirequest.Context, obj, old runtime.Object) {
-	newVs := obj.(*api.VolumeSnapshot)
-	oldVs := old.(*api.VolumeSnapshot)
+	newVs := obj.(*storageapi.VolumeSnapshot)
+	oldVs := old.(*storageapi.VolumeSnapshot)
 	newVs.Status = oldVs.Status
 }
 
 func (volumesnapshotStrategy) ValidateUpdate(ctx genericapirequest.Context, obj, old runtime.Object) field.ErrorList {
-	newVs := obj.(*api.VolumeSnapshot)
+	newVs := obj.(*storageapi.VolumeSnapshot)
 	errorList := validation.ValidateVolumeSnapshot(newVs)
-	return append(errorList, validation.ValidateVolumeSnapshotUpdate(newVs, old.(*api.VolumeSnapshot))...)
+	return append(errorList, validation.ValidateVolumeSnapshotUpdate(newVs, old.(*storageapi.VolumeSnapshot))...)
 }
 
 func (volumesnapshotStrategy) AllowUnconditionalUpdate() bool {
@@ -90,18 +90,18 @@ var StatusStrategy = volumeSnapshotStatusStrategy{Strategy}
 
 // PrepareForUpdate sets the Spec field which is not allowed to be changed when updating a VS's Status
 func (volumeSnapshotStatusStrategy) PrepareForUpdate(ctx genericapirequest.Context, obj, old runtime.Object) {
-	newVs := obj.(*api.VolumeSnapshot)
-	oldVs := old.(*api.VolumeSnapshot)
+	newVs := obj.(*storageapi.VolumeSnapshot)
+	oldVs := old.(*storageapi.VolumeSnapshot)
 	newVs.Spec = oldVs.Spec
 }
 
 func (volumeSnapshotStatusStrategy) ValidateUpdate(ctx genericapirequest.Context, obj, old runtime.Object) field.ErrorList {
-	return validation.ValidateVolumeSnapshotStatusUpdate(obj.(*api.VolumeSnapshot), old.(*api.VolumeSnapshot))
+	return validation.ValidateVolumeSnapshotStatusUpdate(obj.(*storageapi.VolumeSnapshot), old.(*storageapi.VolumeSnapshot))
 }
 
 // GetAttrs returns labels and fields of a given object for filtering purposes.
 func GetAttrs(obj runtime.Object) (labels.Set, fields.Set, bool, error) {
-	volumeSnapshotObj, ok := obj.(*api.VolumeSnapshot)
+	volumeSnapshotObj, ok := obj.(*storageapi.VolumeSnapshot)
 	if !ok {
 		return nil, nil, false, fmt.Errorf("not a volumeSnapshot")
 	}
@@ -118,7 +118,7 @@ func MatchVolumeSnapshots(label labels.Selector, field fields.Selector) storage.
 }
 
 // VolumeSnapshotToSelectableFields returns a field set that represents the object
-func VolumeSnapshotToSelectableFields(volumeSnapshot *api.VolumeSnapshot) fields.Set {
+func VolumeSnapshotToSelectableFields(volumeSnapshot *storageapi.VolumeSnapshot) fields.Set {
 	objectMetaFieldsSet := generic.ObjectMetaFieldsSet(&volumeSnapshot.ObjectMeta, true)
 	specificFieldsSet := fields.Set{
 		// This is a bug, but we need to support it for backward compatibility.

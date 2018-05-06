@@ -21,7 +21,7 @@ import (
 
 	"k8s.io/kubernetes/pkg/api/legacyscheme"
 	apitesting "k8s.io/kubernetes/pkg/api/testing"
-	api "k8s.io/kubernetes/pkg/apis/core"
+	"k8s.io/kubernetes/pkg/apis/storage"
 
 	// install all api groups for testing
 	_ "k8s.io/kubernetes/pkg/api/testapi"
@@ -29,9 +29,9 @@ import (
 
 func TestSelectableFieldLabelConversions(t *testing.T) {
 	apitesting.TestSelectableFieldLabelConversionsOfKind(t,
-		legacyscheme.Registry.GroupOrDie(api.GroupName).GroupVersion.String(),
+		legacyscheme.Registry.GroupOrDie(storage.GroupName).GroupVersion.String(),
 		"VolumeSnapshot",
-		VolumeSnapshotToSelectableFields(&api.VolumeSnapshot{}),
+		VolumeSnapshotToSelectableFields(&storage.VolumeSnapshot{}),
 		map[string]string{"name": "metadata.name"},
 	)
 }
