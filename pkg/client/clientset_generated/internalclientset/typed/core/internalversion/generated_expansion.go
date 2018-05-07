@@ -39,7 +39,3 @@ type ResourceQuotaExpansion interface{}
 type SecretExpansion interface{}
 
 type ServiceAccountExpansion interface{}
-
-type VolumeSnapshotExpansion interface{}
-
-type VolumeSnapshotDataExpansion interface{}

@@ -63,8 +63,6 @@ import (
 	"k8s.io/kubernetes/pkg/registry/core/service/portallocator"
 	servicestore "k8s.io/kubernetes/pkg/registry/core/service/storage"
 	serviceaccountstore "k8s.io/kubernetes/pkg/registry/core/serviceaccount/storage"
-	vsstore "k8s.io/kubernetes/pkg/registry/core/volumesnapshot/storage"
-	vsdstore "k8s.io/kubernetes/pkg/registry/core/volumesnapshotdata/storage"
 	"k8s.io/kubernetes/pkg/serviceaccount"
 )
 
@@ -123,8 +121,6 @@ func (c LegacyRESTStorageProvider) NewLegacyRESTStorage(restOptionsGetter generi
 	secretStorage := secretstore.NewREST(restOptionsGetter)
 	persistentVolumeStorage, persistentVolumeStatusStorage := pvstore.NewREST(restOptionsGetter)
 	persistentVolumeClaimStorage, persistentVolumeClaimStatusStorage := pvcstore.NewREST(restOptionsGetter)
-	volumeSnapshotStorage, volumeSnapshotStatusStorage := vsstore.NewREST(restOptionsGetter)
-	volumeSnapshotDataStorage, volumeSnapshotDataStatusStorage := vsdstore.NewREST(restOptionsGetter)
 	configMapStorage := configmapstore.NewREST(restOptionsGetter)
 
 	namespaceStorage, namespaceStatusStorage, namespaceFinalizeStorage := namespacestore.NewREST(restOptionsGetter)
@@ -226,10 +222,6 @@ func (c LegacyRESTStorageProvider) NewLegacyRESTStorage(restOptionsGetter generi
 		"persistentVolumes/status":      persistentVolumeStatusStorage,
 		"persistentVolumeClaims":        persistentVolumeClaimStorage,
 		"persistentVolumeClaims/status": persistentVolumeClaimStatusStorage,
-		"volumeSnapshots":               volumeSnapshotStorage,
-		"volumeSnapshots/status":        volumeSnapshotStatusStorage,
-		"volumeSnapshotDatas":           volumeSnapshotDataStorage,
-		"volumeSnapshotDatas/status":    volumeSnapshotDataStatusStorage,
 		"configMaps":                    configMapStorage,
 
 		"componentStatuses": componentstatus.NewStorage(componentStatusStorage{c.StorageFactory}.serversToValidate),

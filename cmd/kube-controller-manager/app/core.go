@@ -417,8 +417,8 @@ func startPVProtectionController(ctx ControllerContext) (bool, error) {
 func startSnapshotController(ctx ControllerContext) (bool, error) {
 	if utilfeature.DefaultFeatureGate.Enabled(features.VolumeSnapshot) {
 		ssc, err := snapshot.NewSnapshotController(
-			ctx.InformerFactory.Core().V1().VolumeSnapshots(),
-			ctx.InformerFactory.Core().V1().VolumeSnapshotDatas(),
+			ctx.InformerFactory.Storage().V1alpha1().VolumeSnapshots(),
+			ctx.InformerFactory.Storage().V1alpha1().VolumeSnapshotDatas(),
 			ctx.ClientBuilder.ClientOrDie("snapshot-controller"),
 			ctx.Cloud,
 			ProbeSnapshottableVolumePlugins(ctx.ComponentConfig.PersistentVolumeBinderController.VolumeConfiguration),

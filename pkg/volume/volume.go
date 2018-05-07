@@ -23,6 +23,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
+	storage "k8s.io/api/storage/v1alpha1"
 )
 
 // Volume represents a directory used by pods or hosts on a node. All method
@@ -202,15 +203,15 @@ type Deleter interface {
 // in the infrastructure provider.
 type Snapshotter interface {
 	// SnapshotCreate creates a VolumeSnapshot from a PersistentVolumeSpec
-	SnapshotCreate(*v1.PersistentVolume, *map[string]string) (*v1.VolumeSnapshotDataSource, *[]v1.VolumeSnapshotCondition, error)
+	SnapshotCreate(*v1.PersistentVolume, *map[string]string) (*storage.VolumeSnapshotDataSource, *[]storage.VolumeSnapshotCondition, error)
 	// SnapshotDelete deletes a VolumeSnapshot
 	// PersistentVolume is provided for volume types, if any, that need PV Spec to delete snapshot
-	SnapshotDelete(*v1.VolumeSnapshotDataSource, *v1.PersistentVolume) error
+	SnapshotDelete(*storage.VolumeSnapshotDataSource, *v1.PersistentVolume) error
 	// Describe an EBS volume snapshot status for create or delete.
 	// return status (completed or pending or error), and error
-	DescribeSnapshot(snapshotData *v1.VolumeSnapshotData) (snapConditions *[]v1.VolumeSnapshotCondition, isCompleted bool, err error)
+	DescribeSnapshot(snapshotData *storage.VolumeSnapshotData) (snapConditions *[]storage.VolumeSnapshotCondition, isCompleted bool, err error)
 	// FindSnapshot finds a VolumeSnapshot by matching metadata
-	FindSnapshot(tags *map[string]string) (*v1.VolumeSnapshotDataSource, *[]v1.VolumeSnapshotCondition, error)
+	FindSnapshot(tags *map[string]string) (*storage.VolumeSnapshotDataSource, *[]storage.VolumeSnapshotCondition, error)
 }
 
 // Attacher can attach a volume to a node.

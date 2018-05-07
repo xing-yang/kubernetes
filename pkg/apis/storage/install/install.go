@@ -43,6 +43,7 @@ func Install(groupFactoryRegistry announced.APIGroupFactoryRegistry, registry *r
 			RootScopedKinds: sets.NewString(
 				"StorageClass",
 				"VolumeAttachment",
+				"VolumeSnapshotData",
 			),
 			AddInternalObjectsToScheme: storage.AddToScheme,
 		},

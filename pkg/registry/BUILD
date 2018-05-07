@@ -66,8 +66,6 @@ filegroup(
         "//pkg/registry/core/secret:all-srcs",
         "//pkg/registry/core/service:all-srcs",
         "//pkg/registry/core/serviceaccount:all-srcs",
-        "//pkg/registry/core/volumesnapshot:all-srcs",
-        "//pkg/registry/core/volumesnapshotdata:all-srcs",
         "//pkg/registry/events/event:all-srcs",
         "//pkg/registry/events/rest:all-srcs",
         "//pkg/registry/extensions/controller/storage:all-srcs",
@@ -87,6 +85,8 @@ filegroup(
         "//pkg/registry/storage/rest:all-srcs",
         "//pkg/registry/storage/storageclass:all-srcs",
         "//pkg/registry/storage/volumeattachment:all-srcs",
+        "//pkg/registry/storage/volumesnapshot:all-srcs",
+        "//pkg/registry/storage/volumesnapshotdata:all-srcs",
     ],
     tags = ["automanaged"],
 )

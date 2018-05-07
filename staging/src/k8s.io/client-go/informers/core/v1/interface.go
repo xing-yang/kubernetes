@@ -56,10 +56,6 @@ type Interface interface {
 	Services() ServiceInformer
 	// ServiceAccounts returns a ServiceAccountInformer.
 	ServiceAccounts() ServiceAccountInformer
-	// VolumeSnapshots returns a VolumeSnapshotInformer.
-	VolumeSnapshots() VolumeSnapshotInformer
-	// VolumeSnapshotDatas returns a VolumeSnapshotDataInformer.
-	VolumeSnapshotDatas() VolumeSnapshotDataInformer
 }
 
 type version struct {
@@ -151,14 +147,4 @@ func (v *version) Services() ServiceInformer {
 // ServiceAccounts returns a ServiceAccountInformer.
 func (v *version) ServiceAccounts() ServiceAccountInformer {
 	return &serviceAccountInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
-}
-
-// VolumeSnapshots returns a VolumeSnapshotInformer.
-func (v *version) VolumeSnapshots() VolumeSnapshotInformer {
-	return &volumeSnapshotInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
-}
-
-// VolumeSnapshotDatas returns a VolumeSnapshotDataInformer.
-func (v *version) VolumeSnapshotDatas() VolumeSnapshotDataInformer {
-	return &volumeSnapshotDataInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
 }

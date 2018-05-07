@@ -1337,7 +1337,7 @@ type VolumeSnapshotDescriber struct {
 }
 
 func (d *VolumeSnapshotDescriber) Describe(namespace, name string, describerSettings printers.DescriberSettings) (string, error) {
-	c := d.Core().VolumeSnapshots(namespace)
+	c := d.Storage().VolumeSnapshots(namespace)
 
 	vs, err := c.Get(name, metav1.GetOptions{})
 	if err != nil {
@@ -1349,7 +1349,7 @@ func (d *VolumeSnapshotDescriber) Describe(namespace, name string, describerSett
 	return describeVolumeSnapshot(vs, events)
 }
 
-func describeVolumeSnapshot(vs *api.VolumeSnapshot, events *api.EventList) (string, error) {
+func describeVolumeSnapshot(vs *storage.VolumeSnapshot, events *api.EventList) (string, error) {
 	return tabbedString(func(out io.Writer) error {
 		w := NewPrefixWriter(out)
 		w.Write(LEVEL_0, "Name:\t%s\n", vs.Name)
@@ -1389,7 +1389,7 @@ type VolumeSnapshotDataDescriber struct {
 }
 
 func (d *VolumeSnapshotDataDescriber) Describe(namespace, name string, describerSettings printers.DescriberSettings) (string, error) {
-	c := d.Core().VolumeSnapshotDatas()
+	c := d.Storage().VolumeSnapshotDatas()
 
 	vsd, err := c.Get(name, metav1.GetOptions{})
 	if err != nil {
@@ -1404,7 +1404,7 @@ func (d *VolumeSnapshotDataDescriber) Describe(namespace, name string, describer
 	return describeVolumeSnapshotData(vsd, events)
 }
 
-func describeVolumeSnapshotData(vsd *api.VolumeSnapshotData, events *api.EventList) (string, error) {
+func describeVolumeSnapshotData(vsd *storage.VolumeSnapshotData, events *api.EventList) (string, error) {
 	return tabbedString(func(out io.Writer) error {
 		w := NewPrefixWriter(out)
 		w.Write(LEVEL_0, "Name:\t%s\n", vsd.Name)
