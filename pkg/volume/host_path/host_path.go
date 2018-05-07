@@ -32,6 +32,7 @@ import (
 	"k8s.io/kubernetes/pkg/volume/util"
 	"k8s.io/kubernetes/pkg/volume/util/recyclerclient"
 	"k8s.io/kubernetes/pkg/volume/validation"
+	storage "k8s.io/api/storage/v1alpha1"
 )
 
 const (
@@ -475,7 +476,7 @@ type hostPathSnapshotter struct {
 	exec mount.Exec
 }
 
-func (s *hostPathSnapshotter) SnapshotCreate(pv *v1.PersistentVolume, tags *map[string]string) (*v1.VolumeSnapshotDataSource, *[]v1.VolumeSnapshotCondition, error) {
+func (s *hostPathSnapshotter) SnapshotCreate(pv *v1.PersistentVolume, tags *map[string]string) (*storage.VolumeSnapshotDataSource, *[]storage.VolumeSnapshotCondition, error) {
 	spec := &pv.Spec
 	if spec == nil || spec.HostPath == nil {
 		return nil, nil, fmt.Errorf("invalid PV spec %v", spec)
@@ -484,37 +485,37 @@ func (s *hostPathSnapshotter) SnapshotCreate(pv *v1.PersistentVolume, tags *map[
 	file := depot + string(uuid.NewUUID()) + ".tgz"
 	cmdline := []string{"tar", "czf", file, "-C", path, "."}
 	out, err := s.exec.Run(cmdline[0], cmdline[1:]...)
-	cond := []v1.VolumeSnapshotCondition{}
+	cond := []storage.VolumeSnapshotCondition{}
 	if err == nil {
-		cond = []v1.VolumeSnapshotCondition{
+		cond = []storage.VolumeSnapshotCondition{
 			{
 				Status:             v1.ConditionTrue,
 				Message:            "Snapshot created successfully",
 				LastTransitionTime: metav1.Now(),
-				Type:               v1.VolumeSnapshotConditionReady,
+				Type:               storage.VolumeSnapshotConditionReady,
 			},
 		}
 	} else {
 		glog.V(2).Infof("failed to execute %q: %v", strings.Join(cmdline, " "), err)
 		glog.V(3).Infof("output: %s", string(out))
-		cond = []v1.VolumeSnapshotCondition{
+		cond = []storage.VolumeSnapshotCondition{
 			{
 				Status:             v1.ConditionTrue,
 				Message:            fmt.Sprintf("Failed to create the snapshot: %v", err),
 				LastTransitionTime: metav1.Now(),
-				Type:               v1.VolumeSnapshotConditionError,
+				Type:               storage.VolumeSnapshotConditionError,
 			},
 		}
 	}
-	res := &v1.VolumeSnapshotDataSource{
-		HostPath: &v1.HostPathVolumeSnapshotSource{
+	res := &storage.VolumeSnapshotDataSource{
+		HostPath: &storage.HostPathVolumeSnapshotSource{
 			Path: file,
 		},
 	}
 	return res, &cond, err
 }
 
-func (s *hostPathSnapshotter) SnapshotDelete(src *v1.VolumeSnapshotDataSource, _ *v1.PersistentVolume) error {
+func (s *hostPathSnapshotter) SnapshotDelete(src *storage.VolumeSnapshotDataSource, _ *v1.PersistentVolume) error {
 	if src == nil || src.HostPath == nil {
 		return fmt.Errorf("invalid VolumeSnapshotDataSource: %v", src)
 	}
@@ -522,7 +523,7 @@ func (s *hostPathSnapshotter) SnapshotDelete(src *v1.VolumeSnapshotDataSource, _
 	return os.Remove(path)
 }
 
-func (s *hostPathSnapshotter) DescribeSnapshot(snapshotData *v1.VolumeSnapshotData) (snapConditions *[]v1.VolumeSnapshotCondition, isCompleted bool, err error) {
+func (s *hostPathSnapshotter) DescribeSnapshot(snapshotData *storage.VolumeSnapshotData) (snapConditions *[]storage.VolumeSnapshotCondition, isCompleted bool, err error) {
 	if snapshotData == nil || snapshotData.Spec.HostPath == nil {
 		return nil, false, fmt.Errorf("failed to retrieve Snapshot spec")
 	}
@@ -534,15 +535,15 @@ func (s *hostPathSnapshotter) DescribeSnapshot(snapshotData *v1.VolumeSnapshotDa
 		return nil, false, fmt.Errorf("No status condtions in VoluemSnapshotData for hostpath snapshot type")
 	}
 	lastCondIdx := len(snapshotData.Status.Conditions) - 1
-	retCondType := v1.VolumeSnapshotConditionError
+	retCondType := storage.VolumeSnapshotConditionError
 	switch snapshotData.Status.Conditions[lastCondIdx].Type {
-	case v1.VolumeSnapshotDataConditionReady:
-		retCondType = v1.VolumeSnapshotConditionReady
-	case v1.VolumeSnapshotDataConditionPending:
-		retCondType = v1.VolumeSnapshotConditionPending
+	case storage.VolumeSnapshotDataConditionReady:
+		retCondType = storage.VolumeSnapshotConditionReady
+	case storage.VolumeSnapshotDataConditionPending:
+		retCondType = storage.VolumeSnapshotConditionPending
 		// Error othewise
 	}
-	retCond := []v1.VolumeSnapshotCondition{
+	retCond := []storage.VolumeSnapshotCondition{
 		{
 			Status:             snapshotData.Status.Conditions[lastCondIdx].Status,
 			Message:            snapshotData.Status.Conditions[lastCondIdx].Message,
@@ -554,12 +555,12 @@ func (s *hostPathSnapshotter) DescribeSnapshot(snapshotData *v1.VolumeSnapshotDa
 }
 
 // FindSnapshot finds a VolumeSnapshot by matching metadata
-func (s *hostPathSnapshotter) FindSnapshot(tags *map[string]string) (*v1.VolumeSnapshotDataSource, *[]v1.VolumeSnapshotCondition, error) {
+func (s *hostPathSnapshotter) FindSnapshot(tags *map[string]string) (*storage.VolumeSnapshotDataSource, *[]storage.VolumeSnapshotCondition, error) {
 	glog.Infof("FindSnapshot by tags: %#v", *tags)
 
 	// TODO: Implement FindSnapshot
-	return &v1.VolumeSnapshotDataSource{
-		HostPath: &v1.HostPathVolumeSnapshotSource{
+	return &storage.VolumeSnapshotDataSource{
+		HostPath: &storage.HostPathVolumeSnapshotSource{
 			Path: "",
 		},
 	}, nil, nil

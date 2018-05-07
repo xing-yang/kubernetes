@@ -23,13 +23,15 @@ import (
 
 	"github.com/golang/glog"
 	"k8s.io/api/core/v1"
+	storage "k8s.io/api/storage/v1alpha1"
 
 	"k8s.io/apimachinery/pkg/types"
-	coreinformers "k8s.io/client-go/informers/core/v1"
+	storageinformers "k8s.io/client-go/informers/storage/v1alpha1"
+
 	clientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
 	v1core "k8s.io/client-go/kubernetes/typed/core/v1"
-	corelisters "k8s.io/client-go/listers/core/v1"
+	storagelisters "k8s.io/client-go/listers/storage/v1alpha1"
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/tools/record"
 	"k8s.io/client-go/util/workqueue"
@@ -64,10 +66,10 @@ const (
 type Controller struct {
 	client clientset.Interface
 
-	vsLister       corelisters.VolumeSnapshotLister
+	vsLister       storagelisters.VolumeSnapshotLister
 	vsListerSynced cache.InformerSynced
 
-	vsdLister       corelisters.VolumeSnapshotDataLister
+	vsdLister       storagelisters.VolumeSnapshotDataLister
 	vsdListerSynced cache.InformerSynced
 
 	queue workqueue.RateLimitingInterface
@@ -111,8 +113,8 @@ type Controller struct {
 
 // NewSnapshotController returns a new *Controller.
 func NewSnapshotController(
-	vsInformer coreinformers.VolumeSnapshotInformer,
-	vsdInformer coreinformers.VolumeSnapshotDataInformer,
+	vsInformer storageinformers.VolumeSnapshotInformer,
+	vsdInformer storageinformers.VolumeSnapshotDataInformer,
 	kubeClient clientset.Interface,
 	cloud cloudprovider.Interface,
 	plugins []volume.VolumePlugin) (*Controller, error) {
@@ -182,7 +184,7 @@ func (c *Controller) Run(stopCh <-chan struct{}) {
 func (c *Controller) onSnapshotAdd(obj interface{}) {
 	// Add snapshot: Add snapshot to DesiredStateOfWorld, then ask snapshotter to create
 	// the actual snapshot
-	snapshotObj, ok := obj.(*v1.VolumeSnapshot)
+	snapshotObj, ok := obj.(*storage.VolumeSnapshot)
 	if !ok {
 		glog.Warning("expecting type VolumeSnapshot but received type %T", obj)
 		return
@@ -194,8 +196,8 @@ func (c *Controller) onSnapshotAdd(obj interface{}) {
 }
 
 func (c *Controller) onSnapshotUpdate(oldObj, newObj interface{}) {
-	oldSnapshot := oldObj.(*v1.VolumeSnapshot)
-	newSnapshot := newObj.(*v1.VolumeSnapshot)
+	oldSnapshot := oldObj.(*storage.VolumeSnapshot)
+	newSnapshot := newObj.(*storage.VolumeSnapshot)
 	glog.Infof("[CONTROLLER] OnUpdate oldObj: %#v", oldSnapshot.Spec)
 	glog.Infof("[CONTROLLER] OnUpdate newObj: %#v", newSnapshot.Spec)
 	if oldSnapshot.Spec.SnapshotDataName != newSnapshot.Spec.SnapshotDataName {
@@ -204,7 +206,7 @@ func (c *Controller) onSnapshotUpdate(oldObj, newObj interface{}) {
 }
 
 func (c *Controller) onSnapshotDelete(obj interface{}) {
-	deletedSnapshot, ok := obj.(*v1.VolumeSnapshot)
+	deletedSnapshot, ok := obj.(*storage.VolumeSnapshot)
 	if !ok {
 		// DeletedFinalStateUnkown is an expected data type here
 		deletedState, isState := obj.(cache.DeletedFinalStateUnknown)
@@ -212,7 +214,7 @@ func (c *Controller) onSnapshotDelete(obj interface{}) {
 			glog.Errorf("Error: unkown type passed as snapshot for deletion: %T", obj)
 			return
 		}
-		deletedSnapshot, ok = deletedState.Obj.(*v1.VolumeSnapshot)
+		deletedSnapshot, ok = deletedState.Obj.(*storage.VolumeSnapshot)
 		if !ok {
 			glog.Errorf("Error: unkown data type in DeletedState: %T", deletedState.Obj)
 			return
