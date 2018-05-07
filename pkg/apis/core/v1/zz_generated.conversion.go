@@ -40,8 +40,6 @@ func init() {
 // Public to allow building arbitrary schemes.
 func RegisterConversions(scheme *runtime.Scheme) error {
 	return scheme.AddGeneratedConversionFuncs(
-		Convert_v1_AWSElasticBlockStoreVolumeSnapshotSource_To_core_AWSElasticBlockStoreVolumeSnapshotSource,
-		Convert_core_AWSElasticBlockStoreVolumeSnapshotSource_To_v1_AWSElasticBlockStoreVolumeSnapshotSource,
 		Convert_v1_AWSElasticBlockStoreVolumeSource_To_core_AWSElasticBlockStoreVolumeSource,
 		Convert_core_AWSElasticBlockStoreVolumeSource_To_v1_AWSElasticBlockStoreVolumeSource,
 		Convert_v1_Affinity_To_core_Affinity,
@@ -66,8 +64,6 @@ func RegisterConversions(scheme *runtime.Scheme) error {
 		Convert_core_CephFSPersistentVolumeSource_To_v1_CephFSPersistentVolumeSource,
 		Convert_v1_CephFSVolumeSource_To_core_CephFSVolumeSource,
 		Convert_core_CephFSVolumeSource_To_v1_CephFSVolumeSource,
-		Convert_v1_CinderVolumeSnapshotSource_To_core_CinderVolumeSnapshotSource,
-		Convert_core_CinderVolumeSnapshotSource_To_v1_CinderVolumeSnapshotSource,
 		Convert_v1_CinderVolumeSource_To_core_CinderVolumeSource,
 		Convert_core_CinderVolumeSource_To_v1_CinderVolumeSource,
 		Convert_v1_ClientIPConfig_To_core_ClientIPConfig,
@@ -150,14 +146,10 @@ func RegisterConversions(scheme *runtime.Scheme) error {
 		Convert_core_FlexVolumeSource_To_v1_FlexVolumeSource,
 		Convert_v1_FlockerVolumeSource_To_core_FlockerVolumeSource,
 		Convert_core_FlockerVolumeSource_To_v1_FlockerVolumeSource,
-		Convert_v1_GCEPersistentDiskSnapshotSource_To_core_GCEPersistentDiskSnapshotSource,
-		Convert_core_GCEPersistentDiskSnapshotSource_To_v1_GCEPersistentDiskSnapshotSource,
 		Convert_v1_GCEPersistentDiskVolumeSource_To_core_GCEPersistentDiskVolumeSource,
 		Convert_core_GCEPersistentDiskVolumeSource_To_v1_GCEPersistentDiskVolumeSource,
 		Convert_v1_GitRepoVolumeSource_To_core_GitRepoVolumeSource,
 		Convert_core_GitRepoVolumeSource_To_v1_GitRepoVolumeSource,
-		Convert_v1_GlusterVolumeSnapshotSource_To_core_GlusterVolumeSnapshotSource,
-		Convert_core_GlusterVolumeSnapshotSource_To_v1_GlusterVolumeSnapshotSource,
 		Convert_v1_GlusterfsVolumeSource_To_core_GlusterfsVolumeSource,
 		Convert_core_GlusterfsVolumeSource_To_v1_GlusterfsVolumeSource,
 		Convert_v1_HTTPGetAction_To_core_HTTPGetAction,
@@ -168,8 +160,6 @@ func RegisterConversions(scheme *runtime.Scheme) error {
 		Convert_core_Handler_To_v1_Handler,
 		Convert_v1_HostAlias_To_core_HostAlias,
 		Convert_core_HostAlias_To_v1_HostAlias,
-		Convert_v1_HostPathVolumeSnapshotSource_To_core_HostPathVolumeSnapshotSource,
-		Convert_core_HostPathVolumeSnapshotSource_To_v1_HostPathVolumeSnapshotSource,
 		Convert_v1_HostPathVolumeSource_To_core_HostPathVolumeSource,
 		Convert_core_HostPathVolumeSource_To_v1_HostPathVolumeSource,
 		Convert_v1_ISCSIPersistentVolumeSource_To_core_ISCSIPersistentVolumeSource,
@@ -414,28 +404,6 @@ func RegisterConversions(scheme *runtime.Scheme) error {
 		Convert_core_VolumeNodeAffinity_To_v1_VolumeNodeAffinity,
 		Convert_v1_VolumeProjection_To_core_VolumeProjection,
 		Convert_core_VolumeProjection_To_v1_VolumeProjection,
-		Convert_v1_VolumeSnapshot_To_core_VolumeSnapshot,
-		Convert_core_VolumeSnapshot_To_v1_VolumeSnapshot,
-		Convert_v1_VolumeSnapshotCondition_To_core_VolumeSnapshotCondition,
-		Convert_core_VolumeSnapshotCondition_To_v1_VolumeSnapshotCondition,
-		Convert_v1_VolumeSnapshotData_To_core_VolumeSnapshotData,
-		Convert_core_VolumeSnapshotData_To_v1_VolumeSnapshotData,
-		Convert_v1_VolumeSnapshotDataCondition_To_core_VolumeSnapshotDataCondition,
-		Convert_core_VolumeSnapshotDataCondition_To_v1_VolumeSnapshotDataCondition,
-		Convert_v1_VolumeSnapshotDataList_To_core_VolumeSnapshotDataList,
-		Convert_core_VolumeSnapshotDataList_To_v1_VolumeSnapshotDataList,
-		Convert_v1_VolumeSnapshotDataSource_To_core_VolumeSnapshotDataSource,
-		Convert_core_VolumeSnapshotDataSource_To_v1_VolumeSnapshotDataSource,
-		Convert_v1_VolumeSnapshotDataSpec_To_core_VolumeSnapshotDataSpec,
-		Convert_core_VolumeSnapshotDataSpec_To_v1_VolumeSnapshotDataSpec,
-		Convert_v1_VolumeSnapshotDataStatus_To_core_VolumeSnapshotDataStatus,
-		Convert_core_VolumeSnapshotDataStatus_To_v1_VolumeSnapshotDataStatus,
-		Convert_v1_VolumeSnapshotList_To_core_VolumeSnapshotList,
-		Convert_core_VolumeSnapshotList_To_v1_VolumeSnapshotList,
-		Convert_v1_VolumeSnapshotSpec_To_core_VolumeSnapshotSpec,
-		Convert_core_VolumeSnapshotSpec_To_v1_VolumeSnapshotSpec,
-		Convert_v1_VolumeSnapshotStatus_To_core_VolumeSnapshotStatus,
-		Convert_core_VolumeSnapshotStatus_To_v1_VolumeSnapshotStatus,
 		Convert_v1_VolumeSource_To_core_VolumeSource,
 		Convert_core_VolumeSource_To_v1_VolumeSource,
 		Convert_v1_VsphereVirtualDiskVolumeSource_To_core_VsphereVirtualDiskVolumeSource,
@@ -443,26 +411,6 @@ func RegisterConversions(scheme *runtime.Scheme) error {
 		Convert_v1_WeightedPodAffinityTerm_To_core_WeightedPodAffinityTerm,
 		Convert_core_WeightedPodAffinityTerm_To_v1_WeightedPodAffinityTerm,
 	)
-}
-
-func autoConvert_v1_AWSElasticBlockStoreVolumeSnapshotSource_To_core_AWSElasticBlockStoreVolumeSnapshotSource(in *v1.AWSElasticBlockStoreVolumeSnapshotSource, out *core.AWSElasticBlockStoreVolumeSnapshotSource, s conversion.Scope) error {
-	out.SnapshotID = in.SnapshotID
-	return nil
-}
-
-// Convert_v1_AWSElasticBlockStoreVolumeSnapshotSource_To_core_AWSElasticBlockStoreVolumeSnapshotSource is an autogenerated conversion function.
-func Convert_v1_AWSElasticBlockStoreVolumeSnapshotSource_To_core_AWSElasticBlockStoreVolumeSnapshotSource(in *v1.AWSElasticBlockStoreVolumeSnapshotSource, out *core.AWSElasticBlockStoreVolumeSnapshotSource, s conversion.Scope) error {
-	return autoConvert_v1_AWSElasticBlockStoreVolumeSnapshotSource_To_core_AWSElasticBlockStoreVolumeSnapshotSource(in, out, s)
-}
-
-func autoConvert_core_AWSElasticBlockStoreVolumeSnapshotSource_To_v1_AWSElasticBlockStoreVolumeSnapshotSource(in *core.AWSElasticBlockStoreVolumeSnapshotSource, out *v1.AWSElasticBlockStoreVolumeSnapshotSource, s conversion.Scope) error {
-	out.SnapshotID = in.SnapshotID
-	return nil
-}
-
-// Convert_core_AWSElasticBlockStoreVolumeSnapshotSource_To_v1_AWSElasticBlockStoreVolumeSnapshotSource is an autogenerated conversion function.
-func Convert_core_AWSElasticBlockStoreVolumeSnapshotSource_To_v1_AWSElasticBlockStoreVolumeSnapshotSource(in *core.AWSElasticBlockStoreVolumeSnapshotSource, out *v1.AWSElasticBlockStoreVolumeSnapshotSource, s conversion.Scope) error {
-	return autoConvert_core_AWSElasticBlockStoreVolumeSnapshotSource_To_v1_AWSElasticBlockStoreVolumeSnapshotSource(in, out, s)
 }
 
 func autoConvert_v1_AWSElasticBlockStoreVolumeSource_To_core_AWSElasticBlockStoreVolumeSource(in *v1.AWSElasticBlockStoreVolumeSource, out *core.AWSElasticBlockStoreVolumeSource, s conversion.Scope) error {
@@ -777,26 +725,6 @@ func autoConvert_core_CephFSVolumeSource_To_v1_CephFSVolumeSource(in *core.CephF
 // Convert_core_CephFSVolumeSource_To_v1_CephFSVolumeSource is an autogenerated conversion function.
 func Convert_core_CephFSVolumeSource_To_v1_CephFSVolumeSource(in *core.CephFSVolumeSource, out *v1.CephFSVolumeSource, s conversion.Scope) error {
 	return autoConvert_core_CephFSVolumeSource_To_v1_CephFSVolumeSource(in, out, s)
-}
-
-func autoConvert_v1_CinderVolumeSnapshotSource_To_core_CinderVolumeSnapshotSource(in *v1.CinderVolumeSnapshotSource, out *core.CinderVolumeSnapshotSource, s conversion.Scope) error {
-	out.SnapshotID = in.SnapshotID
-	return nil
-}
-
-// Convert_v1_CinderVolumeSnapshotSource_To_core_CinderVolumeSnapshotSource is an autogenerated conversion function.
-func Convert_v1_CinderVolumeSnapshotSource_To_core_CinderVolumeSnapshotSource(in *v1.CinderVolumeSnapshotSource, out *core.CinderVolumeSnapshotSource, s conversion.Scope) error {
-	return autoConvert_v1_CinderVolumeSnapshotSource_To_core_CinderVolumeSnapshotSource(in, out, s)
-}
-
-func autoConvert_core_CinderVolumeSnapshotSource_To_v1_CinderVolumeSnapshotSource(in *core.CinderVolumeSnapshotSource, out *v1.CinderVolumeSnapshotSource, s conversion.Scope) error {
-	out.SnapshotID = in.SnapshotID
-	return nil
-}
-
-// Convert_core_CinderVolumeSnapshotSource_To_v1_CinderVolumeSnapshotSource is an autogenerated conversion function.
-func Convert_core_CinderVolumeSnapshotSource_To_v1_CinderVolumeSnapshotSource(in *core.CinderVolumeSnapshotSource, out *v1.CinderVolumeSnapshotSource, s conversion.Scope) error {
-	return autoConvert_core_CinderVolumeSnapshotSource_To_v1_CinderVolumeSnapshotSource(in, out, s)
 }
 
 func autoConvert_v1_CinderVolumeSource_To_core_CinderVolumeSource(in *v1.CinderVolumeSource, out *core.CinderVolumeSource, s conversion.Scope) error {
@@ -1893,26 +1821,6 @@ func Convert_core_FlockerVolumeSource_To_v1_FlockerVolumeSource(in *core.Flocker
 	return autoConvert_core_FlockerVolumeSource_To_v1_FlockerVolumeSource(in, out, s)
 }
 
-func autoConvert_v1_GCEPersistentDiskSnapshotSource_To_core_GCEPersistentDiskSnapshotSource(in *v1.GCEPersistentDiskSnapshotSource, out *core.GCEPersistentDiskSnapshotSource, s conversion.Scope) error {
-	out.SnapshotName = in.SnapshotName
-	return nil
-}
-
-// Convert_v1_GCEPersistentDiskSnapshotSource_To_core_GCEPersistentDiskSnapshotSource is an autogenerated conversion function.
-func Convert_v1_GCEPersistentDiskSnapshotSource_To_core_GCEPersistentDiskSnapshotSource(in *v1.GCEPersistentDiskSnapshotSource, out *core.GCEPersistentDiskSnapshotSource, s conversion.Scope) error {
-	return autoConvert_v1_GCEPersistentDiskSnapshotSource_To_core_GCEPersistentDiskSnapshotSource(in, out, s)
-}
-
-func autoConvert_core_GCEPersistentDiskSnapshotSource_To_v1_GCEPersistentDiskSnapshotSource(in *core.GCEPersistentDiskSnapshotSource, out *v1.GCEPersistentDiskSnapshotSource, s conversion.Scope) error {
-	out.SnapshotName = in.SnapshotName
-	return nil
-}
-
-// Convert_core_GCEPersistentDiskSnapshotSource_To_v1_GCEPersistentDiskSnapshotSource is an autogenerated conversion function.
-func Convert_core_GCEPersistentDiskSnapshotSource_To_v1_GCEPersistentDiskSnapshotSource(in *core.GCEPersistentDiskSnapshotSource, out *v1.GCEPersistentDiskSnapshotSource, s conversion.Scope) error {
-	return autoConvert_core_GCEPersistentDiskSnapshotSource_To_v1_GCEPersistentDiskSnapshotSource(in, out, s)
-}
-
 func autoConvert_v1_GCEPersistentDiskVolumeSource_To_core_GCEPersistentDiskVolumeSource(in *v1.GCEPersistentDiskVolumeSource, out *core.GCEPersistentDiskVolumeSource, s conversion.Scope) error {
 	out.PDName = in.PDName
 	out.FSType = in.FSType
@@ -1961,26 +1869,6 @@ func autoConvert_core_GitRepoVolumeSource_To_v1_GitRepoVolumeSource(in *core.Git
 // Convert_core_GitRepoVolumeSource_To_v1_GitRepoVolumeSource is an autogenerated conversion function.
 func Convert_core_GitRepoVolumeSource_To_v1_GitRepoVolumeSource(in *core.GitRepoVolumeSource, out *v1.GitRepoVolumeSource, s conversion.Scope) error {
 	return autoConvert_core_GitRepoVolumeSource_To_v1_GitRepoVolumeSource(in, out, s)
-}
-
-func autoConvert_v1_GlusterVolumeSnapshotSource_To_core_GlusterVolumeSnapshotSource(in *v1.GlusterVolumeSnapshotSource, out *core.GlusterVolumeSnapshotSource, s conversion.Scope) error {
-	out.SnapshotID = in.SnapshotID
-	return nil
-}
-
-// Convert_v1_GlusterVolumeSnapshotSource_To_core_GlusterVolumeSnapshotSource is an autogenerated conversion function.
-func Convert_v1_GlusterVolumeSnapshotSource_To_core_GlusterVolumeSnapshotSource(in *v1.GlusterVolumeSnapshotSource, out *core.GlusterVolumeSnapshotSource, s conversion.Scope) error {
-	return autoConvert_v1_GlusterVolumeSnapshotSource_To_core_GlusterVolumeSnapshotSource(in, out, s)
-}
-
-func autoConvert_core_GlusterVolumeSnapshotSource_To_v1_GlusterVolumeSnapshotSource(in *core.GlusterVolumeSnapshotSource, out *v1.GlusterVolumeSnapshotSource, s conversion.Scope) error {
-	out.SnapshotID = in.SnapshotID
-	return nil
-}
-
-// Convert_core_GlusterVolumeSnapshotSource_To_v1_GlusterVolumeSnapshotSource is an autogenerated conversion function.
-func Convert_core_GlusterVolumeSnapshotSource_To_v1_GlusterVolumeSnapshotSource(in *core.GlusterVolumeSnapshotSource, out *v1.GlusterVolumeSnapshotSource, s conversion.Scope) error {
-	return autoConvert_core_GlusterVolumeSnapshotSource_To_v1_GlusterVolumeSnapshotSource(in, out, s)
 }
 
 func autoConvert_v1_GlusterfsVolumeSource_To_core_GlusterfsVolumeSource(in *v1.GlusterfsVolumeSource, out *core.GlusterfsVolumeSource, s conversion.Scope) error {
@@ -2101,26 +1989,6 @@ func autoConvert_core_HostAlias_To_v1_HostAlias(in *core.HostAlias, out *v1.Host
 // Convert_core_HostAlias_To_v1_HostAlias is an autogenerated conversion function.
 func Convert_core_HostAlias_To_v1_HostAlias(in *core.HostAlias, out *v1.HostAlias, s conversion.Scope) error {
 	return autoConvert_core_HostAlias_To_v1_HostAlias(in, out, s)
-}
-
-func autoConvert_v1_HostPathVolumeSnapshotSource_To_core_HostPathVolumeSnapshotSource(in *v1.HostPathVolumeSnapshotSource, out *core.HostPathVolumeSnapshotSource, s conversion.Scope) error {
-	out.Path = in.Path
-	return nil
-}
-
-// Convert_v1_HostPathVolumeSnapshotSource_To_core_HostPathVolumeSnapshotSource is an autogenerated conversion function.
-func Convert_v1_HostPathVolumeSnapshotSource_To_core_HostPathVolumeSnapshotSource(in *v1.HostPathVolumeSnapshotSource, out *core.HostPathVolumeSnapshotSource, s conversion.Scope) error {
-	return autoConvert_v1_HostPathVolumeSnapshotSource_To_core_HostPathVolumeSnapshotSource(in, out, s)
-}
-
-func autoConvert_core_HostPathVolumeSnapshotSource_To_v1_HostPathVolumeSnapshotSource(in *core.HostPathVolumeSnapshotSource, out *v1.HostPathVolumeSnapshotSource, s conversion.Scope) error {
-	out.Path = in.Path
-	return nil
-}
-
-// Convert_core_HostPathVolumeSnapshotSource_To_v1_HostPathVolumeSnapshotSource is an autogenerated conversion function.
-func Convert_core_HostPathVolumeSnapshotSource_To_v1_HostPathVolumeSnapshotSource(in *core.HostPathVolumeSnapshotSource, out *v1.HostPathVolumeSnapshotSource, s conversion.Scope) error {
-	return autoConvert_core_HostPathVolumeSnapshotSource_To_v1_HostPathVolumeSnapshotSource(in, out, s)
 }
 
 func autoConvert_v1_HostPathVolumeSource_To_core_HostPathVolumeSource(in *v1.HostPathVolumeSource, out *core.HostPathVolumeSource, s conversion.Scope) error {
@@ -5575,292 +5443,6 @@ func autoConvert_core_VolumeProjection_To_v1_VolumeProjection(in *core.VolumePro
 // Convert_core_VolumeProjection_To_v1_VolumeProjection is an autogenerated conversion function.
 func Convert_core_VolumeProjection_To_v1_VolumeProjection(in *core.VolumeProjection, out *v1.VolumeProjection, s conversion.Scope) error {
 	return autoConvert_core_VolumeProjection_To_v1_VolumeProjection(in, out, s)
-}
-
-func autoConvert_v1_VolumeSnapshot_To_core_VolumeSnapshot(in *v1.VolumeSnapshot, out *core.VolumeSnapshot, s conversion.Scope) error {
-	out.Metadata = in.Metadata
-	if err := Convert_v1_VolumeSnapshotSpec_To_core_VolumeSnapshotSpec(&in.Spec, &out.Spec, s); err != nil {
-		return err
-	}
-	if err := Convert_v1_VolumeSnapshotStatus_To_core_VolumeSnapshotStatus(&in.Status, &out.Status, s); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Convert_v1_VolumeSnapshot_To_core_VolumeSnapshot is an autogenerated conversion function.
-func Convert_v1_VolumeSnapshot_To_core_VolumeSnapshot(in *v1.VolumeSnapshot, out *core.VolumeSnapshot, s conversion.Scope) error {
-	return autoConvert_v1_VolumeSnapshot_To_core_VolumeSnapshot(in, out, s)
-}
-
-func autoConvert_core_VolumeSnapshot_To_v1_VolumeSnapshot(in *core.VolumeSnapshot, out *v1.VolumeSnapshot, s conversion.Scope) error {
-	out.Metadata = in.Metadata
-	if err := Convert_core_VolumeSnapshotSpec_To_v1_VolumeSnapshotSpec(&in.Spec, &out.Spec, s); err != nil {
-		return err
-	}
-	if err := Convert_core_VolumeSnapshotStatus_To_v1_VolumeSnapshotStatus(&in.Status, &out.Status, s); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Convert_core_VolumeSnapshot_To_v1_VolumeSnapshot is an autogenerated conversion function.
-func Convert_core_VolumeSnapshot_To_v1_VolumeSnapshot(in *core.VolumeSnapshot, out *v1.VolumeSnapshot, s conversion.Scope) error {
-	return autoConvert_core_VolumeSnapshot_To_v1_VolumeSnapshot(in, out, s)
-}
-
-func autoConvert_v1_VolumeSnapshotCondition_To_core_VolumeSnapshotCondition(in *v1.VolumeSnapshotCondition, out *core.VolumeSnapshotCondition, s conversion.Scope) error {
-	out.Type = core.VolumeSnapshotConditionType(in.Type)
-	out.Status = core.ConditionStatus(in.Status)
-	out.LastTransitionTime = in.LastTransitionTime
-	out.Reason = in.Reason
-	out.Message = in.Message
-	return nil
-}
-
-// Convert_v1_VolumeSnapshotCondition_To_core_VolumeSnapshotCondition is an autogenerated conversion function.
-func Convert_v1_VolumeSnapshotCondition_To_core_VolumeSnapshotCondition(in *v1.VolumeSnapshotCondition, out *core.VolumeSnapshotCondition, s conversion.Scope) error {
-	return autoConvert_v1_VolumeSnapshotCondition_To_core_VolumeSnapshotCondition(in, out, s)
-}
-
-func autoConvert_core_VolumeSnapshotCondition_To_v1_VolumeSnapshotCondition(in *core.VolumeSnapshotCondition, out *v1.VolumeSnapshotCondition, s conversion.Scope) error {
-	out.Type = v1.VolumeSnapshotConditionType(in.Type)
-	out.Status = v1.ConditionStatus(in.Status)
-	out.LastTransitionTime = in.LastTransitionTime
-	out.Reason = in.Reason
-	out.Message = in.Message
-	return nil
-}
-
-// Convert_core_VolumeSnapshotCondition_To_v1_VolumeSnapshotCondition is an autogenerated conversion function.
-func Convert_core_VolumeSnapshotCondition_To_v1_VolumeSnapshotCondition(in *core.VolumeSnapshotCondition, out *v1.VolumeSnapshotCondition, s conversion.Scope) error {
-	return autoConvert_core_VolumeSnapshotCondition_To_v1_VolumeSnapshotCondition(in, out, s)
-}
-
-func autoConvert_v1_VolumeSnapshotData_To_core_VolumeSnapshotData(in *v1.VolumeSnapshotData, out *core.VolumeSnapshotData, s conversion.Scope) error {
-	out.Metadata = in.Metadata
-	if err := Convert_v1_VolumeSnapshotDataSpec_To_core_VolumeSnapshotDataSpec(&in.Spec, &out.Spec, s); err != nil {
-		return err
-	}
-	if err := Convert_v1_VolumeSnapshotDataStatus_To_core_VolumeSnapshotDataStatus(&in.Status, &out.Status, s); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Convert_v1_VolumeSnapshotData_To_core_VolumeSnapshotData is an autogenerated conversion function.
-func Convert_v1_VolumeSnapshotData_To_core_VolumeSnapshotData(in *v1.VolumeSnapshotData, out *core.VolumeSnapshotData, s conversion.Scope) error {
-	return autoConvert_v1_VolumeSnapshotData_To_core_VolumeSnapshotData(in, out, s)
-}
-
-func autoConvert_core_VolumeSnapshotData_To_v1_VolumeSnapshotData(in *core.VolumeSnapshotData, out *v1.VolumeSnapshotData, s conversion.Scope) error {
-	out.Metadata = in.Metadata
-	if err := Convert_core_VolumeSnapshotDataSpec_To_v1_VolumeSnapshotDataSpec(&in.Spec, &out.Spec, s); err != nil {
-		return err
-	}
-	if err := Convert_core_VolumeSnapshotDataStatus_To_v1_VolumeSnapshotDataStatus(&in.Status, &out.Status, s); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Convert_core_VolumeSnapshotData_To_v1_VolumeSnapshotData is an autogenerated conversion function.
-func Convert_core_VolumeSnapshotData_To_v1_VolumeSnapshotData(in *core.VolumeSnapshotData, out *v1.VolumeSnapshotData, s conversion.Scope) error {
-	return autoConvert_core_VolumeSnapshotData_To_v1_VolumeSnapshotData(in, out, s)
-}
-
-func autoConvert_v1_VolumeSnapshotDataCondition_To_core_VolumeSnapshotDataCondition(in *v1.VolumeSnapshotDataCondition, out *core.VolumeSnapshotDataCondition, s conversion.Scope) error {
-	out.Type = core.VolumeSnapshotDataConditionType(in.Type)
-	out.Status = core.ConditionStatus(in.Status)
-	out.LastTransitionTime = in.LastTransitionTime
-	out.Reason = in.Reason
-	out.Message = in.Message
-	return nil
-}
-
-// Convert_v1_VolumeSnapshotDataCondition_To_core_VolumeSnapshotDataCondition is an autogenerated conversion function.
-func Convert_v1_VolumeSnapshotDataCondition_To_core_VolumeSnapshotDataCondition(in *v1.VolumeSnapshotDataCondition, out *core.VolumeSnapshotDataCondition, s conversion.Scope) error {
-	return autoConvert_v1_VolumeSnapshotDataCondition_To_core_VolumeSnapshotDataCondition(in, out, s)
-}
-
-func autoConvert_core_VolumeSnapshotDataCondition_To_v1_VolumeSnapshotDataCondition(in *core.VolumeSnapshotDataCondition, out *v1.VolumeSnapshotDataCondition, s conversion.Scope) error {
-	out.Type = v1.VolumeSnapshotDataConditionType(in.Type)
-	out.Status = v1.ConditionStatus(in.Status)
-	out.LastTransitionTime = in.LastTransitionTime
-	out.Reason = in.Reason
-	out.Message = in.Message
-	return nil
-}
-
-// Convert_core_VolumeSnapshotDataCondition_To_v1_VolumeSnapshotDataCondition is an autogenerated conversion function.
-func Convert_core_VolumeSnapshotDataCondition_To_v1_VolumeSnapshotDataCondition(in *core.VolumeSnapshotDataCondition, out *v1.VolumeSnapshotDataCondition, s conversion.Scope) error {
-	return autoConvert_core_VolumeSnapshotDataCondition_To_v1_VolumeSnapshotDataCondition(in, out, s)
-}
-
-func autoConvert_v1_VolumeSnapshotDataList_To_core_VolumeSnapshotDataList(in *v1.VolumeSnapshotDataList, out *core.VolumeSnapshotDataList, s conversion.Scope) error {
-	out.Metadata = in.Metadata
-	out.Items = *(*[]core.VolumeSnapshotData)(unsafe.Pointer(&in.Items))
-	return nil
-}
-
-// Convert_v1_VolumeSnapshotDataList_To_core_VolumeSnapshotDataList is an autogenerated conversion function.
-func Convert_v1_VolumeSnapshotDataList_To_core_VolumeSnapshotDataList(in *v1.VolumeSnapshotDataList, out *core.VolumeSnapshotDataList, s conversion.Scope) error {
-	return autoConvert_v1_VolumeSnapshotDataList_To_core_VolumeSnapshotDataList(in, out, s)
-}
-
-func autoConvert_core_VolumeSnapshotDataList_To_v1_VolumeSnapshotDataList(in *core.VolumeSnapshotDataList, out *v1.VolumeSnapshotDataList, s conversion.Scope) error {
-	out.Metadata = in.Metadata
-	out.Items = *(*[]v1.VolumeSnapshotData)(unsafe.Pointer(&in.Items))
-	return nil
-}
-
-// Convert_core_VolumeSnapshotDataList_To_v1_VolumeSnapshotDataList is an autogenerated conversion function.
-func Convert_core_VolumeSnapshotDataList_To_v1_VolumeSnapshotDataList(in *core.VolumeSnapshotDataList, out *v1.VolumeSnapshotDataList, s conversion.Scope) error {
-	return autoConvert_core_VolumeSnapshotDataList_To_v1_VolumeSnapshotDataList(in, out, s)
-}
-
-func autoConvert_v1_VolumeSnapshotDataSource_To_core_VolumeSnapshotDataSource(in *v1.VolumeSnapshotDataSource, out *core.VolumeSnapshotDataSource, s conversion.Scope) error {
-	out.HostPath = (*core.HostPathVolumeSnapshotSource)(unsafe.Pointer(in.HostPath))
-	out.GlusterSnapshotVolume = (*core.GlusterVolumeSnapshotSource)(unsafe.Pointer(in.GlusterSnapshotVolume))
-	out.AWSElasticBlockStore = (*core.AWSElasticBlockStoreVolumeSnapshotSource)(unsafe.Pointer(in.AWSElasticBlockStore))
-	out.GCEPersistentDiskSnapshot = (*core.GCEPersistentDiskSnapshotSource)(unsafe.Pointer(in.GCEPersistentDiskSnapshot))
-	out.CinderSnapshot = (*core.CinderVolumeSnapshotSource)(unsafe.Pointer(in.CinderSnapshot))
-	return nil
-}
-
-// Convert_v1_VolumeSnapshotDataSource_To_core_VolumeSnapshotDataSource is an autogenerated conversion function.
-func Convert_v1_VolumeSnapshotDataSource_To_core_VolumeSnapshotDataSource(in *v1.VolumeSnapshotDataSource, out *core.VolumeSnapshotDataSource, s conversion.Scope) error {
-	return autoConvert_v1_VolumeSnapshotDataSource_To_core_VolumeSnapshotDataSource(in, out, s)
-}
-
-func autoConvert_core_VolumeSnapshotDataSource_To_v1_VolumeSnapshotDataSource(in *core.VolumeSnapshotDataSource, out *v1.VolumeSnapshotDataSource, s conversion.Scope) error {
-	out.HostPath = (*v1.HostPathVolumeSnapshotSource)(unsafe.Pointer(in.HostPath))
-	out.GlusterSnapshotVolume = (*v1.GlusterVolumeSnapshotSource)(unsafe.Pointer(in.GlusterSnapshotVolume))
-	out.AWSElasticBlockStore = (*v1.AWSElasticBlockStoreVolumeSnapshotSource)(unsafe.Pointer(in.AWSElasticBlockStore))
-	out.GCEPersistentDiskSnapshot = (*v1.GCEPersistentDiskSnapshotSource)(unsafe.Pointer(in.GCEPersistentDiskSnapshot))
-	out.CinderSnapshot = (*v1.CinderVolumeSnapshotSource)(unsafe.Pointer(in.CinderSnapshot))
-	return nil
-}
-
-// Convert_core_VolumeSnapshotDataSource_To_v1_VolumeSnapshotDataSource is an autogenerated conversion function.
-func Convert_core_VolumeSnapshotDataSource_To_v1_VolumeSnapshotDataSource(in *core.VolumeSnapshotDataSource, out *v1.VolumeSnapshotDataSource, s conversion.Scope) error {
-	return autoConvert_core_VolumeSnapshotDataSource_To_v1_VolumeSnapshotDataSource(in, out, s)
-}
-
-func autoConvert_v1_VolumeSnapshotDataSpec_To_core_VolumeSnapshotDataSpec(in *v1.VolumeSnapshotDataSpec, out *core.VolumeSnapshotDataSpec, s conversion.Scope) error {
-	if err := Convert_v1_VolumeSnapshotDataSource_To_core_VolumeSnapshotDataSource(&in.VolumeSnapshotDataSource, &out.VolumeSnapshotDataSource, s); err != nil {
-		return err
-	}
-	out.VolumeSnapshotRef = (*core.ObjectReference)(unsafe.Pointer(in.VolumeSnapshotRef))
-	out.PersistentVolumeRef = (*core.ObjectReference)(unsafe.Pointer(in.PersistentVolumeRef))
-	return nil
-}
-
-// Convert_v1_VolumeSnapshotDataSpec_To_core_VolumeSnapshotDataSpec is an autogenerated conversion function.
-func Convert_v1_VolumeSnapshotDataSpec_To_core_VolumeSnapshotDataSpec(in *v1.VolumeSnapshotDataSpec, out *core.VolumeSnapshotDataSpec, s conversion.Scope) error {
-	return autoConvert_v1_VolumeSnapshotDataSpec_To_core_VolumeSnapshotDataSpec(in, out, s)
-}
-
-func autoConvert_core_VolumeSnapshotDataSpec_To_v1_VolumeSnapshotDataSpec(in *core.VolumeSnapshotDataSpec, out *v1.VolumeSnapshotDataSpec, s conversion.Scope) error {
-	if err := Convert_core_VolumeSnapshotDataSource_To_v1_VolumeSnapshotDataSource(&in.VolumeSnapshotDataSource, &out.VolumeSnapshotDataSource, s); err != nil {
-		return err
-	}
-	out.VolumeSnapshotRef = (*v1.ObjectReference)(unsafe.Pointer(in.VolumeSnapshotRef))
-	out.PersistentVolumeRef = (*v1.ObjectReference)(unsafe.Pointer(in.PersistentVolumeRef))
-	return nil
-}
-
-// Convert_core_VolumeSnapshotDataSpec_To_v1_VolumeSnapshotDataSpec is an autogenerated conversion function.
-func Convert_core_VolumeSnapshotDataSpec_To_v1_VolumeSnapshotDataSpec(in *core.VolumeSnapshotDataSpec, out *v1.VolumeSnapshotDataSpec, s conversion.Scope) error {
-	return autoConvert_core_VolumeSnapshotDataSpec_To_v1_VolumeSnapshotDataSpec(in, out, s)
-}
-
-func autoConvert_v1_VolumeSnapshotDataStatus_To_core_VolumeSnapshotDataStatus(in *v1.VolumeSnapshotDataStatus, out *core.VolumeSnapshotDataStatus, s conversion.Scope) error {
-	out.CreationTimestamp = in.CreationTimestamp
-	out.Conditions = *(*[]core.VolumeSnapshotDataCondition)(unsafe.Pointer(&in.Conditions))
-	return nil
-}
-
-// Convert_v1_VolumeSnapshotDataStatus_To_core_VolumeSnapshotDataStatus is an autogenerated conversion function.
-func Convert_v1_VolumeSnapshotDataStatus_To_core_VolumeSnapshotDataStatus(in *v1.VolumeSnapshotDataStatus, out *core.VolumeSnapshotDataStatus, s conversion.Scope) error {
-	return autoConvert_v1_VolumeSnapshotDataStatus_To_core_VolumeSnapshotDataStatus(in, out, s)
-}
-
-func autoConvert_core_VolumeSnapshotDataStatus_To_v1_VolumeSnapshotDataStatus(in *core.VolumeSnapshotDataStatus, out *v1.VolumeSnapshotDataStatus, s conversion.Scope) error {
-	out.CreationTimestamp = in.CreationTimestamp
-	out.Conditions = *(*[]v1.VolumeSnapshotDataCondition)(unsafe.Pointer(&in.Conditions))
-	return nil
-}
-
-// Convert_core_VolumeSnapshotDataStatus_To_v1_VolumeSnapshotDataStatus is an autogenerated conversion function.
-func Convert_core_VolumeSnapshotDataStatus_To_v1_VolumeSnapshotDataStatus(in *core.VolumeSnapshotDataStatus, out *v1.VolumeSnapshotDataStatus, s conversion.Scope) error {
-	return autoConvert_core_VolumeSnapshotDataStatus_To_v1_VolumeSnapshotDataStatus(in, out, s)
-}
-
-func autoConvert_v1_VolumeSnapshotList_To_core_VolumeSnapshotList(in *v1.VolumeSnapshotList, out *core.VolumeSnapshotList, s conversion.Scope) error {
-	out.Metadata = in.Metadata
-	out.Items = *(*[]core.VolumeSnapshot)(unsafe.Pointer(&in.Items))
-	return nil
-}
-
-// Convert_v1_VolumeSnapshotList_To_core_VolumeSnapshotList is an autogenerated conversion function.
-func Convert_v1_VolumeSnapshotList_To_core_VolumeSnapshotList(in *v1.VolumeSnapshotList, out *core.VolumeSnapshotList, s conversion.Scope) error {
-	return autoConvert_v1_VolumeSnapshotList_To_core_VolumeSnapshotList(in, out, s)
-}
-
-func autoConvert_core_VolumeSnapshotList_To_v1_VolumeSnapshotList(in *core.VolumeSnapshotList, out *v1.VolumeSnapshotList, s conversion.Scope) error {
-	out.Metadata = in.Metadata
-	out.Items = *(*[]v1.VolumeSnapshot)(unsafe.Pointer(&in.Items))
-	return nil
-}
-
-// Convert_core_VolumeSnapshotList_To_v1_VolumeSnapshotList is an autogenerated conversion function.
-func Convert_core_VolumeSnapshotList_To_v1_VolumeSnapshotList(in *core.VolumeSnapshotList, out *v1.VolumeSnapshotList, s conversion.Scope) error {
-	return autoConvert_core_VolumeSnapshotList_To_v1_VolumeSnapshotList(in, out, s)
-}
-
-func autoConvert_v1_VolumeSnapshotSpec_To_core_VolumeSnapshotSpec(in *v1.VolumeSnapshotSpec, out *core.VolumeSnapshotSpec, s conversion.Scope) error {
-	out.PersistentVolumeClaimName = in.PersistentVolumeClaimName
-	out.SnapshotDataName = in.SnapshotDataName
-	return nil
-}
-
-// Convert_v1_VolumeSnapshotSpec_To_core_VolumeSnapshotSpec is an autogenerated conversion function.
-func Convert_v1_VolumeSnapshotSpec_To_core_VolumeSnapshotSpec(in *v1.VolumeSnapshotSpec, out *core.VolumeSnapshotSpec, s conversion.Scope) error {
-	return autoConvert_v1_VolumeSnapshotSpec_To_core_VolumeSnapshotSpec(in, out, s)
-}
-
-func autoConvert_core_VolumeSnapshotSpec_To_v1_VolumeSnapshotSpec(in *core.VolumeSnapshotSpec, out *v1.VolumeSnapshotSpec, s conversion.Scope) error {
-	out.PersistentVolumeClaimName = in.PersistentVolumeClaimName
-	out.SnapshotDataName = in.SnapshotDataName
-	return nil
-}
-
-// Convert_core_VolumeSnapshotSpec_To_v1_VolumeSnapshotSpec is an autogenerated conversion function.
-func Convert_core_VolumeSnapshotSpec_To_v1_VolumeSnapshotSpec(in *core.VolumeSnapshotSpec, out *v1.VolumeSnapshotSpec, s conversion.Scope) error {
-	return autoConvert_core_VolumeSnapshotSpec_To_v1_VolumeSnapshotSpec(in, out, s)
-}
-
-func autoConvert_v1_VolumeSnapshotStatus_To_core_VolumeSnapshotStatus(in *v1.VolumeSnapshotStatus, out *core.VolumeSnapshotStatus, s conversion.Scope) error {
-	out.CreationTimestamp = in.CreationTimestamp
-	out.Conditions = *(*[]core.VolumeSnapshotCondition)(unsafe.Pointer(&in.Conditions))
-	return nil
-}
-
-// Convert_v1_VolumeSnapshotStatus_To_core_VolumeSnapshotStatus is an autogenerated conversion function.
-func Convert_v1_VolumeSnapshotStatus_To_core_VolumeSnapshotStatus(in *v1.VolumeSnapshotStatus, out *core.VolumeSnapshotStatus, s conversion.Scope) error {
-	return autoConvert_v1_VolumeSnapshotStatus_To_core_VolumeSnapshotStatus(in, out, s)
-}
-
-func autoConvert_core_VolumeSnapshotStatus_To_v1_VolumeSnapshotStatus(in *core.VolumeSnapshotStatus, out *v1.VolumeSnapshotStatus, s conversion.Scope) error {
-	out.CreationTimestamp = in.CreationTimestamp
-	out.Conditions = *(*[]v1.VolumeSnapshotCondition)(unsafe.Pointer(&in.Conditions))
-	return nil
-}
-
-// Convert_core_VolumeSnapshotStatus_To_v1_VolumeSnapshotStatus is an autogenerated conversion function.
-func Convert_core_VolumeSnapshotStatus_To_v1_VolumeSnapshotStatus(in *core.VolumeSnapshotStatus, out *v1.VolumeSnapshotStatus, s conversion.Scope) error {
-	return autoConvert_core_VolumeSnapshotStatus_To_v1_VolumeSnapshotStatus(in, out, s)
 }
 
 func autoConvert_v1_VolumeSource_To_core_VolumeSource(in *v1.VolumeSource, out *core.VolumeSource, s conversion.Scope) error {
