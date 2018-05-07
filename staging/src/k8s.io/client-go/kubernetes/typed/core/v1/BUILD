@@ -33,8 +33,6 @@ go_library(
         "service_expansion.go",
         "serviceaccount.go",
         "serviceaccount_expansion.go",
-        "volumesnapshot.go",
-        "volumesnapshotdata.go",
     ],
     importpath = "k8s.io/client-go/kubernetes/typed/core/v1",
     deps = [

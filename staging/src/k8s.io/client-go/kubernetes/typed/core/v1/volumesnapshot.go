@@ -30,7 +30,7 @@ import (
 // VolumeSnapshotsGetter has a method to return a VolumeSnapshotInterface.
 // A group's client should implement this interface.
 type VolumeSnapshotsGetter interface {
-	VolumeSnapshots(namespace string) VolumeSnapshotInterface
+	VolumeSnapshots() VolumeSnapshotInterface
 }
 
 // VolumeSnapshotInterface has methods to work with VolumeSnapshot resources.
@@ -50,14 +50,12 @@ type VolumeSnapshotInterface interface {
 // volumeSnapshots implements VolumeSnapshotInterface
 type volumeSnapshots struct {
 	client rest.Interface
-	ns     string
 }
 
 // newVolumeSnapshots returns a VolumeSnapshots
-func newVolumeSnapshots(c *CoreV1Client, namespace string) *volumeSnapshots {
+func newVolumeSnapshots(c *CoreV1Client) *volumeSnapshots {
 	return &volumeSnapshots{
 		client: c.RESTClient(),
-		ns:     namespace,
 	}
 }
 
@@ -65,7 +63,6 @@ func newVolumeSnapshots(c *CoreV1Client, namespace string) *volumeSnapshots {
 func (c *volumeSnapshots) Get(name string, options meta_v1.GetOptions) (result *v1.VolumeSnapshot, err error) {
 	result = &v1.VolumeSnapshot{}
 	err = c.client.Get().
-		Namespace(c.ns).
 		Resource("volumesnapshots").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
@@ -78,7 +75,6 @@ func (c *volumeSnapshots) Get(name string, options meta_v1.GetOptions) (result *
 func (c *volumeSnapshots) List(opts meta_v1.ListOptions) (result *v1.VolumeSnapshotList, err error) {
 	result = &v1.VolumeSnapshotList{}
 	err = c.client.Get().
-		Namespace(c.ns).
 		Resource("volumesnapshots").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Do().
@@ -90,7 +86,6 @@ func (c *volumeSnapshots) List(opts meta_v1.ListOptions) (result *v1.VolumeSnaps
 func (c *volumeSnapshots) Watch(opts meta_v1.ListOptions) (watch.Interface, error) {
 	opts.Watch = true
 	return c.client.Get().
-		Namespace(c.ns).
 		Resource("volumesnapshots").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Watch()
@@ -100,7 +95,6 @@ func (c *volumeSnapshots) Watch(opts meta_v1.ListOptions) (watch.Interface, erro
 func (c *volumeSnapshots) Create(volumeSnapshot *v1.VolumeSnapshot) (result *v1.VolumeSnapshot, err error) {
 	result = &v1.VolumeSnapshot{}
 	err = c.client.Post().
-		Namespace(c.ns).
 		Resource("volumesnapshots").
 		Body(volumeSnapshot).
 		Do().
@@ -112,9 +106,8 @@ func (c *volumeSnapshots) Create(volumeSnapshot *v1.VolumeSnapshot) (result *v1.
 func (c *volumeSnapshots) Update(volumeSnapshot *v1.VolumeSnapshot) (result *v1.VolumeSnapshot, err error) {
 	result = &v1.VolumeSnapshot{}
 	err = c.client.Put().
-		Namespace(c.ns).
 		Resource("volumesnapshots").
-		Name(volumeSnapshot.Name).
+		Name(volumeSnapshot.Metadata.Name).
 		Body(volumeSnapshot).
 		Do().
 		Into(result)
@@ -127,9 +120,8 @@ func (c *volumeSnapshots) Update(volumeSnapshot *v1.VolumeSnapshot) (result *v1.
 func (c *volumeSnapshots) UpdateStatus(volumeSnapshot *v1.VolumeSnapshot) (result *v1.VolumeSnapshot, err error) {
 	result = &v1.VolumeSnapshot{}
 	err = c.client.Put().
-		Namespace(c.ns).
 		Resource("volumesnapshots").
-		Name(volumeSnapshot.Name).
+		Name(volumeSnapshot.Metadata.Name).
 		SubResource("status").
 		Body(volumeSnapshot).
 		Do().
@@ -140,7 +132,6 @@ func (c *volumeSnapshots) UpdateStatus(volumeSnapshot *v1.VolumeSnapshot) (resul
 // Delete takes name of the volumeSnapshot and deletes it. Returns an error if one occurs.
 func (c *volumeSnapshots) Delete(name string, options *meta_v1.DeleteOptions) error {
 	return c.client.Delete().
-		Namespace(c.ns).
 		Resource("volumesnapshots").
 		Name(name).
 		Body(options).
@@ -151,7 +142,6 @@ func (c *volumeSnapshots) Delete(name string, options *meta_v1.DeleteOptions) er
 // DeleteCollection deletes a collection of objects.
 func (c *volumeSnapshots) DeleteCollection(options *meta_v1.DeleteOptions, listOptions meta_v1.ListOptions) error {
 	return c.client.Delete().
-		Namespace(c.ns).
 		Resource("volumesnapshots").
 		VersionedParams(&listOptions, scheme.ParameterCodec).
 		Body(options).
@@ -163,7 +153,6 @@ func (c *volumeSnapshots) DeleteCollection(options *meta_v1.DeleteOptions, listO
 func (c *volumeSnapshots) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1.VolumeSnapshot, err error) {
 	result = &v1.VolumeSnapshot{}
 	err = c.client.Patch(pt).
-		Namespace(c.ns).
 		Resource("volumesnapshots").
 		SubResource(subresources...).
 		Name(name).

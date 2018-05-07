@@ -92,12 +92,8 @@ func (c *FakeCoreV1) ServiceAccounts(namespace string) v1.ServiceAccountInterfac
 	return &FakeServiceAccounts{c, namespace}
 }
 
-func (c *FakeCoreV1) VolumeSnapshots(namespace string) v1.VolumeSnapshotInterface {
-	return &FakeVolumeSnapshots{c, namespace}
-}
-
-func (c *FakeCoreV1) VolumeSnapshotDatas() v1.VolumeSnapshotDataInterface {
-	return &FakeVolumeSnapshotDatas{c}
+func (c *FakeCoreV1) VolumeSnapshots() v1.VolumeSnapshotInterface {
+        return &FakeVolumeSnapshots{c}
 }
 
 // RESTClient returns a RESTClient that is used to communicate

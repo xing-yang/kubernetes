@@ -29,8 +29,8 @@ import (
 type VolumeSnapshotLister interface {
 	// List lists all VolumeSnapshots in the indexer.
 	List(selector labels.Selector) (ret []*v1.VolumeSnapshot, err error)
-	// VolumeSnapshots returns an object that can list and get VolumeSnapshots.
-	VolumeSnapshots(namespace string) VolumeSnapshotNamespaceLister
+	// Get retrieves the VolumeSnapshot from the index for a given name.
+	Get(name string) (*v1.VolumeSnapshot, error)
 	VolumeSnapshotListerExpansion
 }
 
@@ -52,38 +52,9 @@ func (s *volumeSnapshotLister) List(selector labels.Selector) (ret []*v1.VolumeS
 	return ret, err
 }
 
-// VolumeSnapshots returns an object that can list and get VolumeSnapshots.
-func (s *volumeSnapshotLister) VolumeSnapshots(namespace string) VolumeSnapshotNamespaceLister {
-	return volumeSnapshotNamespaceLister{indexer: s.indexer, namespace: namespace}
-}
-
-// VolumeSnapshotNamespaceLister helps list and get VolumeSnapshots.
-type VolumeSnapshotNamespaceLister interface {
-	// List lists all VolumeSnapshots in the indexer for a given namespace.
-	List(selector labels.Selector) (ret []*v1.VolumeSnapshot, err error)
-	// Get retrieves the VolumeSnapshot from the indexer for a given namespace and name.
-	Get(name string) (*v1.VolumeSnapshot, error)
-	VolumeSnapshotNamespaceListerExpansion
-}
-
-// volumeSnapshotNamespaceLister implements the VolumeSnapshotNamespaceLister
-// interface.
-type volumeSnapshotNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all VolumeSnapshots in the indexer for a given namespace.
-func (s volumeSnapshotNamespaceLister) List(selector labels.Selector) (ret []*v1.VolumeSnapshot, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1.VolumeSnapshot))
-	})
-	return ret, err
-}
-
-// Get retrieves the VolumeSnapshot from the indexer for a given namespace and name.
-func (s volumeSnapshotNamespaceLister) Get(name string) (*v1.VolumeSnapshot, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
+// Get retrieves the VolumeSnapshot from the index for a given name.
+func (s *volumeSnapshotLister) Get(name string) (*v1.VolumeSnapshot, error) {
+	obj, exists, err := s.indexer.GetByKey(name)
 	if err != nil {
 		return nil, err
 	}
