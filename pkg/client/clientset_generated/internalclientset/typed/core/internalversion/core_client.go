@@ -41,8 +41,6 @@ type CoreInterface interface {
 	SecretsGetter
 	ServicesGetter
 	ServiceAccountsGetter
-	VolumeSnapshotsGetter
-	VolumeSnapshotDatasGetter
 }
 
 // CoreClient is used to interact with features provided by the  group.
@@ -112,14 +110,6 @@ func (c *CoreClient) Services(namespace string) ServiceInterface {
 
 func (c *CoreClient) ServiceAccounts(namespace string) ServiceAccountInterface {
 	return newServiceAccounts(c, namespace)
-}
-
-func (c *CoreClient) VolumeSnapshots(namespace string) VolumeSnapshotInterface {
-	return newVolumeSnapshots(c, namespace)
-}
-
-func (c *CoreClient) VolumeSnapshotDatas() VolumeSnapshotDataInterface {
-	return newVolumeSnapshotDatas(c)
 }
 
 // NewForConfig creates a new CoreClient for the given config.

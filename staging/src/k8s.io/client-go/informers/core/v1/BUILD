@@ -25,8 +25,6 @@ go_library(
         "secret.go",
         "service.go",
         "serviceaccount.go",
-        "volumesnapshot.go",
-        "volumesnapshotdata.go",
     ],
     importpath = "k8s.io/client-go/informers/core/v1",
     deps = [

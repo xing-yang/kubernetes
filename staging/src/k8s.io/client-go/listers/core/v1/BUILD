@@ -28,8 +28,6 @@ go_library(
         "service.go",
         "service_expansion.go",
         "serviceaccount.go",
-        "volumesnapshot.go",
-        "volumesnapshotdata.go",
     ],
     importpath = "k8s.io/client-go/listers/core/v1",
     deps = [
