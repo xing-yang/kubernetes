@@ -472,6 +472,12 @@ function start_apiserver {
       fi
       RUNTIME_CONFIG+="scheduling.k8s.io/v1alpha1=true"
     fi
+    if [ "${ENABLE_VOLUME_SNAPSHOT}" == true ]; then
+      if [[ -n "${RUNTIME_CONFIG}" ]]; then
+          RUNTIME_CONFIG+=","
+      fi
+      RUNTIME_CONFIG+="storage.k8s.io/v1alpha1=true"
+    fi
 
 
     # Admission Controllers to invoke prior to persisting objects in cluster
