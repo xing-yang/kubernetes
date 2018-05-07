@@ -20,7 +20,7 @@ package populator
 
 import (
 	"github.com/golang/glog"
-	listers "k8s.io/client-go/listers/core/v1"
+	listers "k8s.io/client-go/listers/storage/v1alpha1"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"

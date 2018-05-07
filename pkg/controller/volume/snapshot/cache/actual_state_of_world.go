@@ -24,7 +24,7 @@ import (
 	"sync"
 
 	"github.com/golang/glog"
-	"k8s.io/api/core/v1"
+	storage "k8s.io/api/storage/v1alpha1"
 )
 
 // ActualStateOfWorld defines a set of thread-safe operations supported on
@@ -34,17 +34,17 @@ import (
 type ActualStateOfWorld interface {
 	// Adds snapshot to the list of snapshots. No-op if the snapshot
 	// is already in the list.
-	AddSnapshot(*v1.VolumeSnapshot) error
+	AddSnapshot(*storage.VolumeSnapshot) error
 
 	// Deletes the snapshot from the list of known snapshots. No-op if the snapshot
 	// does not exist.
 	DeleteSnapshot(snapshotName string) error
 
 	// Return a copy of the known snapshots
-	GetSnapshots() map[string]*v1.VolumeSnapshot
+	GetSnapshots() map[string]*storage.VolumeSnapshot
 
 	// Get snapshot by its name
-	GetSnapshot(snapshotName string) *v1.VolumeSnapshot
+	GetSnapshot(snapshotName string) *storage.VolumeSnapshot
 
 	// Check whether the specified snapshot exists
 	SnapshotExists(snapshotName string) bool
@@ -53,20 +53,20 @@ type ActualStateOfWorld interface {
 type actualStateOfWorld struct {
 	// List of snapshots that need to be created
 	// it maps [snapshotName] VolumeSnapshot
-	snapshots map[string]*v1.VolumeSnapshot
+	snapshots map[string]*storage.VolumeSnapshot
 	sync.RWMutex
 }
 
 // NewActualStateOfWorld returns a new instance of ActualStateOfWorld.
 func NewActualStateOfWorld() ActualStateOfWorld {
-	m := make(map[string]*v1.VolumeSnapshot)
+	m := make(map[string]*storage.VolumeSnapshot)
 	return &actualStateOfWorld{
 		snapshots: m,
 	}
 }
 
 // Adds a snapshot to the list of snapshots to be created.
-func (asw *actualStateOfWorld) AddSnapshot(snapshot *v1.VolumeSnapshot) error {
+func (asw *actualStateOfWorld) AddSnapshot(snapshot *storage.VolumeSnapshot) error {
 	asw.Lock()
 	defer asw.Unlock()
 
@@ -87,11 +87,11 @@ func (asw *actualStateOfWorld) DeleteSnapshot(snapshotName string) error {
 }
 
 // Returns a copy of the list of the snapshots known to the actual state of world.
-func (asw *actualStateOfWorld) GetSnapshots() map[string]*v1.VolumeSnapshot {
+func (asw *actualStateOfWorld) GetSnapshots() map[string]*storage.VolumeSnapshot {
 	asw.RLock()
 	defer asw.RUnlock()
 
-	snapshots := make(map[string]*v1.VolumeSnapshot)
+	snapshots := make(map[string]*storage.VolumeSnapshot)
 
 	for snapName, snapshot := range asw.snapshots {
 		snapshots[snapName] = snapshot
@@ -101,7 +101,7 @@ func (asw *actualStateOfWorld) GetSnapshots() map[string]*v1.VolumeSnapshot {
 }
 
 // Get snapshot
-func (asw *actualStateOfWorld) GetSnapshot(snapshotName string) *v1.VolumeSnapshot {
+func (asw *actualStateOfWorld) GetSnapshot(snapshotName string) *storage.VolumeSnapshot {
 	asw.RLock()
 	defer asw.RUnlock()
 	snapshot, _ := asw.snapshots[snapshotName]

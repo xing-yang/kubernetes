@@ -344,10 +344,10 @@ func buildControllerRoles() ([]rbac.ClusterRole, []rbac.ClusterRoleBinding) {
 		addControllerRole(&controllerRoles, &controllerRoleBindings, rbac.ClusterRole{
 			ObjectMeta: metav1.ObjectMeta{Name: saRolePrefix + "snapshot-controller"},
 			Rules: []rbac.PolicyRule{
-				rbac.NewRule("get", "list", "watch", "update", "delete").Groups(legacyGroup).Resources("volumesnapshots").RuleOrDie(),
-				rbac.NewRule("update").Groups(legacyGroup).Resources("volumesnapshots/status").RuleOrDie(),
-				rbac.NewRule("get", "list", "watch", "update", "create", "delete").Groups(legacyGroup).Resources("volumesnapshotdatas").RuleOrDie(),
-				rbac.NewRule("update").Groups(legacyGroup).Resources("volumesnapshotdatas/status").RuleOrDie(),
+				rbac.NewRule("get", "list", "watch", "update", "delete").Groups(storageGroup).Resources("volumesnapshots").RuleOrDie(),
+				rbac.NewRule("update").Groups(storageGroup).Resources("volumesnapshots/status").RuleOrDie(),
+				rbac.NewRule("get", "list", "watch", "update", "create", "delete").Groups(storageGroup).Resources("volumesnapshotdatas").RuleOrDie(),
+				rbac.NewRule("update").Groups(storageGroup).Resources("volumesnapshotdatas/status").RuleOrDie(),
 				rbac.NewRule("get", "list", "watch", "update").Groups(legacyGroup).Resources("persistentvolumeclaims").RuleOrDie(),
 				rbac.NewRule("get", "list", "watch", "update").Groups(legacyGroup).Resources("persistentvolumes").RuleOrDie(),
 				eventsRule(),
