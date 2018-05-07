@@ -6,12 +6,12 @@ go_library(
         "doc.go",
         "strategy.go",
     ],
-    importpath = "k8s.io/kubernetes/pkg/registry/core/volumesnapshotdata",
+    importpath = "k8s.io/kubernetes/pkg/registry/storage/volumesnapshotdata",
     visibility = ["//visibility:public"],
     deps = [
         "//pkg/api/legacyscheme:go_default_library",
-        "//pkg/apis/core:go_default_library",
-        "//pkg/apis/core/validation:go_default_library",
+        "//pkg/apis/storage:go_default_library",
+        "//pkg/apis/storage/validation:go_default_library",
         "//vendor/k8s.io/apimachinery/pkg/fields:go_default_library",
         "//vendor/k8s.io/apimachinery/pkg/labels:go_default_library",
         "//vendor/k8s.io/apimachinery/pkg/runtime:go_default_library",
@@ -31,7 +31,7 @@ go_test(
         "//pkg/api/legacyscheme:go_default_library",
         "//pkg/api/testapi:go_default_library",
         "//pkg/api/testing:go_default_library",
-        "//pkg/apis/core:go_default_library",
+        "//pkg/apis/storage:go_default_library",
     ],
 )
 
@@ -46,7 +46,7 @@ filegroup(
     name = "all-srcs",
     srcs = [
         ":package-srcs",
-        "//pkg/registry/core/volumesnapshotdata/storage:all-srcs",
+        "//pkg/registry/storage/volumesnapshotdata/storage:all-srcs",
     ],
     tags = ["automanaged"],
     visibility = ["//visibility:public"],

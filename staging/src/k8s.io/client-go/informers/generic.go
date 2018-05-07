@@ -175,8 +175,6 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Core().V1().Services().Informer()}, nil
 	case core_v1.SchemeGroupVersion.WithResource("serviceaccounts"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Core().V1().ServiceAccounts().Informer()}, nil
-        case core_v1.SchemeGroupVersion.WithResource("volumesnapshots"):
-                return &genericInformer{resource: resource.GroupResource(), informer: f.Core().V1().VolumeSnapshots().Informer()}, nil
 
 		// Group=events.k8s.io, Version=v1beta1
 	case events_v1beta1.SchemeGroupVersion.WithResource("events"):
@@ -253,6 +251,10 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		// Group=storage.k8s.io, Version=v1alpha1
 	case storage_v1alpha1.SchemeGroupVersion.WithResource("volumeattachments"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Storage().V1alpha1().VolumeAttachments().Informer()}, nil
+	case storage_v1alpha1.SchemeGroupVersion.WithResource("volumesnapshots"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Storage().V1alpha1().VolumeSnapshots().Informer()}, nil
+	case storage_v1alpha1.SchemeGroupVersion.WithResource("volumesnapshotdatas"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Storage().V1alpha1().VolumeSnapshotDatas().Informer()}, nil
 
 		// Group=storage.k8s.io, Version=v1beta1
 	case storage_v1beta1.SchemeGroupVersion.WithResource("storageclasses"):

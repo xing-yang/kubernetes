@@ -128,7 +128,6 @@ type VolumeError struct {
 	Message string `json:"message,omitempty" protobuf:"bytes,2,opt,name=message"`
 }
 
-
 const (
 	// VolumeSnapshotDataResourcePlural is "volumesnapshotdatas"
 	VolumeSnapshotDataResourcePlural = "volumesnapshotdatas"
