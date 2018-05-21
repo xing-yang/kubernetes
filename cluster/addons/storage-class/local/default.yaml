@@ -8,3 +8,4 @@ metadata:
   labels:
     addonmanager.kubernetes.io/mode: Reconcile
 provisioner: kubernetes.io/host-path
+snapshotter: kubernetes.io/host-path

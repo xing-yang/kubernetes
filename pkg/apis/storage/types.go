@@ -72,6 +72,12 @@ type StorageClass struct {
 	// the VolumeScheduling feature.
 	// +optional
 	VolumeBindingMode *VolumeBindingMode
+
+	// Snapshotter is the driver expected to handle this StorageClass.
+	// This is an optionally-prefixed name, like a label key.
+	// For example: "kubernetes.io/gce-pd" or "kubernetes.io/aws-ebs".
+	// This value may not be empty.
+	Snapshotter string
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
@@ -417,6 +423,25 @@ type GCEPersistentDiskSnapshotSource struct {
 	SnapshotName string
 }
 
+// CSIVolumeSnapshotSource is CSI volume snapshot source
+type CSIVolumeSnapshotSource struct {
+	// Driver is the name of the driver to use for this snapshot.
+	// Required.
+	Driver string
+
+	// SnapshotHandle is the unique snapshot id returned by the CSI volume
+	// plugin’s CreateSnapshot to refer to the snapshot on all subsequent calls.
+	// Required.
+	SnapshotHandle string
+
+	// CreatedAt is timestamp when the point-in-time snapshot is taken on the storage
+	// system. The format of this field should be a Unix nanoseconds time
+	// encoded as an int64. On Unix, the command `date +%s%N` returns
+	// the  current time in nanoseconds since 1970-01-01 00:00:00 UTC.
+	// This field is REQUIRED.
+	CreatedAt int64
+}
+
 // VolumeSnapshotDataSource represents the actual location and type of the snapshot. Only one of its members may be specified.
 type VolumeSnapshotDataSource struct {
 	// HostPath represents a directory on the host.
@@ -440,4 +465,7 @@ type VolumeSnapshotDataSource struct {
 	// CinderVolumeSnapshotSource represents Cinder snapshot resource
 	// +optional
 	CinderSnapshot *CinderVolumeSnapshotSource
+	// CSISnapshot represents CSI snapshot resource
+	// +optional
+	CSISnapshot    *CSIVolumeSnapshotSource
 }
