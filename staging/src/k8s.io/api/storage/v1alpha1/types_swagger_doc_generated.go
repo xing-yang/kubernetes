@@ -36,6 +36,17 @@ func (AWSElasticBlockStoreVolumeSnapshotSource) SwaggerDoc() map[string]string {
 	return map_AWSElasticBlockStoreVolumeSnapshotSource
 }
 
+var map_CSIVolumeSnapshotSource = map[string]string{
+	"":               "CSIVolumeSnapshotSource is CSI volume snapshot source",
+	"driver":         "Driver is the name of the driver to use for this snapshot. Required.",
+	"snapshotHandle": "SnapshotHandle is the unique snapshot id returned by the CSI volume plugin’s CreateSnapshot to refer to the snapshot on all subsequent calls. Required.",
+	"createdAt":      "CreatedAt is timestamp when the point-in-time snapshot is taken on the storage system. The format of this field should be a Unix nanoseconds time encoded as an int64. On Unix, the command `date +%s%N` returns the  current time in nanoseconds since 1970-01-01 00:00:00 UTC. This field is REQUIRED.",
+}
+
+func (CSIVolumeSnapshotSource) SwaggerDoc() map[string]string {
+	return map_CSIVolumeSnapshotSource
+}
+
 var map_CinderVolumeSnapshotSource = map[string]string{
 	"":           "CinderVolumeSnapshotSource is Cinder volume snapshot source",
 	"snapshotId": "Unique id of the cinder volume snapshot resource. Used to identify the snapshot in OpenStack",
@@ -198,6 +209,7 @@ var map_VolumeSnapshotDataSource = map[string]string{
 	"glusterSnapshotVolume": "AWSElasticBlockStore represents an AWS Disk resource that is attached to a kubelet's host machine and then exposed to the pod. More info: https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore GlusterSnapshotSource represents a gluster snapshot resource",
 	"gcePersistentDisk":     "GCEPersistentDiskSnapshotSource represents an GCE PD snapshot resource",
 	"cinderVolume":          "CinderVolumeSnapshotSource represents Cinder snapshot resource",
+	"csiSnapshot":           "CSISnapshot represents CSI snapshot resource",
 }
 
 func (VolumeSnapshotDataSource) SwaggerDoc() map[string]string {

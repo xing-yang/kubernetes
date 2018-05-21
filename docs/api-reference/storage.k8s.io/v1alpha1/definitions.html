@@ -496,14 +496,14 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">spec</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Spec represents the desired state of the snapshot</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#_v1alpha1_volumesnapshotdataspec">v1alpha1.VolumeSnapshotDataSpec</a></p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">status</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Status represents the latest observed state of the snapshot</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#_v1alpha1_volumesnapshotdatastatus">v1alpha1.VolumeSnapshotDataStatus</a></p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
@@ -987,7 +987,7 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">snapshotId</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Unique id of the cinder volume snapshot resource. Used to identify the snapshot in OpenStack</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
@@ -1368,7 +1368,7 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">snapshotId</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Unique id of the persistent disk snapshot resource. Used to identify the disk snapshot in AWS</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
@@ -1411,6 +1411,54 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <td class="tableblock halign-left valign-top"><p class="tableblock">Representes the lates available observations about the volume snapshot</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#_v1alpha1_volumesnapshotdatacondition">v1alpha1.VolumeSnapshotDataCondition</a> array</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div class="sect2">
+<h3 id="_v1alpha1_csivolumesnapshotsource">v1alpha1.CSIVolumeSnapshotSource</h3>
+<div class="paragraph">
+<p>CSIVolumeSnapshotSource is CSI volume snapshot source</p>
+</div>
+<table class="tableblock frame-all grid-all" style="width:100%; ">
+<colgroup>
+<col style="width:20%;">
+<col style="width:20%;">
+<col style="width:20%;">
+<col style="width:20%;">
+<col style="width:20%;"> 
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Required</th>
+<th class="tableblock halign-left valign-top">Schema</th>
+<th class="tableblock halign-left valign-top">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">driver</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Driver is the name of the driver to use for this snapshot. Required.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">snapshotHandle</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SnapshotHandle is the unique snapshot id returned by the CSI volume plugin’s CreateSnapshot to refer to the snapshot on all subsequent calls. Required.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">createdAt</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CreatedAt is timestamp when the point-in-time snapshot is taken on the storage system. The format of this field should be a Unix nanoseconds time encoded as an int64. On Unix, the command <code>date +%s%N</code> returns the  current time in nanoseconds since 1970-01-01 00:00:00 UTC. This field is REQUIRED.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">integer (int64)</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 </tbody>
@@ -1770,7 +1818,7 @@ When an object is created, the system will populate this list with the current s
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">snapshot</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Path represents a tar file that stores the HostPath volume source</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
@@ -2099,16 +2147,23 @@ When an object is created, the system will populate this list with the current s
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">csiSnapshot</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CSISnapshot represents CSI snapshot resource</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#_v1alpha1_csivolumesnapshotsource">v1alpha1.CSIVolumeSnapshotSource</a></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">volumeSnapshotRef</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">VolumeSnapshotRef is part of bi-directional binding between VolumeSnapshot and VolumeSnapshotData</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#_v1_objectreference">v1.ObjectReference</a></p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">persistentVolumeRef</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">PersistentVolumeRef represents the PersistentVolume that the snapshot has been taken from</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#_v1_objectreference">v1.ObjectReference</a></p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
@@ -2249,7 +2304,7 @@ Examples:<br>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">snapshotId</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Unique id of the persistent disk snapshot resource. Used to identify the disk snapshot in GCE</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
@@ -2283,7 +2338,7 @@ Examples:<br>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">snapshotId</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">UniqueID represents a snapshot resource.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
