@@ -3193,10 +3193,6 @@
    "v1alpha1.VolumeSnapshotData": {
     "id": "v1alpha1.VolumeSnapshotData",
     "description": "VolumeSnapshotData represents the actual \"on-disk\" snapshot object",
-    "required": [
-     "spec",
-     "status"
-    ],
     "properties": {
      "kind": {
       "type": "string",
@@ -3223,10 +3219,6 @@
    "v1alpha1.VolumeSnapshotDataSpec": {
     "id": "v1alpha1.VolumeSnapshotDataSpec",
     "description": "VolumeSnapshotDataSpec is the spec of the volume snapshot data",
-    "required": [
-     "volumeSnapshotRef",
-     "persistentVolumeRef"
-    ],
     "properties": {
      "hostPath": {
       "$ref": "v1alpha1.HostPathVolumeSnapshotSource",
@@ -3247,6 +3239,10 @@
       "$ref": "v1alpha1.CinderVolumeSnapshotSource",
       "description": "CinderVolumeSnapshotSource represents Cinder snapshot resource"
      },
+     "csiSnapshot": {
+      "$ref": "v1alpha1.CSIVolumeSnapshotSource",
+      "description": "CSISnapshot represents CSI snapshot resource"
+     },
      "volumeSnapshotRef": {
       "$ref": "v1.ObjectReference",
       "description": "VolumeSnapshotRef is part of bi-directional binding between VolumeSnapshot and VolumeSnapshotData"
@@ -3260,9 +3256,6 @@
    "v1alpha1.HostPathVolumeSnapshotSource": {
     "id": "v1alpha1.HostPathVolumeSnapshotSource",
     "description": "HostPathVolumeSnapshotSource is HostPath volume snapshot source",
-    "required": [
-     "snapshot"
-    ],
     "properties": {
      "snapshot": {
       "type": "string",
@@ -3273,9 +3266,6 @@
    "v1alpha1.GlusterVolumeSnapshotSource": {
     "id": "v1alpha1.GlusterVolumeSnapshotSource",
     "description": "GlusterVolumeSnapshotSource is Gluster volume snapshot source",
-    "required": [
-     "snapshotId"
-    ],
     "properties": {
      "snapshotId": {
       "type": "string",
@@ -3286,9 +3276,6 @@
    "v1alpha1.AWSElasticBlockStoreVolumeSnapshotSource": {
     "id": "v1alpha1.AWSElasticBlockStoreVolumeSnapshotSource",
     "description": "AWSElasticBlockStoreVolumeSnapshotSource is AWS EBS volume snapshot source",
-    "required": [
-     "snapshotId"
-    ],
     "properties": {
      "snapshotId": {
       "type": "string",
@@ -3299,9 +3286,6 @@
    "v1alpha1.GCEPersistentDiskSnapshotSource": {
     "id": "v1alpha1.GCEPersistentDiskSnapshotSource",
     "description": "GCEPersistentDiskSnapshotSource is GCE PD volume snapshot source",
-    "required": [
-     "snapshotId"
-    ],
     "properties": {
      "snapshotId": {
       "type": "string",
@@ -3312,13 +3296,29 @@
    "v1alpha1.CinderVolumeSnapshotSource": {
     "id": "v1alpha1.CinderVolumeSnapshotSource",
     "description": "CinderVolumeSnapshotSource is Cinder volume snapshot source",
-    "required": [
-     "snapshotId"
-    ],
     "properties": {
      "snapshotId": {
       "type": "string",
       "description": "Unique id of the cinder volume snapshot resource. Used to identify the snapshot in OpenStack"
+     }
+    }
+   },
+   "v1alpha1.CSIVolumeSnapshotSource": {
+    "id": "v1alpha1.CSIVolumeSnapshotSource",
+    "description": "CSIVolumeSnapshotSource is CSI volume snapshot source",
+    "properties": {
+     "driver": {
+      "type": "string",
+      "description": "Driver is the name of the driver to use for this snapshot. Required."
+     },
+     "snapshotHandle": {
+      "type": "string",
+      "description": "SnapshotHandle is the unique snapshot id returned by the CSI volume plugin’s CreateSnapshot to refer to the snapshot on all subsequent calls. Required."
+     },
+     "createdAt": {
+      "type": "integer",
+      "format": "int64",
+      "description": "CreatedAt is timestamp when the point-in-time snapshot is taken on the storage system. The format of this field should be a Unix nanoseconds time encoded as an int64. On Unix, the command `date +%s%N` returns the  current time in nanoseconds since 1970-01-01 00:00:00 UTC. This field is REQUIRED."
      }
     }
    },

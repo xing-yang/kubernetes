@@ -37,6 +37,25 @@ message AWSElasticBlockStoreVolumeSnapshotSource {
   optional string snapshotId = 1;
 }
 
+// CSIVolumeSnapshotSource is CSI volume snapshot source
+message CSIVolumeSnapshotSource {
+  // Driver is the name of the driver to use for this snapshot.
+  // Required.
+  optional string driver = 1;
+
+  // SnapshotHandle is the unique snapshot id returned by the CSI volume
+  // plugin’s CreateSnapshot to refer to the snapshot on all subsequent calls.
+  // Required.
+  optional string snapshotHandle = 2;
+
+  // CreatedAt is timestamp when the point-in-time snapshot is taken on the storage
+  // system. The format of this field should be a Unix nanoseconds time
+  // encoded as an int64. On Unix, the command `date +%s%N` returns
+  // the  current time in nanoseconds since 1970-01-01 00:00:00 UTC.
+  // This field is REQUIRED.
+  optional int64 createdAt = 3;
+}
+
 // CinderVolumeSnapshotSource is Cinder volume snapshot source
 message CinderVolumeSnapshotSource {
   // Unique id of the cinder volume snapshot resource. Used to identify the snapshot in OpenStack
@@ -270,6 +289,10 @@ message VolumeSnapshotDataSource {
   // CinderVolumeSnapshotSource represents Cinder snapshot resource
   // +optional
   optional CinderVolumeSnapshotSource cinderVolume = 5;
+
+  // CSISnapshot represents CSI snapshot resource
+  // +optional
+  optional CSIVolumeSnapshotSource csiSnapshot = 6;
 }
 
 // VolumeSnapshotDataSpec is the spec of the volume snapshot data

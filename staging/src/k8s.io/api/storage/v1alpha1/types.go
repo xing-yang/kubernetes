@@ -387,5 +387,5 @@ type VolumeSnapshotDataSource struct {
 	CinderSnapshot *CinderVolumeSnapshotSource `json:"cinderVolume,omitempty" protobuf:"bytes,5,opt,name=cinderVolume"`
 	// CSISnapshot represents CSI snapshot resource
 	// +optional
-	CSISnapshot    *CSIVolumeSnapshotSource `json:"csiSnapshot,omitempty" protobuf:"bytes,6,opt,name=csiSnapshot"`
+	CSISnapshot *CSIVolumeSnapshotSource `json:"csiSnapshot,omitempty" protobuf:"bytes,6,opt,name=csiSnapshot"`
 }

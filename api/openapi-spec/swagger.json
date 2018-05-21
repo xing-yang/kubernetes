@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
    "title": "Kubernetes",
-   "version": "v1.8.0"
+   "version": "v1.11.0"
   },
   "paths": {
    "/api/": {
@@ -85392,7 +85392,8 @@
    "io.k8s.api.storage.v1.StorageClass": {
     "description": "StorageClass describes the parameters for a class of storage for which PersistentVolumes can be dynamically provisioned.\n\nStorageClasses are non-namespaced; the name of the storage class according to etcd is in ObjectMeta.Name.",
     "required": [
-     "provisioner"
+     "provisioner",
+     "snapshotter"
     ],
     "properties": {
      "allowVolumeExpansion": {
@@ -85431,6 +85432,10 @@
      },
      "reclaimPolicy": {
       "description": "Dynamically provisioned PersistentVolumes of this storage class are created with this reclaimPolicy. Defaults to Delete.",
+      "type": "string"
+     },
+     "snapshotter": {
+      "description": "Snapshotter is the driver expected to handle this StorageClass. This is an optionally-prefixed name, like a label key. For example: \"kubernetes.io/gce-pd\" or \"kubernetes.io/aws-ebs\". This value may not be empty.",
       "type": "string"
      },
      "volumeBindingMode": {
@@ -85482,9 +85487,6 @@
    },
    "io.k8s.api.storage.v1alpha1.AWSElasticBlockStoreVolumeSnapshotSource": {
     "description": "AWSElasticBlockStoreVolumeSnapshotSource is AWS EBS volume snapshot source",
-    "required": [
-     "snapshotId"
-    ],
     "properties": {
      "snapshotId": {
       "description": "Unique id of the persistent disk snapshot resource. Used to identify the disk snapshot in AWS",
@@ -85492,11 +85494,26 @@
      }
     }
    },
+   "io.k8s.api.storage.v1alpha1.CSIVolumeSnapshotSource": {
+    "description": "CSIVolumeSnapshotSource is CSI volume snapshot source",
+    "properties": {
+     "createdAt": {
+      "description": "CreatedAt is timestamp when the point-in-time snapshot is taken on the storage system. The format of this field should be a Unix nanoseconds time encoded as an int64. On Unix, the command `date +%s%N` returns the  current time in nanoseconds since 1970-01-01 00:00:00 UTC. This field is REQUIRED.",
+      "type": "integer",
+      "format": "int64"
+     },
+     "driver": {
+      "description": "Driver is the name of the driver to use for this snapshot. Required.",
+      "type": "string"
+     },
+     "snapshotHandle": {
+      "description": "SnapshotHandle is the unique snapshot id returned by the CSI volume plugin’s CreateSnapshot to refer to the snapshot on all subsequent calls. Required.",
+      "type": "string"
+     }
+    }
+   },
    "io.k8s.api.storage.v1alpha1.CinderVolumeSnapshotSource": {
     "description": "CinderVolumeSnapshotSource is Cinder volume snapshot source",
-    "required": [
-     "snapshotId"
-    ],
     "properties": {
      "snapshotId": {
       "description": "Unique id of the cinder volume snapshot resource. Used to identify the snapshot in OpenStack",
@@ -85506,9 +85523,6 @@
    },
    "io.k8s.api.storage.v1alpha1.GCEPersistentDiskSnapshotSource": {
     "description": "GCEPersistentDiskSnapshotSource is GCE PD volume snapshot source",
-    "required": [
-     "snapshotId"
-    ],
     "properties": {
      "snapshotId": {
       "description": "Unique id of the persistent disk snapshot resource. Used to identify the disk snapshot in GCE",
@@ -85518,9 +85532,6 @@
    },
    "io.k8s.api.storage.v1alpha1.GlusterVolumeSnapshotSource": {
     "description": "GlusterVolumeSnapshotSource is Gluster volume snapshot source",
-    "required": [
-     "snapshotId"
-    ],
     "properties": {
      "snapshotId": {
       "description": "UniqueID represents a snapshot resource.",
@@ -85530,9 +85541,6 @@
    },
    "io.k8s.api.storage.v1alpha1.HostPathVolumeSnapshotSource": {
     "description": "HostPathVolumeSnapshotSource is HostPath volume snapshot source",
-    "required": [
-     "snapshot"
-    ],
     "properties": {
      "snapshot": {
       "description": "Path represents a tar file that stores the HostPath volume source",
@@ -85845,6 +85853,10 @@
       "description": "CinderVolumeSnapshotSource represents Cinder snapshot resource",
       "$ref": "#/definitions/io.k8s.api.storage.v1alpha1.CinderVolumeSnapshotSource"
      },
+     "csiSnapshot": {
+      "description": "CSISnapshot represents CSI snapshot resource",
+      "$ref": "#/definitions/io.k8s.api.storage.v1alpha1.CSIVolumeSnapshotSource"
+     },
      "gcePersistentDisk": {
       "description": "GCEPersistentDiskSnapshotSource represents an GCE PD snapshot resource",
       "$ref": "#/definitions/io.k8s.api.storage.v1alpha1.GCEPersistentDiskSnapshotSource"
@@ -85954,7 +85966,8 @@
    "io.k8s.api.storage.v1beta1.StorageClass": {
     "description": "StorageClass describes the parameters for a class of storage for which PersistentVolumes can be dynamically provisioned.\n\nStorageClasses are non-namespaced; the name of the storage class according to etcd is in ObjectMeta.Name.",
     "required": [
-     "provisioner"
+     "provisioner",
+     "snapshotter"
     ],
     "properties": {
      "allowVolumeExpansion": {
@@ -85993,6 +86006,10 @@
      },
      "reclaimPolicy": {
       "description": "Dynamically provisioned PersistentVolumes of this storage class are created with this reclaimPolicy. Defaults to Delete.",
+      "type": "string"
+     },
+     "snapshotter": {
+      "description": "Snapshotter is the driver expected to handle this StorageClass. This is an optionally-prefixed name, like a label key. For example: \"kubernetes.io/gce-pd\" or \"kubernetes.io/aws-ebs\". This value may not be empty.",
       "type": "string"
      },
      "volumeBindingMode": {
