@@ -80,6 +80,12 @@ type StorageClass struct {
 	// the DynamicProvisioningScheduling feature.
 	// +optional
 	AllowedTopologies []api.TopologySelectorTerm
+
+	// Snapshotter is the driver expected to handle volume snapshotting.
+	// This is an optionally-prefixed name, like a label key.
+	// For example: "kubernetes.io/gce-pd" or "kubernetes.io/aws-ebs".
+	// This value may not be empty.
+	Snapshotter string
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
@@ -240,12 +246,11 @@ type VolumeSnapshotConditionType string
 
 // These are valid conditions of a volume snapshot.
 const (
-	// VolumeSnapshotConditionPending means the snapshot is cut and the application
+	// VolumeSnapshotConditionUploading means the snapshot is cut and the application
 	// can resume accessing data if ConditionStatus is True. It corresponds
 	// to "Uploading" in GCE PD or "Pending" in AWS and ConditionStatus is True.
-	// It also corresponds to "Creating" in OpenStack Cinder and ConditionStatus
-	// is Unknown.
-	VolumeSnapshotConditionPending VolumeSnapshotConditionType = "Pending"
+	// This condition type is not applicable in OpenStack Cinder.
+	VolumeSnapshotConditionUploading VolumeSnapshotConditionType = "Uploading"
 	// VolumeSnapshotConditionReady is added when the snapshot has been successfully created and is ready to be used.
 	VolumeSnapshotConditionReady VolumeSnapshotConditionType = "Ready"
 	// VolumeSnapshotConditionError means an error occurred during snapshot creation.
@@ -337,8 +342,8 @@ type VolumeSnapshotDataConditionType string
 const (
 	// VolumeSnapshotDataReady is added when the on-disk snapshot has been successfully created.
 	VolumeSnapshotDataConditionReady VolumeSnapshotDataConditionType = "Ready"
-	// VolumeSnapshotDataPending is added when the on-disk snapshot has been successfully created but is not available to use.
-	VolumeSnapshotDataConditionPending VolumeSnapshotDataConditionType = "Pending"
+	// VolumeSnapshotDataUploading is added when the on-disk snapshot has been successfully cut and is being uploaded.
+	VolumeSnapshotDataConditionUploading VolumeSnapshotDataConditionType = "Uploading"
 	// VolumeSnapshotDataError is added but the on-disk snapshot is failed to created
 	VolumeSnapshotDataConditionError VolumeSnapshotDataConditionType = "Error"
 )
@@ -425,6 +430,24 @@ type GCEPersistentDiskSnapshotSource struct {
 	SnapshotName string
 }
 
+type CSIVolumeSnapshotSource struct {
+	// Driver is the name of the driver to use for this snapshot.
+	// Required.
+	Driver string
+
+	// SnapshotHandle is the unique snapshot id returned by the CSI volume
+	// plugin’s CreateSnapshot to refer to the snapshot on all subsequent calls.
+	// Required.
+	SnapshotHandle string
+
+	// CreatedAt is timestamp when the point-in-time snapshot is taken on the storage
+	// system. The format of this field should be a Unix nanoseconds time
+	// encoded as an int64. On Unix, the command `date +%s%N` returns
+	// the  current time in nanoseconds since 1970-01-01 00:00:00 UTC.
+	// This field is REQUIRED.
+	CreatedAt int64
+}
+
 // VolumeSnapshotDataSource represents the actual location and type of the snapshot. Only one of its members may be specified.
 type VolumeSnapshotDataSource struct {
 	// HostPath represents a directory on the host.
@@ -448,4 +471,7 @@ type VolumeSnapshotDataSource struct {
 	// CinderVolumeSnapshotSource represents Cinder snapshot resource
 	// +optional
 	CinderSnapshot *CinderVolumeSnapshotSource
+	// CSISnapshot represents CSI snapshot resource
+	// +optional
+	CSISnapshot *CSIVolumeSnapshotSource
 }
