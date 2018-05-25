@@ -187,7 +187,8 @@ type VolumeSnapshotCondition struct {
 // the VolumeSnapshotSpec
 type VolumeSnapshot struct {
 	metav1.TypeMeta `json:",inline"`
-	// Standard object's metadata.
+
+	// Standard object metadata.
 	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 	// +optional
 	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
@@ -209,8 +210,8 @@ type VolumeSnapshotList struct {
 	// Standard list metadata.
 	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 	// +optional
-	metav1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
-	Items           []VolumeSnapshot `json:"items" protobuf:"bytes,2,rep,name=items"`
+	metav1.ListMeta        `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+	Items []VolumeSnapshot `json:"items" protobuf:"bytes,2,rep,name=items"`
 }
 
 // VolumeSnapshotSpec is the desired state of the volume snapshot
@@ -242,8 +243,8 @@ type VolumeSnapshotDataList struct {
 	// Standard list metadata.
 	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 	// +optional
-	metav1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
-	Items           []VolumeSnapshotData `json:"items" protobuf:"bytes,2,rep,name=items"`
+	metav1.ListMeta            `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+	Items []VolumeSnapshotData `json:"items" protobuf:"bytes,2,rep,name=items"`
 }
 
 // VolumeSnapshotDataConditionType is the type of the VolumeSnapshotData condition
