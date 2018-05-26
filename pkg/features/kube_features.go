@@ -286,6 +286,12 @@ const (
 	//
 	// Extend the default scheduler to be aware of volume topology and handle PV provisioning
 	DynamicProvisioningScheduling utilfeature.Feature = "DynamicProvisioningScheduling"
+
+	// owner: @xing-yang
+	// alpha: v1.11
+	//
+	// Enable volume snapshot support.
+	VolumeSnapshot utilfeature.Feature = "VolumeSnapshot"
 )
 
 func init() {
@@ -335,6 +341,7 @@ var defaultKubernetesFeatureGates = map[utilfeature.Feature]utilfeature.FeatureS
 	VolumeSubpath:                               {Default: true, PreRelease: utilfeature.GA},
 	BalanceAttachedNodeVolumes:                  {Default: false, PreRelease: utilfeature.Alpha},
 	DynamicProvisioningScheduling:               {Default: false, PreRelease: utilfeature.Alpha},
+	VolumeSnapshot:                              {Default: true, PreRelease: utilfeature.Alpha},
 
 	// inherited features from generic apiserver, relisted here to get a conflict if it is changed
 	// unintentionally on either side:
