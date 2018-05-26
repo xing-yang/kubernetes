@@ -235,7 +235,7 @@ func (c *Controller) GetVolumeDevicePluginDir(pluginName string) string {
 }
 
 func (expc *Controller) GetPodsDir() string {
-        return ""
+	return ""
 }
 
 func (c *Controller) GetPodVolumeDir(podUID types.UID, pluginName string, volumeName string) string {
@@ -311,5 +311,5 @@ func (c *Controller) GetNodeName() types.NodeName {
 }
 
 func (c *Controller) GetEventRecorder() record.EventRecorder {
-        return c.recorder
+	return c.recorder
 }
