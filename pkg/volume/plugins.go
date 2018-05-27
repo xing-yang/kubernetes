@@ -216,6 +216,16 @@ type ExpandableVolumePlugin interface {
 	RequiresFSResize() bool
 }
 
+// SnapshotableVolumePlugin is an extended interface of VolumePlugin and is used
+// to create snapshot for PersistentVolume
+type SnapshotableVolumePlugin interface {
+	VolumePlugin
+	// NewDeleter creates a new volume.Deleter which knows how to delete this
+	// resource in accordance with the underlying storage provider after the
+	// volume's release from a claim
+	NewSnapshotter() (Snapshotter, error)
+}
+
 // BlockVolumePlugin is an extend interface of VolumePlugin and is used for block volumes support.
 type BlockVolumePlugin interface {
 	VolumePlugin
@@ -728,6 +738,32 @@ func (pm *VolumePluginMgr) FindExpandablePluginByName(name string) (ExpandableVo
 
 	if expandableVolumePlugin, ok := volumePlugin.(ExpandableVolumePlugin); ok {
 		return expandableVolumePlugin, nil
+	}
+	return nil, nil
+}
+
+// FindSnapshottablePluginBySpec fetches a snapshottable plugin by spec.
+func (pm *VolumePluginMgr) FindSnapshottablePluginBySpec(spec *Spec) (SnapshotableVolumePlugin, error) {
+	volumePlugin, err := pm.FindPluginBySpec(spec)
+	if err != nil {
+		return nil, err
+	}
+
+	if snapshotableVolumePlugin, ok := volumePlugin.(SnapshotableVolumePlugin); ok {
+		return snapshotableVolumePlugin, nil
+	}
+	return nil, nil
+}
+
+// FindSnapshottablePluginByName fetches a snapshottable plugin by name.
+func (pm *VolumePluginMgr) FindSnapshottablePluginByName(name string) (SnapshotableVolumePlugin, error) {
+	volumePlugin, err := pm.FindPluginByName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	if snapshotableVolumePlugin, ok := volumePlugin.(SnapshotableVolumePlugin); ok {
+		return snapshotableVolumePlugin, nil
 	}
 	return nil, nil
 }
