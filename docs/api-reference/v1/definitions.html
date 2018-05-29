@@ -8048,16 +8048,9 @@ Examples:<br>
 
 </div>
 <div class="sect2">
-<<<<<<< 4867efe26ff38c1613d506cf636503913fd51e6a
-<<<<<<< 06c3ae76d52aa515a285bd7515b2cc4cce3bf24c
 <h3 id="_v1_cinderpersistentvolumesource">v1.CinderPersistentVolumeSource</h3>
 <div class="paragraph">
 <p>Represents a cinder volume resource in Openstack. A Cinder volume must exist before mounting to a container. The volume must also be in the same region as the kubelet. Cinder volumes support ownership management and SELinux relabeling.</p>
-=======
-<h3 id="_v1_gcepersistentdisksnapshotsource">v1.GCEPersistentDiskSnapshotSource</h3>
-<div class="paragraph">
-<p>GCEPersistentDiskSnapshotSource is GCE PD volume snapshot source</p>
->>>>>>> add generate file
 </div>
 <table class="tableblock frame-all grid-all" style="width:100%; ">
 <colgroup>
@@ -8078,18 +8071,12 @@ Examples:<br>
 </thead>
 <tbody>
 <tr>
-<<<<<<< 06c3ae76d52aa515a285bd7515b2cc4cce3bf24c
 <td class="tableblock halign-left valign-top"><p class="tableblock">volumeID</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">volume id used to identify the volume in cinder More info: <a href="https://releases.k8s.io/HEAD/examples/mysql-cinder-pd/README.md">https://releases.k8s.io/HEAD/examples/mysql-cinder-pd/README.md</a></p></td>
-=======
-<td class="tableblock halign-left valign-top"><p class="tableblock">snapshotId</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Unique id of the persistent disk snapshot resource. Used to identify the disk snapshot in GCE</p></td>
->>>>>>> add generate file
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
-<<<<<<< 06c3ae76d52aa515a285bd7515b2cc4cce3bf24c
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">fsType</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Filesystem type to mount. Must be a filesystem type supported by the host operating system. Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified. More info: <a href="https://releases.k8s.io/HEAD/examples/mysql-cinder-pd/README.md">https://releases.k8s.io/HEAD/examples/mysql-cinder-pd/README.md</a></p></td>
@@ -8166,15 +8153,11 @@ Examples:<br>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
-=======
->>>>>>> add generate file
 </tbody>
 </table>
 
 </div>
 <div class="sect2">
-=======
->>>>>>> Revert "add generate file"
 <h3 id="_v1_csipersistentvolumesource">v1.CSIPersistentVolumeSource</h3>
 <div class="paragraph">
 <p>Represents storage that is managed by an external CSI volume driver (Beta feature)</p>

@@ -72,7 +72,6 @@ message StorageClass {
   // +optional
   optional string volumeBindingMode = 7;
 
-<<<<<<< 27fe12b6e6cee1641a63d5794cdd3b2644b97c51
   // Restrict the node topologies where volumes can be dynamically provisioned.
   // Each volume plugin defines its own supported topology specifications.
   // An empty TopologySelectorTerm list means there is no topology restriction.
@@ -80,13 +79,12 @@ message StorageClass {
   // the DynamicProvisioningScheduling feature.
   // +optional
   repeated k8s.io.api.core.v1.TopologySelectorTerm allowedTopologies = 8;
-=======
-  // Snapshotter is the driver expected to handle this StorageClass.
+
+  // Snapshotter is the driver expected to handle the volume snapshotting.
   // This is an optionally-prefixed name, like a label key.
   // For example: "kubernetes.io/gce-pd" or "kubernetes.io/aws-ebs".
   // This value may not be empty.
-  optional string snapshotter = 8;
->>>>>>> add generate file
+  optional string snapshotter = 9;
 }
 
 // StorageClassList is a collection of storage classes.

@@ -66,11 +66,8 @@ func autoConvert_v1beta1_StorageClass_To_storage_StorageClass(in *v1beta1.Storag
 	out.MountOptions = *(*[]string)(unsafe.Pointer(&in.MountOptions))
 	out.AllowVolumeExpansion = (*bool)(unsafe.Pointer(in.AllowVolumeExpansion))
 	out.VolumeBindingMode = (*storage.VolumeBindingMode)(unsafe.Pointer(in.VolumeBindingMode))
-<<<<<<< 27fe12b6e6cee1641a63d5794cdd3b2644b97c51
 	out.AllowedTopologies = *(*[]core.TopologySelectorTerm)(unsafe.Pointer(&in.AllowedTopologies))
-=======
 	out.Snapshotter = in.Snapshotter
->>>>>>> add generate file
 	return nil
 }
 
@@ -87,11 +84,8 @@ func autoConvert_storage_StorageClass_To_v1beta1_StorageClass(in *storage.Storag
 	out.MountOptions = *(*[]string)(unsafe.Pointer(&in.MountOptions))
 	out.AllowVolumeExpansion = (*bool)(unsafe.Pointer(in.AllowVolumeExpansion))
 	out.VolumeBindingMode = (*v1beta1.VolumeBindingMode)(unsafe.Pointer(in.VolumeBindingMode))
-<<<<<<< 27fe12b6e6cee1641a63d5794cdd3b2644b97c51
 	out.AllowedTopologies = *(*[]v1.TopologySelectorTerm)(unsafe.Pointer(&in.AllowedTopologies))
-=======
 	out.Snapshotter = in.Snapshotter
->>>>>>> add generate file
 	return nil
 }
 

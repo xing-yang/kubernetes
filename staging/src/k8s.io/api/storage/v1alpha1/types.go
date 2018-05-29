@@ -150,12 +150,11 @@ type VolumeSnapshotConditionType string
 
 // These are valid conditions of a volume snapshot.
 const (
-	// VolumeSnapshotConditionPending means the snapshot is cut and the application
+	// VolumeSnapshotConditionUploading means the snapshot is cut and the application
 	// can resume accessing data if ConditionStatus is True. It corresponds
 	// to "Uploading" in GCE PD or "Pending" in AWS and ConditionStatus is True.
-	// It also corresponds to "Creating" in OpenStack Cinder and ConditionStatus
-	// is Unknown.
-	VolumeSnapshotConditionPending VolumeSnapshotConditionType = "Pending"
+	// This condition type is not applicable in OpenStack Cinder.
+	VolumeSnapshotConditionUploading VolumeSnapshotConditionType = "Uploading"
 	// VolumeSnapshotConditionReady is added when the snapshot has been successfully created and is ready to be used.
 	VolumeSnapshotConditionReady VolumeSnapshotConditionType = "Ready"
 	// VolumeSnapshotConditionError means an error occurred during snapshot creation.
@@ -187,8 +186,7 @@ type VolumeSnapshotCondition struct {
 // the VolumeSnapshotSpec
 type VolumeSnapshot struct {
 	metav1.TypeMeta `json:",inline"`
-
-	// Standard object metadata.
+	// Standard object's metadata.
 	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 	// +optional
 	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
@@ -210,8 +208,8 @@ type VolumeSnapshotList struct {
 	// Standard list metadata.
 	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 	// +optional
-	metav1.ListMeta        `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
-	Items []VolumeSnapshot `json:"items" protobuf:"bytes,2,rep,name=items"`
+	metav1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+	Items           []VolumeSnapshot `json:"items" protobuf:"bytes,2,rep,name=items"`
 }
 
 // VolumeSnapshotSpec is the desired state of the volume snapshot
@@ -243,8 +241,8 @@ type VolumeSnapshotDataList struct {
 	// Standard list metadata.
 	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 	// +optional
-	metav1.ListMeta            `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
-	Items []VolumeSnapshotData `json:"items" protobuf:"bytes,2,rep,name=items"`
+	metav1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+	Items           []VolumeSnapshotData `json:"items" protobuf:"bytes,2,rep,name=items"`
 }
 
 // VolumeSnapshotDataConditionType is the type of the VolumeSnapshotData condition
@@ -254,8 +252,8 @@ type VolumeSnapshotDataConditionType string
 const (
 	// VolumeSnapshotDataReady is added when the on-disk snapshot has been successfully created.
 	VolumeSnapshotDataConditionReady VolumeSnapshotDataConditionType = "Ready"
-	// VolumeSnapshotDataPending is added when the on-disk snapshot has been successfully created but is not available to use.
-	VolumeSnapshotDataConditionPending VolumeSnapshotDataConditionType = "Pending"
+	// VolumeSnapshotDataUploading is added when the on-disk snapshot has been successfully cut and is being uploaded.
+	VolumeSnapshotDataConditionUploading VolumeSnapshotDataConditionType = "Uploading"
 	// VolumeSnapshotDataError is added but the on-disk snapshot is failed to created
 	VolumeSnapshotDataConditionError VolumeSnapshotDataConditionType = "Error"
 )

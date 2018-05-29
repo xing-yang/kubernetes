@@ -1,6 +1,7 @@
 
 cluster/images/etcd-version-monitor
 cmd/hyperkube
+cmd/kube-apiserver/app
 cmd/kube-controller-manager/app
 cmd/kube-proxy/app
 cmd/kube-scheduler/app
@@ -188,7 +189,6 @@ pkg/kubelet/dockershim/network/hostport/testing
 pkg/kubelet/dockershim/network/kubenet
 pkg/kubelet/dockershim/network/testing
 pkg/kubelet/events
-pkg/kubelet/gpu
 pkg/kubelet/images
 pkg/kubelet/kuberuntime
 pkg/kubelet/leaky

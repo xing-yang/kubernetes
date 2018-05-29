@@ -5,8 +5,6 @@ go_library(
     srcs = [
         "expansion_generated.go",
         "volumeattachment.go",
-        "volumesnapshot.go",
-        "volumesnapshotdata.go",
     ],
     importpath = "k8s.io/client-go/listers/storage/v1alpha1",
     visibility = ["//visibility:public"],

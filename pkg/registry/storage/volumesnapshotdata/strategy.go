@@ -1,12 +1,9 @@
 /*
 Copyright 2018 The Kubernetes Authors.
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
-
     http://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,13 +14,13 @@ limitations under the License.
 package volumesnapshotdata
 
 import (
+	"context"
 	"fmt"
 
 	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/validation/field"
-	genericapirequest "k8s.io/apiserver/pkg/endpoints/request"
 	"k8s.io/apiserver/pkg/registry/generic"
 	"k8s.io/apiserver/pkg/storage"
 	"k8s.io/apiserver/pkg/storage/names"
@@ -47,10 +44,10 @@ func (volumesnapshotdataStrategy) NamespaceScoped() bool {
 }
 
 // ResetBeforeCreate clears the Status field which is not allowed to be set by end users on creation.
-func (volumesnapshotdataStrategy) PrepareForCreate(ctx genericapirequest.Context, obj runtime.Object) {
+func (volumesnapshotdataStrategy) PrepareForCreate(ctx context.Context, obj runtime.Object) {
 }
 
-func (volumesnapshotdataStrategy) Validate(ctx genericapirequest.Context, obj runtime.Object) field.ErrorList {
+func (volumesnapshotdataStrategy) Validate(ctx context.Context, obj runtime.Object) field.ErrorList {
 	volumeSnapshotData := obj.(*apistorage.VolumeSnapshotData)
 	return validation.ValidateVolumeSnapshotData(volumeSnapshotData)
 }
@@ -64,13 +61,13 @@ func (volumesnapshotdataStrategy) AllowCreateOnUpdate() bool {
 }
 
 // PrepareForUpdate sets the Status fields which is not allowed to be set by an end user updating a VSD
-func (volumesnapshotdataStrategy) PrepareForUpdate(ctx genericapirequest.Context, obj, old runtime.Object) {
+func (volumesnapshotdataStrategy) PrepareForUpdate(ctx context.Context, obj, old runtime.Object) {
 	newVsd := obj.(*apistorage.VolumeSnapshotData)
 	oldVsd := old.(*apistorage.VolumeSnapshotData)
 	newVsd.Status = oldVsd.Status
 }
 
-func (volumesnapshotdataStrategy) ValidateUpdate(ctx genericapirequest.Context, obj, old runtime.Object) field.ErrorList {
+func (volumesnapshotdataStrategy) ValidateUpdate(ctx context.Context, obj, old runtime.Object) field.ErrorList {
 	newVsd := obj.(*apistorage.VolumeSnapshotData)
 	errorList := validation.ValidateVolumeSnapshotData(newVsd)
 	return append(errorList, validation.ValidateVolumeSnapshotDataUpdate(newVsd, old.(*apistorage.VolumeSnapshotData))...)
@@ -87,13 +84,13 @@ type volumeSnapshotStatusStrategy struct {
 var StatusStrategy = volumeSnapshotStatusStrategy{Strategy}
 
 // PrepareForUpdate sets the Spec field which is not allowed to be changed when updating a PV's Status
-func (volumeSnapshotStatusStrategy) PrepareForUpdate(ctx genericapirequest.Context, obj, old runtime.Object) {
+func (volumeSnapshotStatusStrategy) PrepareForUpdate(ctx context.Context, obj, old runtime.Object) {
 	newVsd := obj.(*apistorage.VolumeSnapshotData)
 	oldVsd := old.(*apistorage.VolumeSnapshotData)
 	newVsd.Spec = oldVsd.Spec
 }
 
-func (volumeSnapshotStatusStrategy) ValidateUpdate(ctx genericapirequest.Context, obj, old runtime.Object) field.ErrorList {
+func (volumeSnapshotStatusStrategy) ValidateUpdate(ctx context.Context, obj, old runtime.Object) field.ErrorList {
 	return validation.ValidateVolumeSnapshotDataStatusUpdate(obj.(*apistorage.VolumeSnapshotData), old.(*apistorage.VolumeSnapshotData))
 }
 

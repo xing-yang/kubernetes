@@ -36,11 +36,8 @@ var map_StorageClass = map[string]string{
 	"mountOptions":         "Dynamically provisioned PersistentVolumes of this storage class are created with these mountOptions, e.g. [\"ro\", \"soft\"]. Not validated - mount of the PVs will simply fail if one is invalid.",
 	"allowVolumeExpansion": "AllowVolumeExpansion shows whether the storage class allow volume expand",
 	"volumeBindingMode":    "VolumeBindingMode indicates how PersistentVolumeClaims should be provisioned and bound.  When unset, VolumeBindingImmediate is used. This field is alpha-level and is only honored by servers that enable the VolumeScheduling feature.",
-<<<<<<< 27fe12b6e6cee1641a63d5794cdd3b2644b97c51
 	"allowedTopologies":    "Restrict the node topologies where volumes can be dynamically provisioned. Each volume plugin defines its own supported topology specifications. An empty TopologySelectorTerm list means there is no topology restriction. This field is alpha-level and is only honored by servers that enable the DynamicProvisioningScheduling feature.",
-=======
-	"snapshotter":          "Snapshotter is the driver expected to handle this StorageClass. This is an optionally-prefixed name, like a label key. For example: \"kubernetes.io/gce-pd\" or \"kubernetes.io/aws-ebs\". This value may not be empty.",
->>>>>>> add generate file
+	"snapshotter":          "Snapshotter is the driver expected to handle the volume snapshotting. This is an optionally-prefixed name, like a label key. For example: \"kubernetes.io/gce-pd\" or \"kubernetes.io/aws-ebs\". This value may not be empty.",
 }
 
 func (StorageClass) SwaggerDoc() map[string]string {

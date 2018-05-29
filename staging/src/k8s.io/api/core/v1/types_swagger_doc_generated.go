@@ -170,8 +170,6 @@ func (CephFSVolumeSource) SwaggerDoc() map[string]string {
 	return map_CephFSVolumeSource
 }
 
-<<<<<<< 4867efe26ff38c1613d506cf636503913fd51e6a
-<<<<<<< 06c3ae76d52aa515a285bd7515b2cc4cce3bf24c
 var map_CinderPersistentVolumeSource = map[string]string{
 	"":          "Represents a cinder volume resource in Openstack. A Cinder volume must exist before mounting to a container. The volume must also be in the same region as the kubelet. Cinder volumes support ownership management and SELinux relabeling.",
 	"volumeID":  "volume id used to identify the volume in cinder More info: https://releases.k8s.io/HEAD/examples/mysql-cinder-pd/README.md",
@@ -182,19 +180,8 @@ var map_CinderPersistentVolumeSource = map[string]string{
 
 func (CinderPersistentVolumeSource) SwaggerDoc() map[string]string {
 	return map_CinderPersistentVolumeSource
-=======
-var map_CinderVolumeSnapshotSource = map[string]string{
-	"":           "CinderVolumeSnapshotSource is Cinder volume snapshot source",
-	"snapshotId": "Unique id of the cinder volume snapshot resource. Used to identify the snapshot in OpenStack",
 }
 
-func (CinderVolumeSnapshotSource) SwaggerDoc() map[string]string {
-	return map_CinderVolumeSnapshotSource
->>>>>>> add generate file
-}
-
-=======
->>>>>>> Revert "add generate file"
 var map_CinderVolumeSource = map[string]string{
 	"":          "Represents a cinder volume resource in Openstack. A Cinder volume must exist before mounting to a container. The volume must also be in the same region as the kubelet. Cinder volumes support ownership management and SELinux relabeling.",
 	"volumeID":  "volume id used to identify the volume in cinder More info: https://releases.k8s.io/HEAD/examples/mysql-cinder-pd/README.md",

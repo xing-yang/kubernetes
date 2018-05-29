@@ -62,7 +62,7 @@ func (c *FakeVolumeSnapshots) List(opts v1.ListOptions) (result *storage.VolumeS
 	if label == nil {
 		label = labels.Everything()
 	}
-	list := &storage.VolumeSnapshotList{}
+	list := &storage.VolumeSnapshotList{ListMeta: obj.(*storage.VolumeSnapshotList).ListMeta}
 	for _, item := range obj.(*storage.VolumeSnapshotList).Items {
 		if label.Matches(labels.Set(item.Labels)) {
 			list.Items = append(list.Items, item)

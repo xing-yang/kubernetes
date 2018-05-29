@@ -2,15 +2,7 @@
   "swagger": "2.0",
   "info": {
    "title": "Kubernetes",
-<<<<<<< 27fe12b6e6cee1641a63d5794cdd3b2644b97c51
-<<<<<<< 91aa1f2beb261a081ed3f9d7cebcf780b3b3c514
    "version": "v1.12.0"
-=======
-   "version": "v1.8.0"
->>>>>>> add generate file
-=======
-   "version": "v1.11.0"
->>>>>>> add generate file
   },
   "paths": {
    "/api/": {
@@ -78482,8 +78474,6 @@
      }
     }
    },
-<<<<<<< 4867efe26ff38c1613d506cf636503913fd51e6a
-<<<<<<< 06c3ae76d52aa515a285bd7515b2cc4cce3bf24c
    "io.k8s.api.core.v1.CinderPersistentVolumeSource": {
     "description": "Represents a cinder volume resource in Openstack. A Cinder volume must exist before mounting to a container. The volume must also be in the same region as the kubelet. Cinder volumes support ownership management and SELinux relabeling.",
     "required": [
@@ -78504,22 +78494,10 @@
      },
      "volumeID": {
       "description": "volume id used to identify the volume in cinder More info: https://releases.k8s.io/HEAD/examples/mysql-cinder-pd/README.md",
-=======
-   "io.k8s.api.core.v1.CinderVolumeSnapshotSource": {
-    "description": "CinderVolumeSnapshotSource is Cinder volume snapshot source",
-    "required": [
-     "snapshotId"
-    ],
-    "properties": {
-     "snapshotId": {
-      "description": "Unique id of the cinder volume snapshot resource. Used to identify the snapshot in OpenStack",
->>>>>>> add generate file
       "type": "string"
      }
     }
    },
-=======
->>>>>>> Revert "add generate file"
    "io.k8s.api.core.v1.CinderVolumeSource": {
     "description": "Represents a cinder volume resource in Openstack. A Cinder volume must exist before mounting to a container. The volume must also be in the same region as the kubelet. Cinder volumes support ownership management and SELinux relabeling.",
     "required": [
@@ -81921,7 +81899,7 @@
       "type": "string"
      },
      "type": {
-      "description": "Type of VolumeSnapshot condition.",
+      "description": "Type of replication controller condition.",
       "type": "string"
      }
     }
@@ -83186,280 +83164,6 @@
      }
     }
    },
-<<<<<<< 4867efe26ff38c1613d506cf636503913fd51e6a
-   "io.k8s.api.core.v1.VolumeSnapshot": {
-    "description": "VolumeSnapshot is the volume snapshot object accessible to the user. Upon succesful creation of the actual snapshot by the volume provider it is bound to the corresponding VolumeSnapshotData through the VolumeSnapshotSpec",
-    "properties": {
-     "apiVersion": {
-      "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
-      "type": "string"
-     },
-     "kind": {
-      "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
-      "type": "string"
-     },
-     "metadata": {
-      "description": "Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
-      "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta"
-     },
-     "spec": {
-      "description": "Spec represents the desired state of the snapshot",
-      "$ref": "#/definitions/io.k8s.api.core.v1.VolumeSnapshotSpec"
-     },
-     "status": {
-      "description": "Status represents the latest observer state of the snapshot",
-      "$ref": "#/definitions/io.k8s.api.core.v1.VolumeSnapshotStatus"
-     }
-    },
-    "x-kubernetes-group-version-kind": [
-     {
-      "group": "",
-      "kind": "VolumeSnapshot",
-      "version": "v1"
-     }
-    ]
-   },
-   "io.k8s.api.core.v1.VolumeSnapshotCondition": {
-    "description": "VolumeSnapshotCondition describes the state of a volume snapshot  at a certain point.",
-    "required": [
-     "type",
-     "status"
-    ],
-    "properties": {
-     "lastTransitionTime": {
-      "description": "The last time the condition transitioned from one status to another.",
-      "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.Time"
-     },
-     "message": {
-      "description": "A human readable message indicating details about the transition.",
-      "type": "string"
-     },
-     "reason": {
-      "description": "The reason for the condition's last transition.",
-      "type": "string"
-     },
-     "status": {
-      "description": "Status of the condition, one of True, False, Unknown.",
-      "type": "string"
-     },
-     "type": {
-      "description": "Type of replication controller condition.",
-      "type": "string"
-     }
-    }
-   },
-   "io.k8s.api.core.v1.VolumeSnapshotData": {
-    "description": "VolumeSnapshotData represents the actual \"on-disk\" snapshot object",
-    "properties": {
-     "apiVersion": {
-      "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
-      "type": "string"
-     },
-     "kind": {
-      "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
-      "type": "string"
-     },
-     "metadata": {
-      "description": "Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
-      "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta"
-     },
-     "spec": {
-      "description": "Spec represents the desired state of the snapshot",
-      "$ref": "#/definitions/io.k8s.api.core.v1.VolumeSnapshotDataSpec"
-     },
-     "status": {
-      "description": "Status represents the latest observed state of the snapshot",
-      "$ref": "#/definitions/io.k8s.api.core.v1.VolumeSnapshotDataStatus"
-     }
-    },
-    "x-kubernetes-group-version-kind": [
-     {
-      "group": "",
-      "kind": "VolumeSnapshotData",
-      "version": "v1"
-     }
-    ]
-   },
-   "io.k8s.api.core.v1.VolumeSnapshotDataCondition": {
-    "description": "VolumeSnapshotDataCondition describes the state of a volume snapshot  at a certain point.",
-    "required": [
-     "type",
-     "status"
-    ],
-    "properties": {
-     "lastTransitionTime": {
-      "description": "The last time the condition transitioned from one status to another.",
-      "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.Time"
-     },
-     "message": {
-      "description": "A human readable message indicating details about the transition.",
-      "type": "string"
-     },
-     "reason": {
-      "description": "The reason for the condition's last transition.",
-      "type": "string"
-     },
-     "status": {
-      "description": "Status of the condition, one of True, False, Unknown.",
-      "type": "string"
-     },
-     "type": {
-      "description": "Type of volume snapshot condition.",
-      "type": "string"
-     }
-    }
-   },
-   "io.k8s.api.core.v1.VolumeSnapshotDataList": {
-    "description": "VolumeSnapshotDataList is a list of VolumeSnapshotData objects",
-    "required": [
-     "items"
-    ],
-    "properties": {
-     "apiVersion": {
-      "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
-      "type": "string"
-     },
-     "items": {
-      "type": "array",
-      "items": {
-       "$ref": "#/definitions/io.k8s.api.core.v1.VolumeSnapshotData"
-      }
-     },
-     "kind": {
-      "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
-      "type": "string"
-     },
-     "metadata": {
-      "description": "Standard list metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
-      "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ListMeta"
-     }
-    },
-    "x-kubernetes-group-version-kind": [
-     {
-      "group": "",
-      "kind": "VolumeSnapshotDataList",
-      "version": "v1"
-     }
-    ]
-   },
-   "io.k8s.api.core.v1.VolumeSnapshotDataSpec": {
-    "description": "VolumeSnapshotDataSpec is the spec of the volume snapshot data",
-    "properties": {
-     "awsElasticBlockStore": {
-      "$ref": "#/definitions/io.k8s.api.core.v1.AWSElasticBlockStoreVolumeSnapshotSource"
-     },
-     "cinderVolume": {
-      "description": "CinderVolumeSnapshotSource represents Cinder snapshot resource",
-      "$ref": "#/definitions/io.k8s.api.core.v1.CinderVolumeSnapshotSource"
-     },
-     "gcePersistentDisk": {
-      "description": "GCEPersistentDiskSnapshotSource represents an GCE PD snapshot resource",
-      "$ref": "#/definitions/io.k8s.api.core.v1.GCEPersistentDiskSnapshotSource"
-     },
-     "glusterSnapshotVolume": {
-      "description": "AWSElasticBlockStore represents an AWS Disk resource that is attached to a kubelet's host machine and then exposed to the pod. More info: https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore GlusterSnapshotSource represents a gluster snapshot resource",
-      "$ref": "#/definitions/io.k8s.api.core.v1.GlusterVolumeSnapshotSource"
-     },
-     "hostPath": {
-      "description": "HostPath represents a directory on the host. Provisioned by a developer or tester. This is useful for single-node development and testing only! On-host storage is not supported in any way and WILL NOT WORK in a multi-node cluster. More info: https://kubernetes.io/docs/concepts/storage/volumes#hostpath",
-      "$ref": "#/definitions/io.k8s.api.core.v1.HostPathVolumeSnapshotSource"
-     },
-     "persistentVolumeRef": {
-      "description": "PersistentVolumeRef represents the PersistentVolume that the snapshot has been taken from",
-      "$ref": "#/definitions/io.k8s.api.core.v1.ObjectReference"
-     },
-     "volumeSnapshotRef": {
-      "description": "VolumeSnapshotRef is part of bi-directional binding between VolumeSnapshot and VolumeSnapshotData",
-      "$ref": "#/definitions/io.k8s.api.core.v1.ObjectReference"
-     }
-    }
-   },
-   "io.k8s.api.core.v1.VolumeSnapshotDataStatus": {
-    "description": "VolumeSnapshotDataStatus is the actual state of the volume snapshot",
-    "required": [
-     "conditions"
-    ],
-    "properties": {
-     "conditions": {
-      "description": "Representes the lates available observations about the volume snapshot",
-      "type": "array",
-      "items": {
-       "$ref": "#/definitions/io.k8s.api.core.v1.VolumeSnapshotDataCondition"
-      }
-     },
-     "creationTimestamp": {
-      "description": "The time the snapshot was successfully created",
-      "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.Time"
-     }
-    }
-   },
-   "io.k8s.api.core.v1.VolumeSnapshotList": {
-    "description": "VolumeSnapshotList is a list of VolumeSnapshot objects",
-    "required": [
-     "items"
-    ],
-    "properties": {
-     "apiVersion": {
-      "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
-      "type": "string"
-     },
-     "items": {
-      "type": "array",
-      "items": {
-       "$ref": "#/definitions/io.k8s.api.core.v1.VolumeSnapshot"
-      }
-     },
-     "kind": {
-      "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
-      "type": "string"
-     },
-     "metadata": {
-      "description": "Standard list metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
-      "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ListMeta"
-     }
-    },
-    "x-kubernetes-group-version-kind": [
-     {
-      "group": "",
-      "kind": "VolumeSnapshotList",
-      "version": "v1"
-     }
-    ]
-   },
-   "io.k8s.api.core.v1.VolumeSnapshotSpec": {
-    "description": "VolumeSnapshotSpec is the desired state of the volume snapshot",
-    "properties": {
-     "persistentVolumeClaimName": {
-      "description": "PersistentVolumeClaimName is the name of the PVC being snapshotted",
-      "type": "string"
-     },
-     "snapshotDataName": {
-      "description": "SnapshotDataName binds the VolumeSnapshot object with the VolumeSnapshotData",
-      "type": "string"
-     }
-    }
-   },
-   "io.k8s.api.core.v1.VolumeSnapshotStatus": {
-    "description": "VolumeSnapshotStatus is the status of the VolumeSnapshot",
-    "required": [
-     "conditions"
-    ],
-    "properties": {
-     "conditions": {
-      "description": "Represent the latest available observations about the volume snapshot",
-      "type": "array",
-      "items": {
-       "$ref": "#/definitions/io.k8s.api.core.v1.VolumeSnapshotCondition"
-      }
-     },
-     "creationTimestamp": {
-      "description": "The time the snapshot was successfully created",
-      "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.Time"
-     }
-    }
-   },
-=======
->>>>>>> Revert "add generate file"
    "io.k8s.api.core.v1.VsphereVirtualDiskVolumeSource": {
     "description": "Represents a vSphere volume resource.",
     "required": [
@@ -87122,7 +86826,7 @@
       "type": "string"
      },
      "snapshotter": {
-      "description": "Snapshotter is the driver expected to handle this StorageClass. This is an optionally-prefixed name, like a label key. For example: \"kubernetes.io/gce-pd\" or \"kubernetes.io/aws-ebs\". This value may not be empty.",
+      "description": "Snapshotter is the driver expected to handle the volume snapshotting. This is an optionally-prefixed name, like a label key. For example: \"kubernetes.io/gce-pd\" or \"kubernetes.io/aws-ebs\". This value may not be empty.",
       "type": "string"
      },
      "volumeBindingMode": {
@@ -87653,8 +87357,7 @@
    "io.k8s.api.storage.v1beta1.StorageClass": {
     "description": "StorageClass describes the parameters for a class of storage for which PersistentVolumes can be dynamically provisioned.\n\nStorageClasses are non-namespaced; the name of the storage class according to etcd is in ObjectMeta.Name.",
     "required": [
-     "provisioner",
-     "snapshotter"
+     "provisioner"
     ],
     "properties": {
      "allowVolumeExpansion": {
@@ -87703,7 +87406,7 @@
       "type": "string"
      },
      "snapshotter": {
-      "description": "Snapshotter is the driver expected to handle this StorageClass. This is an optionally-prefixed name, like a label key. For example: \"kubernetes.io/gce-pd\" or \"kubernetes.io/aws-ebs\". This value may not be empty.",
+      "description": "Snapshotter is the driver expected to handle the volume snapshotting. This is an optionally-prefixed name, like a label key. For example: \"kubernetes.io/gce-pd\" or \"kubernetes.io/aws-ebs\". This value may not be empty.",
       "type": "string"
      },
      "volumeBindingMode": {

@@ -7,8 +7,6 @@ go_library(
         "generated_expansion.go",
         "storage_client.go",
         "volumeattachment.go",
-        "volumesnapshot.go",
-        "volumesnapshotdata.go",
     ],
     importpath = "k8s.io/client-go/kubernetes/typed/storage/v1alpha1",
     visibility = ["//visibility:public"],
