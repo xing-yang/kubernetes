@@ -56,7 +56,7 @@ import (
 	persistentvolumecontroller "k8s.io/kubernetes/pkg/controller/volume/persistentvolume"
 	"k8s.io/kubernetes/pkg/controller/volume/pvcprotection"
 	"k8s.io/kubernetes/pkg/controller/volume/pvprotection"
-	"k8s.io/kubernetes/pkg/controller/volume/snapshot"
+	snapshotcontroller "k8s.io/kubernetes/pkg/controller/volume/snapshot"
 	"k8s.io/kubernetes/pkg/features"
 	"k8s.io/kubernetes/pkg/quota/generic"
 	quotainstall "k8s.io/kubernetes/pkg/quota/install"
@@ -416,17 +416,22 @@ func startPVProtectionController(ctx ControllerContext) (bool, error) {
 
 func startSnapshotController(ctx ControllerContext) (bool, error) {
 	if utilfeature.DefaultFeatureGate.Enabled(features.VolumeSnapshot) {
-		ssc, err := snapshot.NewSnapshotController(
-			ctx.InformerFactory.Storage().V1alpha1().VolumeSnapshots(),
-			ctx.InformerFactory.Storage().V1alpha1().VolumeSnapshotDatas(),
-			ctx.ClientBuilder.ClientOrDie("snapshot-controller"),
-			ctx.Cloud,
-			ProbeSnapshottableVolumePlugins(ctx.ComponentConfig.PersistentVolumeBinderController.VolumeConfiguration),
-		)
-		if err != nil {
-			return true, fmt.Errorf("Failed to start volume snapshot controller : %v", err)
+		params := snapshotcontroller.ControllerParameters{
+			KubeClient:                 ctx.ClientBuilder.ClientOrDie("snapshot-controller"),
+			SyncPeriod:                 ctx.ComponentConfig.PersistentVolumeBinderController.PVClaimBinderSyncPeriod.Duration,
+			VolumePlugins:              ProbeSnapshottableVolumePlugins(ctx.ComponentConfig.PersistentVolumeBinderController.VolumeConfiguration),
+			Cloud:                      ctx.Cloud,
+			ClusterName:                ctx.ComponentConfig.KubeCloudShared.ClusterName,
+			VolumeInformer:             ctx.InformerFactory.Core().V1().PersistentVolumes(),
+			ClaimInformer:              ctx.InformerFactory.Core().V1().PersistentVolumeClaims(),
+			VolumeSnapshotInformer:     ctx.InformerFactory.Storage().V1alpha1().VolumeSnapshots(),
+			VolumeSnapshotDataInformer: ctx.InformerFactory.Storage().V1alpha1().VolumeSnapshotDatas(),
 		}
-		go ssc.Run(ctx.Stop)
+		ssc, err := snapshotcontroller.NewSnapshotController(params)
+		if err != nil {
+			return true, fmt.Errorf("failed to start volume snapshot controller : %v", err)
+		}
+		go ssc.Run(1, ctx.Stop)
 		return true, nil
 	}
 	return false, nil
