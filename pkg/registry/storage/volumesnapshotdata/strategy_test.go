@@ -16,7 +16,7 @@ package volumesnapshotdata
 import (
 	"testing"
 
-	"k8s.io/kubernetes/pkg/api/legacyscheme"
+	storageapiv1alpha1 "k8s.io/api/storage/v1alpha1"
 	apitesting "k8s.io/kubernetes/pkg/api/testing"
 	"k8s.io/kubernetes/pkg/apis/storage"
 
@@ -26,7 +26,7 @@ import (
 
 func TestSelectableFieldLabelConversions(t *testing.T) {
 	apitesting.TestSelectableFieldLabelConversionsOfKind(t,
-		legacyscheme.Registry.GroupOrDie(storage.GroupName).GroupVersion.String(),
+		storageapiv1alpha1.SchemeGroupVersion.String(),
 		"VolumeSnapshotData",
 		VolumeSnapshotDataToSelectableFields(&storage.VolumeSnapshotData{}),
 		map[string]string{"name": "metadata.name"},
