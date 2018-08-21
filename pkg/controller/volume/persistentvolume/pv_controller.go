@@ -1012,7 +1012,7 @@ func (ctrl *PersistentVolumeController) bind(volume *v1.PersistentVolume, claim 
 	}
 	claim = updatedClaim
 
-	if claim.Spec.DataSource != nil && !isVolumeDataPopulated(volume) {
+	if claim.Spec.DataSource != nil && !ctrl.isVolumeDataPopulated(volume) {
 		errStr := fmt.Sprintf("error binding volume %q to claim %q: claim has data source, but data is not yet populated to volume", volume.Name, claimToClaimKey(claim))
 		glog.V(3).Infof(errStr)
 		return fmt.Errorf(errStr)
@@ -1030,7 +1030,8 @@ func (ctrl *PersistentVolumeController) bind(volume *v1.PersistentVolume, claim 
 	return nil
 }
 
-func isVolumeDataPopulated(volume *v1.PersistentVolume) bool {
+// isVolumeDataPopulated checks whether data is populated to the persistent volume.
+func (ctrl *PersistentVolumeController) isVolumeDataPopulated(volume *v1.PersistentVolume) bool {
 	for _, condition := range volume.Status.Conditions {
 		if condition.Type == v1.PersistentVolumeDataPopulated && condition.Status == v1.ConditionTrue {
 			return true

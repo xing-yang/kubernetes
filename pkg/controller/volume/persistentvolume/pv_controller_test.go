@@ -378,3 +378,49 @@ func TestDelayBinding(t *testing.T) {
 		t.Errorf("Test %q returned true, expected false", name)
 	}
 }
+
+// TestIsVolumeDataPolulated tests func TestIsVolumeDataPolulated()
+func TestIsVolumeDataPolulated(t *testing.T) {
+	client := &fake.Clientset{}
+	informerFactory := informers.NewSharedInformerFactory(client, controller.NoResyncPeriodFunc())
+	classInformer := informerFactory.Storage().V1().StorageClasses()
+	ctrl := &PersistentVolumeController{
+		classLister: classInformer.Lister(),
+	}
+
+	pv := newVolume("pvName", "1Gi", "", "", v1.VolumeAvailable, v1.PersistentVolumeReclaimDelete, classEmpty)
+
+	lastCondition := v1.PersistentVolumeCondition{
+		Type:               v1.PersistentVolumeDataPopulated,
+		Status:             v1.ConditionTrue,
+		LastProbeTime:      metav1.Now(),
+		LastTransitionTime: metav1.Now(),
+		Reason:             "DataPopulated",
+		Message:            "data is populated in the pv",
+	}
+
+	pv.Status.Conditions = []v1.PersistentVolumeCondition{
+		lastCondition,
+	}
+
+	if ctrl.isVolumeDataPopulated(pv) == false {
+		t.Errorf("expected volume data populated, got: data not populated")
+	}
+
+	lastCondition = v1.PersistentVolumeCondition{
+		Type:               v1.PersistentVolumeDataPopulated,
+		Status:             v1.ConditionFalse,
+		LastProbeTime:      metav1.Now(),
+		LastTransitionTime: metav1.Now(),
+		Reason:             "DataNotPopulated",
+		Message:            "data is not populated in the pv",
+	}
+
+	pv.Status.Conditions = []v1.PersistentVolumeCondition{
+		lastCondition,
+	}
+
+	if ctrl.isVolumeDataPopulated(pv) == true {
+		t.Errorf("expected volume data not populated, got: data populated")
+	}
+}
