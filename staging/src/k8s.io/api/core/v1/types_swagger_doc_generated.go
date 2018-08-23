@@ -2207,9 +2207,10 @@ func (TopologySelectorTerm) SwaggerDoc() map[string]string {
 }
 
 var map_TypedLocalObjectReference = map[string]string{
-	"":     "TypedLocalObjectReference contains enough information to let you locate the typed referenced object inside the same namespace.",
-	"name": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
-	"kind": "Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
+	"":         "TypedLocalObjectReference contains enough information to let you locate the typed referenced object inside the same namespace.",
+	"apiGroup": "APIGroup is the group for the resource being referenced",
+	"kind":     "Kind is the type of resource being referenced",
+	"name":     "Name is the name of resource being referenced",
 }
 
 func (TypedLocalObjectReference) SwaggerDoc() map[string]string {

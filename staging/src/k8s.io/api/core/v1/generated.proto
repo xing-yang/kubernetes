@@ -4476,15 +4476,14 @@ message TopologySelectorTerm {
 // TypedLocalObjectReference contains enough information to let you locate the
 // typed referenced object inside the same namespace.
 message TypedLocalObjectReference {
-  // Name of the referent.
-  // More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-  // +optional
-  optional string name = 1;
+  // APIGroup is the group for the resource being referenced
+  optional string apiGroup = 1;
 
-  // Kind of the referent.
-  // More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
-  // +optional
+  // Kind is the type of resource being referenced
   optional string kind = 2;
+
+  // Name is the name of resource being referenced
+  optional string name = 3;
 }
 
 // Volume represents a named volume in a pod that may be accessed by any container in the pod.

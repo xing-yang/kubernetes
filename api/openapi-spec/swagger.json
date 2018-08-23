@@ -83025,13 +83025,22 @@
    },
    "io.k8s.api.core.v1.TypedLocalObjectReference": {
     "description": "TypedLocalObjectReference contains enough information to let you locate the typed referenced object inside the same namespace.",
+    "required": [
+     "apiGroup",
+     "kind",
+     "name"
+    ],
     "properties": {
+     "apiGroup": {
+      "description": "APIGroup is the group for the resource being referenced",
+      "type": "string"
+     },
      "kind": {
-      "description": "Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
+      "description": "Kind is the type of resource being referenced",
       "type": "string"
      },
      "name": {
-      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+      "description": "Name is the name of resource being referenced",
       "type": "string"
      }
     }
