@@ -19,7 +19,6 @@ package csi
 import (
 	"context"
 	"crypto/sha256"
-	"errors"
 	"fmt"
 	"os"
 	"path"
@@ -292,8 +291,9 @@ func (c *csiMountMgr) podAttributes() (map[string]string, error) {
 	if !utilfeature.DefaultFeatureGate.Enabled(features.CSIDriverRegistry) {
 		return nil, nil
 	}
+
 	if c.plugin.csiDriverLister == nil {
-		return nil, errors.New("CSIDriver lister does not exist")
+		return nil, fmt.Errorf("CSIDriverLister not found")
 	}
 
 	csiDriver, err := c.plugin.csiDriverLister.Get(string(c.driverName))

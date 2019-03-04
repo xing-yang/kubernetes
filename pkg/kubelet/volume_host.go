@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"net"
 	"runtime"
+	"time"
 
 	"k8s.io/klog"
 
@@ -27,7 +28,9 @@ import (
 	"k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/types"
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
+	"k8s.io/client-go/informers"
 	clientset "k8s.io/client-go/kubernetes"
+	storagelisters "k8s.io/client-go/listers/storage/v1beta1"
 	"k8s.io/client-go/tools/record"
 	cloudprovider "k8s.io/cloud-provider"
 	"k8s.io/kubernetes/pkg/features"
@@ -56,6 +59,22 @@ func NewInitializedVolumePluginMgr(
 	plugins []volume.VolumePlugin,
 	prober volume.DynamicPluginProber) (*volume.VolumePluginMgr, error) {
 
+	// Initialize csiDriverLister before calling NewInitializedVolumePluginMgr
+	var csiDriverLister storagelisters.CSIDriverLister
+	// a 10 minute resyncPeriod is used in a few places in K8S so we use it here as well
+	const resyncPeriod = 10 * time.Minute
+	if utilfeature.DefaultFeatureGate.Enabled(features.CSIDriverRegistry) {
+		// Don't initialize if kubeClient is nil
+		if kubelet.kubeClient != nil {
+			kubelet.informerFactory = informers.NewSharedInformerFactory(kubelet.kubeClient, resyncPeriod)
+			csiDriverInformer := kubelet.informerFactory.Storage().V1beta1().CSIDrivers()
+			csiDriverLister = csiDriverInformer.Lister()
+
+		} else {
+			klog.Warning("kubeClient is nil. Skip initialization of CSIDriverLister")
+		}
+	}
+
 	mountPodManager, err := mountpod.NewManager(kubelet.getRootDir(), kubelet.podManager)
 	if err != nil {
 		return nil, err
@@ -67,6 +86,7 @@ func NewInitializedVolumePluginMgr(
 		configMapManager: configMapManager,
 		tokenManager:     tokenManager,
 		mountPodManager:  mountPodManager,
+		csiDriverLister:  csiDriverLister,
 	}
 
 	if err := kvh.volumePluginMgr.InitPlugins(plugins, prober, kvh); err != nil {
@@ -93,6 +113,7 @@ type kubeletVolumeHost struct {
 	tokenManager     *token.Manager
 	configMapManager configmap.Manager
 	mountPodManager  mountpod.Manager
+	csiDriverLister  storagelisters.CSIDriverLister
 }
 
 func (kvh *kubeletVolumeHost) SetKubeletError(err error) {
@@ -129,6 +150,10 @@ func (kvh *kubeletVolumeHost) GetKubeClient() clientset.Interface {
 
 func (kvh *kubeletVolumeHost) GetSubpather() subpath.Interface {
 	return kvh.kubelet.subpather
+}
+
+func (kvh *kubeletVolumeHost) CSIDriverLister() storagelisters.CSIDriverLister {
+	return kvh.csiDriverLister
 }
 
 func (kvh *kubeletVolumeHost) NewWrapperMounter(

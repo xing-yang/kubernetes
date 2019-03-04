@@ -43,6 +43,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/wait"
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
+	"k8s.io/client-go/informers"
 	clientset "k8s.io/client-go/kubernetes"
 	v1core "k8s.io/client-go/kubernetes/typed/core/v1"
 	corelisters "k8s.io/client-go/listers/core/v1"
@@ -812,7 +813,8 @@ func NewMainKubelet(kubeCfg *kubeletconfiginternal.KubeletConfiguration,
 		klet.getPodsDir(),
 		kubeDeps.Recorder,
 		experimentalCheckNodeCapabilitiesBeforeMount,
-		keepTerminatedPodVolumes)
+		keepTerminatedPodVolumes,
+		klet.informerFactory)
 
 	klet.reasonCache = NewReasonCache()
 	klet.workQueue = queue.NewBasicWorkQueue(klet.clock)
@@ -1216,6 +1218,9 @@ type Kubelet struct {
 
 	// Handles RuntimeClass objects for the Kubelet.
 	runtimeClassManager *runtimeclass.Manager
+
+	// This is for building the informer factory for CSIDriverLister
+	informerFactory informers.SharedInformerFactory
 }
 
 // setupDataDirs creates:
@@ -1395,6 +1400,13 @@ func (kl *Kubelet) Run(updates <-chan kubetypes.PodUpdate) {
 	if err := kl.initializeModules(); err != nil {
 		kl.recorder.Eventf(kl.nodeRef, v1.EventTypeWarning, events.KubeletSetupFailed, err.Error())
 		klog.Fatal(err)
+	}
+
+	if kl.kubeClient != nil {
+		// start informer for CSIDriver
+		if utilfeature.DefaultFeatureGate.Enabled(features.CSIDriverRegistry) {
+			go kl.informerFactory.Start(wait.NeverStop)
+		}
 	}
 
 	// Start volume manager
