@@ -236,6 +236,7 @@ func newTestVolumeManager(tmpDir string, podManager kubepod.Manager, kubeClient 
 		fakeRecorder,
 		false, /* experimentalCheckNodeCapabilitiesBeforeMount */
 		false, /* keepTerminatedPodVolumes */
+		nil,   /* informers.SharedInformerFactory */
 		nil /* kcache.InformerSynced */)
 
 	return vm

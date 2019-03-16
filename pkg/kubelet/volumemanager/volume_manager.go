@@ -29,6 +29,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/informers"
 	clientset "k8s.io/client-go/kubernetes"
+	kcache "k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/tools/record"
 	"k8s.io/klog"
 	"k8s.io/kubernetes/pkg/kubelet/config"
@@ -160,7 +161,8 @@ func NewVolumeManager(
 	recorder record.EventRecorder,
 	checkNodeCapabilitiesBeforeMount bool,
 	keepTerminatedPodVolumes bool,
-	informerFactory informers.SharedInformerFactory) VolumeManager {
+	informerFactory informers.SharedInformerFactory,
+	csiDriversSynced kcache.InformerSynced) VolumeManager {
 
 	vm := &volumeManager{
 		kubeClient:          kubeClient,
@@ -168,6 +170,7 @@ func NewVolumeManager(
 		desiredStateOfWorld: cache.NewDesiredStateOfWorld(volumePluginMgr),
 		actualStateOfWorld:  cache.NewActualStateOfWorld(nodeName, volumePluginMgr),
 		informerFactory:     informerFactory,
+		csiDriversSynced:    csiDriversSynced,
 		operationExecutor: operationexecutor.NewOperationExecutor(operationexecutor.NewOperationGenerator(
 			kubeClient,
 			volumePluginMgr,
@@ -242,7 +245,8 @@ type volumeManager struct {
 	desiredStateOfWorldPopulator populator.DesiredStateOfWorldPopulator
 
 	// the informer factory for CSIDriverLister
-	informerFactory informers.SharedInformerFactory
+	informerFactory  informers.SharedInformerFactory
+	csiDriversSynced kcache.InformerSynced
 }
 
 func (vm *volumeManager) Run(sourcesReady config.SourcesReady, stopCh <-chan struct{}) {
@@ -250,6 +254,14 @@ func (vm *volumeManager) Run(sourcesReady config.SourcesReady, stopCh <-chan str
 
 	if vm.informerFactory != nil {
 		vm.informerFactory.WaitForCacheSync(wait.NeverStop)
+
+		if vm.csiDriversSynced != nil {
+			synced := []kcache.InformerSynced{}
+			synced = append(synced, vm.csiDriversSynced)
+			if !kcache.WaitForCacheSync(wait.NeverStop, synced...) {
+				klog.Warning("failed to wait for cache sync for CSIDriverLister")
+			}
+		}
 	}
 
 	go vm.desiredStateOfWorldPopulator.Run(sourcesReady, stopCh)

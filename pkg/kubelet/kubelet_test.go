@@ -341,6 +341,7 @@ func newTestKubeletWithImageList(
 		kubelet.recorder,
 		false, /* experimentalCheckNodeCapabilitiesBeforeMount*/
 		false, /* keepTerminatedPodVolumes */
+		nil,   /* informers.SharedInformerFactory */
 		nil /* kcache.InformerSynced */)
 
 	kubelet.setNodeStatusFuncs = kubelet.defaultNodeStatusFuncs()

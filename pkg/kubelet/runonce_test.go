@@ -107,6 +107,7 @@ func TestRunOnce(t *testing.T) {
 		kb.recorder,
 		false, /* experimentalCheckNodeCapabilitiesBeforeMount */
 		false, /* keepTerminatedPodVolumes */
+		nil,   /* informers.SharedInformerFactory */
 		nil /* kcache.InformerSynced */)
 
 	// TODO: Factor out "StatsProvider" from Kubelet so we don't have a cyclic dependency

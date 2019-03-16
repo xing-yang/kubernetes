@@ -69,6 +69,7 @@ func NewInitializedVolumePluginMgr(
 			kubelet.informerFactory = informers.NewSharedInformerFactory(kubelet.kubeClient, resyncPeriod)
 			csiDriverInformer := kubelet.informerFactory.Storage().V1beta1().CSIDrivers()
 			csiDriverLister = csiDriverInformer.Lister()
+			kubelet.csiDriversSynced = csiDriverInformer.Informer().HasSynced
 
 		} else {
 			klog.Warning("kubeClient is nil. Skip initialization of CSIDriverLister")

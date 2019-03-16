@@ -814,7 +814,8 @@ func NewMainKubelet(kubeCfg *kubeletconfiginternal.KubeletConfiguration,
 		kubeDeps.Recorder,
 		experimentalCheckNodeCapabilitiesBeforeMount,
 		keepTerminatedPodVolumes,
-		klet.informerFactory)
+		klet.informerFactory,
+		klet.csiDriversSynced)
 
 	klet.reasonCache = NewReasonCache()
 	klet.workQueue = queue.NewBasicWorkQueue(klet.clock)
@@ -1220,7 +1221,8 @@ type Kubelet struct {
 	runtimeClassManager *runtimeclass.Manager
 
 	// This is for building the informer factory for CSIDriverLister
-	informerFactory informers.SharedInformerFactory
+	informerFactory  informers.SharedInformerFactory
+	csiDriversSynced cache.InformerSynced
 }
 
 // setupDataDirs creates:
