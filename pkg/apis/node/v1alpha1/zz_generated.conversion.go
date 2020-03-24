@@ -23,8 +23,9 @@ package v1alpha1
 import (
 	unsafe "unsafe"
 
-	v1 "k8s.io/api/core/v1"
+	corev1 "k8s.io/api/core/v1"
 	v1alpha1 "k8s.io/api/node/v1alpha1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	conversion "k8s.io/apimachinery/pkg/conversion"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	core "k8s.io/kubernetes/pkg/apis/core"
@@ -38,6 +39,66 @@ func init() {
 // RegisterConversions adds conversion functions to the given scheme.
 // Public to allow building arbitrary schemes.
 func RegisterConversions(s *runtime.Scheme) error {
+	if err := s.AddGeneratedConversionFunc((*v1alpha1.ExecutionHook)(nil), (*node.ExecutionHook)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_ExecutionHook_To_node_ExecutionHook(a.(*v1alpha1.ExecutionHook), b.(*node.ExecutionHook), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*node.ExecutionHook)(nil), (*v1alpha1.ExecutionHook)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_node_ExecutionHook_To_v1alpha1_ExecutionHook(a.(*node.ExecutionHook), b.(*v1alpha1.ExecutionHook), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*v1alpha1.ExecutionHookCondition)(nil), (*node.ExecutionHookCondition)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_ExecutionHookCondition_To_node_ExecutionHookCondition(a.(*v1alpha1.ExecutionHookCondition), b.(*node.ExecutionHookCondition), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*node.ExecutionHookCondition)(nil), (*v1alpha1.ExecutionHookCondition)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_node_ExecutionHookCondition_To_v1alpha1_ExecutionHookCondition(a.(*node.ExecutionHookCondition), b.(*v1alpha1.ExecutionHookCondition), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*v1alpha1.ExecutionHookList)(nil), (*node.ExecutionHookList)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_ExecutionHookList_To_node_ExecutionHookList(a.(*v1alpha1.ExecutionHookList), b.(*node.ExecutionHookList), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*node.ExecutionHookList)(nil), (*v1alpha1.ExecutionHookList)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_node_ExecutionHookList_To_v1alpha1_ExecutionHookList(a.(*node.ExecutionHookList), b.(*v1alpha1.ExecutionHookList), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*v1alpha1.ExecutionHookSpec)(nil), (*node.ExecutionHookSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_ExecutionHookSpec_To_node_ExecutionHookSpec(a.(*v1alpha1.ExecutionHookSpec), b.(*node.ExecutionHookSpec), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*node.ExecutionHookSpec)(nil), (*v1alpha1.ExecutionHookSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_node_ExecutionHookSpec_To_v1alpha1_ExecutionHookSpec(a.(*node.ExecutionHookSpec), b.(*v1alpha1.ExecutionHookSpec), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*v1alpha1.ExecutionHookStatus)(nil), (*node.ExecutionHookStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_ExecutionHookStatus_To_node_ExecutionHookStatus(a.(*v1alpha1.ExecutionHookStatus), b.(*node.ExecutionHookStatus), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*node.ExecutionHookStatus)(nil), (*v1alpha1.ExecutionHookStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_node_ExecutionHookStatus_To_v1alpha1_ExecutionHookStatus(a.(*node.ExecutionHookStatus), b.(*v1alpha1.ExecutionHookStatus), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*v1alpha1.HookError)(nil), (*node.HookError)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_HookError_To_node_HookError(a.(*v1alpha1.HookError), b.(*node.HookError), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*node.HookError)(nil), (*v1alpha1.HookError)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_node_HookError_To_v1alpha1_HookError(a.(*node.HookError), b.(*v1alpha1.HookError), scope)
+	}); err != nil {
+		return err
+	}
 	if err := s.AddGeneratedConversionFunc((*v1alpha1.Overhead)(nil), (*node.Overhead)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1alpha1_Overhead_To_node_Overhead(a.(*v1alpha1.Overhead), b.(*node.Overhead), scope)
 	}); err != nil {
@@ -81,6 +142,170 @@ func RegisterConversions(s *runtime.Scheme) error {
 	return nil
 }
 
+func autoConvert_v1alpha1_ExecutionHook_To_node_ExecutionHook(in *v1alpha1.ExecutionHook, out *node.ExecutionHook, s conversion.Scope) error {
+	out.ObjectMeta = in.ObjectMeta
+	if err := Convert_v1alpha1_ExecutionHookSpec_To_node_ExecutionHookSpec(&in.Spec, &out.Spec, s); err != nil {
+		return err
+	}
+	if err := Convert_v1alpha1_ExecutionHookStatus_To_node_ExecutionHookStatus(&in.Status, &out.Status, s); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Convert_v1alpha1_ExecutionHook_To_node_ExecutionHook is an autogenerated conversion function.
+func Convert_v1alpha1_ExecutionHook_To_node_ExecutionHook(in *v1alpha1.ExecutionHook, out *node.ExecutionHook, s conversion.Scope) error {
+	return autoConvert_v1alpha1_ExecutionHook_To_node_ExecutionHook(in, out, s)
+}
+
+func autoConvert_node_ExecutionHook_To_v1alpha1_ExecutionHook(in *node.ExecutionHook, out *v1alpha1.ExecutionHook, s conversion.Scope) error {
+	out.ObjectMeta = in.ObjectMeta
+	if err := Convert_node_ExecutionHookSpec_To_v1alpha1_ExecutionHookSpec(&in.Spec, &out.Spec, s); err != nil {
+		return err
+	}
+	if err := Convert_node_ExecutionHookStatus_To_v1alpha1_ExecutionHookStatus(&in.Status, &out.Status, s); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Convert_node_ExecutionHook_To_v1alpha1_ExecutionHook is an autogenerated conversion function.
+func Convert_node_ExecutionHook_To_v1alpha1_ExecutionHook(in *node.ExecutionHook, out *v1alpha1.ExecutionHook, s conversion.Scope) error {
+	return autoConvert_node_ExecutionHook_To_v1alpha1_ExecutionHook(in, out, s)
+}
+
+func autoConvert_v1alpha1_ExecutionHookCondition_To_node_ExecutionHookCondition(in *v1alpha1.ExecutionHookCondition, out *node.ExecutionHookCondition, s conversion.Scope) error {
+	out.Type = node.ExecutionHookConditionType(in.Type)
+	out.Status = core.ConditionStatus(in.Status)
+	out.LastProbeTime = (*v1.Time)(unsafe.Pointer(in.LastProbeTime))
+	out.LastTransitionTime = (*v1.Time)(unsafe.Pointer(in.LastTransitionTime))
+	out.Reason = (*string)(unsafe.Pointer(in.Reason))
+	out.Message = (*string)(unsafe.Pointer(in.Message))
+	return nil
+}
+
+// Convert_v1alpha1_ExecutionHookCondition_To_node_ExecutionHookCondition is an autogenerated conversion function.
+func Convert_v1alpha1_ExecutionHookCondition_To_node_ExecutionHookCondition(in *v1alpha1.ExecutionHookCondition, out *node.ExecutionHookCondition, s conversion.Scope) error {
+	return autoConvert_v1alpha1_ExecutionHookCondition_To_node_ExecutionHookCondition(in, out, s)
+}
+
+func autoConvert_node_ExecutionHookCondition_To_v1alpha1_ExecutionHookCondition(in *node.ExecutionHookCondition, out *v1alpha1.ExecutionHookCondition, s conversion.Scope) error {
+	out.Type = v1alpha1.ExecutionHookConditionType(in.Type)
+	out.Status = corev1.ConditionStatus(in.Status)
+	out.LastProbeTime = (*v1.Time)(unsafe.Pointer(in.LastProbeTime))
+	out.LastTransitionTime = (*v1.Time)(unsafe.Pointer(in.LastTransitionTime))
+	out.Reason = (*string)(unsafe.Pointer(in.Reason))
+	out.Message = (*string)(unsafe.Pointer(in.Message))
+	return nil
+}
+
+// Convert_node_ExecutionHookCondition_To_v1alpha1_ExecutionHookCondition is an autogenerated conversion function.
+func Convert_node_ExecutionHookCondition_To_v1alpha1_ExecutionHookCondition(in *node.ExecutionHookCondition, out *v1alpha1.ExecutionHookCondition, s conversion.Scope) error {
+	return autoConvert_node_ExecutionHookCondition_To_v1alpha1_ExecutionHookCondition(in, out, s)
+}
+
+func autoConvert_v1alpha1_ExecutionHookList_To_node_ExecutionHookList(in *v1alpha1.ExecutionHookList, out *node.ExecutionHookList, s conversion.Scope) error {
+	out.ListMeta = in.ListMeta
+	out.Items = *(*[]node.ExecutionHook)(unsafe.Pointer(&in.Items))
+	return nil
+}
+
+// Convert_v1alpha1_ExecutionHookList_To_node_ExecutionHookList is an autogenerated conversion function.
+func Convert_v1alpha1_ExecutionHookList_To_node_ExecutionHookList(in *v1alpha1.ExecutionHookList, out *node.ExecutionHookList, s conversion.Scope) error {
+	return autoConvert_v1alpha1_ExecutionHookList_To_node_ExecutionHookList(in, out, s)
+}
+
+func autoConvert_node_ExecutionHookList_To_v1alpha1_ExecutionHookList(in *node.ExecutionHookList, out *v1alpha1.ExecutionHookList, s conversion.Scope) error {
+	out.ListMeta = in.ListMeta
+	out.Items = *(*[]v1alpha1.ExecutionHook)(unsafe.Pointer(&in.Items))
+	return nil
+}
+
+// Convert_node_ExecutionHookList_To_v1alpha1_ExecutionHookList is an autogenerated conversion function.
+func Convert_node_ExecutionHookList_To_v1alpha1_ExecutionHookList(in *node.ExecutionHookList, out *v1alpha1.ExecutionHookList, s conversion.Scope) error {
+	return autoConvert_node_ExecutionHookList_To_v1alpha1_ExecutionHookList(in, out, s)
+}
+
+func autoConvert_v1alpha1_ExecutionHookSpec_To_node_ExecutionHookSpec(in *v1alpha1.ExecutionHookSpec, out *node.ExecutionHookSpec, s conversion.Scope) error {
+	// TODO: Inefficient conversion - can we improve it?
+	if err := s.Convert(&in.HookHandler, &out.HookHandler, 0); err != nil {
+		return err
+	}
+	out.TimeoutSeconds = (*int64)(unsafe.Pointer(in.TimeoutSeconds))
+	return nil
+}
+
+// Convert_v1alpha1_ExecutionHookSpec_To_node_ExecutionHookSpec is an autogenerated conversion function.
+func Convert_v1alpha1_ExecutionHookSpec_To_node_ExecutionHookSpec(in *v1alpha1.ExecutionHookSpec, out *node.ExecutionHookSpec, s conversion.Scope) error {
+	return autoConvert_v1alpha1_ExecutionHookSpec_To_node_ExecutionHookSpec(in, out, s)
+}
+
+func autoConvert_node_ExecutionHookSpec_To_v1alpha1_ExecutionHookSpec(in *node.ExecutionHookSpec, out *v1alpha1.ExecutionHookSpec, s conversion.Scope) error {
+	// TODO: Inefficient conversion - can we improve it?
+	if err := s.Convert(&in.HookHandler, &out.HookHandler, 0); err != nil {
+		return err
+	}
+	out.TimeoutSeconds = (*int64)(unsafe.Pointer(in.TimeoutSeconds))
+	return nil
+}
+
+// Convert_node_ExecutionHookSpec_To_v1alpha1_ExecutionHookSpec is an autogenerated conversion function.
+func Convert_node_ExecutionHookSpec_To_v1alpha1_ExecutionHookSpec(in *node.ExecutionHookSpec, out *v1alpha1.ExecutionHookSpec, s conversion.Scope) error {
+	return autoConvert_node_ExecutionHookSpec_To_v1alpha1_ExecutionHookSpec(in, out, s)
+}
+
+func autoConvert_v1alpha1_ExecutionHookStatus_To_node_ExecutionHookStatus(in *v1alpha1.ExecutionHookStatus, out *node.ExecutionHookStatus, s conversion.Scope) error {
+	out.Timestamp = (*int64)(unsafe.Pointer(in.Timestamp))
+	out.Succeed = (*bool)(unsafe.Pointer(in.Succeed))
+	out.Error = (*node.HookError)(unsafe.Pointer(in.Error))
+	out.Conditions = *(*[]node.ExecutionHookCondition)(unsafe.Pointer(&in.Conditions))
+	return nil
+}
+
+// Convert_v1alpha1_ExecutionHookStatus_To_node_ExecutionHookStatus is an autogenerated conversion function.
+func Convert_v1alpha1_ExecutionHookStatus_To_node_ExecutionHookStatus(in *v1alpha1.ExecutionHookStatus, out *node.ExecutionHookStatus, s conversion.Scope) error {
+	return autoConvert_v1alpha1_ExecutionHookStatus_To_node_ExecutionHookStatus(in, out, s)
+}
+
+func autoConvert_node_ExecutionHookStatus_To_v1alpha1_ExecutionHookStatus(in *node.ExecutionHookStatus, out *v1alpha1.ExecutionHookStatus, s conversion.Scope) error {
+	out.Timestamp = (*int64)(unsafe.Pointer(in.Timestamp))
+	out.Succeed = (*bool)(unsafe.Pointer(in.Succeed))
+	out.Error = (*v1alpha1.HookError)(unsafe.Pointer(in.Error))
+	out.Conditions = *(*[]v1alpha1.ExecutionHookCondition)(unsafe.Pointer(&in.Conditions))
+	return nil
+}
+
+// Convert_node_ExecutionHookStatus_To_v1alpha1_ExecutionHookStatus is an autogenerated conversion function.
+func Convert_node_ExecutionHookStatus_To_v1alpha1_ExecutionHookStatus(in *node.ExecutionHookStatus, out *v1alpha1.ExecutionHookStatus, s conversion.Scope) error {
+	return autoConvert_node_ExecutionHookStatus_To_v1alpha1_ExecutionHookStatus(in, out, s)
+}
+
+func autoConvert_v1alpha1_HookError_To_node_HookError(in *v1alpha1.HookError, out *node.HookError, s conversion.Scope) error {
+	out.ErrorType = node.ErrorType(in.ErrorType)
+	out.Message = (*string)(unsafe.Pointer(in.Message))
+	out.Reason = (*string)(unsafe.Pointer(in.Reason))
+	out.Timestamp = (*int64)(unsafe.Pointer(in.Timestamp))
+	return nil
+}
+
+// Convert_v1alpha1_HookError_To_node_HookError is an autogenerated conversion function.
+func Convert_v1alpha1_HookError_To_node_HookError(in *v1alpha1.HookError, out *node.HookError, s conversion.Scope) error {
+	return autoConvert_v1alpha1_HookError_To_node_HookError(in, out, s)
+}
+
+func autoConvert_node_HookError_To_v1alpha1_HookError(in *node.HookError, out *v1alpha1.HookError, s conversion.Scope) error {
+	out.ErrorType = v1alpha1.ErrorType(in.ErrorType)
+	out.Message = (*string)(unsafe.Pointer(in.Message))
+	out.Reason = (*string)(unsafe.Pointer(in.Reason))
+	out.Timestamp = (*int64)(unsafe.Pointer(in.Timestamp))
+	return nil
+}
+
+// Convert_node_HookError_To_v1alpha1_HookError is an autogenerated conversion function.
+func Convert_node_HookError_To_v1alpha1_HookError(in *node.HookError, out *v1alpha1.HookError, s conversion.Scope) error {
+	return autoConvert_node_HookError_To_v1alpha1_HookError(in, out, s)
+}
+
 func autoConvert_v1alpha1_Overhead_To_node_Overhead(in *v1alpha1.Overhead, out *node.Overhead, s conversion.Scope) error {
 	out.PodFixed = *(*core.ResourceList)(unsafe.Pointer(&in.PodFixed))
 	return nil
@@ -92,7 +317,7 @@ func Convert_v1alpha1_Overhead_To_node_Overhead(in *v1alpha1.Overhead, out *node
 }
 
 func autoConvert_node_Overhead_To_v1alpha1_Overhead(in *node.Overhead, out *v1alpha1.Overhead, s conversion.Scope) error {
-	out.PodFixed = *(*v1.ResourceList)(unsafe.Pointer(&in.PodFixed))
+	out.PodFixed = *(*corev1.ResourceList)(unsafe.Pointer(&in.PodFixed))
 	return nil
 }
 
@@ -170,7 +395,7 @@ func Convert_v1alpha1_Scheduling_To_node_Scheduling(in *v1alpha1.Scheduling, out
 
 func autoConvert_node_Scheduling_To_v1alpha1_Scheduling(in *node.Scheduling, out *v1alpha1.Scheduling, s conversion.Scope) error {
 	out.NodeSelector = *(*map[string]string)(unsafe.Pointer(&in.NodeSelector))
-	out.Tolerations = *(*[]v1.Toleration)(unsafe.Pointer(&in.Tolerations))
+	out.Tolerations = *(*[]corev1.Toleration)(unsafe.Pointer(&in.Tolerations))
 	return nil
 }
 

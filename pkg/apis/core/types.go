@@ -2102,6 +2102,10 @@ type Handler struct {
 	// TODO: implement a realistic TCP lifecycle hook
 	// +optional
 	TCPSocket *TCPSocketAction
+	// +optional
+	Name *string
+	// +optional
+	HookTimeoutSeconds *int32
 }
 
 // Lifecycle describes actions that the management system should take in response to container lifecycle
@@ -2123,6 +2127,11 @@ type Lifecycle struct {
 	// or until the termination grace period is reached.
 	// +optional
 	PreStop *Handler
+        // +optional
+        Handlers []Handler
+	// Names of ExecutionHooks
+        // +optional
+        HookNames []string
 }
 
 // The below types are used by kube_client and api_server.

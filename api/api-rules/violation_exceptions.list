@@ -142,6 +142,8 @@ API rule violation: list_type_missing,k8s.io/api/core/v1,HTTPGetAction,HTTPHeade
 API rule violation: list_type_missing,k8s.io/api/core/v1,HostAlias,Hostnames
 API rule violation: list_type_missing,k8s.io/api/core/v1,ISCSIPersistentVolumeSource,Portals
 API rule violation: list_type_missing,k8s.io/api/core/v1,ISCSIVolumeSource,Portals
+API rule violation: list_type_missing,k8s.io/api/core/v1,Lifecycle,Handlers
+API rule violation: list_type_missing,k8s.io/api/core/v1,Lifecycle,HookNames
 API rule violation: list_type_missing,k8s.io/api/core/v1,LimitRangeList,Items
 API rule violation: list_type_missing,k8s.io/api/core/v1,LimitRangeSpec,Limits
 API rule violation: list_type_missing,k8s.io/api/core/v1,List,Items
@@ -271,6 +273,8 @@ API rule violation: list_type_missing,k8s.io/api/networking/v1beta1,IngressList,
 API rule violation: list_type_missing,k8s.io/api/networking/v1beta1,IngressSpec,Rules
 API rule violation: list_type_missing,k8s.io/api/networking/v1beta1,IngressSpec,TLS
 API rule violation: list_type_missing,k8s.io/api/networking/v1beta1,IngressTLS,Hosts
+API rule violation: list_type_missing,k8s.io/api/node/v1alpha1,ExecutionHookList,Items
+API rule violation: list_type_missing,k8s.io/api/node/v1alpha1,ExecutionHookStatus,Conditions
 API rule violation: list_type_missing,k8s.io/api/node/v1alpha1,RuntimeClassList,Items
 API rule violation: list_type_missing,k8s.io/api/node/v1beta1,RuntimeClassList,Items
 API rule violation: list_type_missing,k8s.io/api/policy/v1beta1,FSGroupStrategyOptions,Ranges

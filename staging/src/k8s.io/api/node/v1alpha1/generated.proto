@@ -30,6 +30,108 @@ import "k8s.io/apimachinery/pkg/runtime/schema/generated.proto";
 // Package-wide variables from generator "generated".
 option go_package = "v1alpha1";
 
+// ExecutionHook defines a specific action that should be taken with timeout
+message ExecutionHook {
+  // More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+  // +optional
+  optional k8s.io.apimachinery.pkg.apis.meta.v1.ObjectMeta metadata = 1;
+
+  // Specification of the ExecutionHook
+  // More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+  optional ExecutionHookSpec spec = 2;
+
+  // Status represents the current information about a hook
+  // +optional
+  optional ExecutionHookStatus status = 3;
+}
+
+// ExecutionHookCondition represents the current condition of ExecutionHook
+message ExecutionHookCondition {
+  optional string type = 1;
+
+  optional string status = 2;
+
+  // Last time we probed the condition.
+  // +optional
+  optional k8s.io.apimachinery.pkg.apis.meta.v1.Time lastProbeTime = 3;
+
+  // Last time the condition transitioned from one status to another.
+  // +optional
+  optional k8s.io.apimachinery.pkg.apis.meta.v1.Time lastTransitionTime = 4;
+
+  // Unique, this should be a short, machine understandable string that gives the reason
+  // for condition's last transition. If it reports "ResizeStarted" that means the underlying
+  // persistent volume is being resized.
+  // +optional
+  optional string reason = 5;
+
+  // Human-readable message indicating details about last transition.
+  // +optional
+  optional string message = 6;
+}
+
+// ExecutionHookList is a list of ExecutionHook objects.
+message ExecutionHookList {
+  // Standard list metadata.
+  // More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+  // +optional
+  optional k8s.io.apimachinery.pkg.apis.meta.v1.ListMeta metadata = 1;
+
+  // Items is a list of schema objects.
+  repeated ExecutionHook items = 2;
+}
+
+// ExecutionHook defines a specific action that should be taken with timeout
+message ExecutionHookSpec {
+  // Command to execute for a particular trigger
+  optional k8s.io.api.core.v1.Handler hookHandler = 1;
+
+  // How long kubelet should wait for the hook to complete execution
+  // before giving up. Kubelet needs to succeed or fail within this
+  // timeout period, regardless of the retries. If not set, kubelet should
+  // set a default timeout.
+  // +optional
+  optional int64 timeoutSeconds = 2;
+}
+
+message ExecutionHookStatus {
+  // If not set, it is nil, indicating Action has not started
+  // If set, it means Action has started at the specified time
+  // +optional
+  optional int64 timestamp = 1;
+
+  // ActionSucceed is set to true when the action is executed in the container successfully.
+  // It will be set to false if the action cannot be executed successfully after ActionTimeoutSeconds passes.
+  // +optional
+  optional bool succeed = 2;
+
+  // The last error encountered when executing the action. The hook controller might update this field each time
+  // it retries the execution.
+  // +optional
+  optional HookError error = 3;
+
+  // +optional
+  repeated ExecutionHookCondition conditions = 4;
+}
+
+message HookError {
+  // Type of the error
+  // This is required
+  optional string errorType = 1;
+
+  // Error message
+  // +optional
+  optional string message = 2;
+
+  // More detailed reason why error happens
+  // +optional
+  optional string reason = 3;
+
+  // It indicates when the error occurred
+  // +optional
+  optional int64 timestamp = 4;
+}
+
 // Overhead structure represents the resource overhead associated with running a pod.
 message Overhead {
   // PodFixed represents the fixed resource overhead associated with running a pod.

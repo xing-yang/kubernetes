@@ -62,6 +62,8 @@ var (
 	ErrPreStartHook = errors.New("PreStartHookError")
 	// ErrPostStartHook - failed to execute PostStartHook
 	ErrPostStartHook = errors.New("PostStartHookError")
+	// ErrExecutionHook - failed to execute ExecutionHook
+	ErrExecutionHook = errors.New("ExecutionHookError")
 )
 
 // recordContainerEvent should be used by the runtime manager for all container related events.
@@ -236,6 +238,30 @@ func (m *kubeGenericRuntimeManager) startContainer(podSandboxID string, podSandb
 					container.Name, kubeContainerID.String(), format.Pod(pod), ErrPostStartHook, err)
 			}
 			return msg, fmt.Errorf("%s: %v", ErrPostStartHook, handlerErr)
+		}
+	}
+
+	// Step 5: execute the ExecutionHook.
+	klog.Infof("Xing: before ExecutionHook")
+	if container.Lifecycle != nil && len(container.Lifecycle.Handlers) > 0 {
+		for _, handler := range container.Lifecycle.Handlers {
+			kubeContainerID := kubecontainer.ContainerID{
+				Type: m.runtimeName,
+				ID:   containerID,
+			}
+			klog.Infof("Xing: before calling ExecutionHook in container %q(id=%q) in pod %q",
+				container.Name, kubeContainerID.String(), format.Pod(pod))
+			msg, handlerErr := m.runner.Run(kubeContainerID, pod, container, &handler)
+			if handlerErr != nil {
+				m.recordContainerEvent(pod, container, kubeContainerID.ID, v1.EventTypeWarning, events.FailedPostStartHook, msg)
+				if err := m.killContainer(pod, kubeContainerID, container.Name, "FailedExecutionHook", nil); err != nil {
+					klog.Errorf("Failed to kill container %q(id=%q) in pod %q: %v, %v",
+						container.Name, kubeContainerID.String(), format.Pod(pod), ErrExecutionHook, err)
+				}
+				return msg, fmt.Errorf("%s: %v", ErrExecutionHook, handlerErr)
+			}
+			klog.Infof("Xing: successfully called ExecutionHook in container %q(id=%q) in pod %q",
+				container.Name, kubeContainerID.String(), format.Pod(pod))
 		}
 	}
 

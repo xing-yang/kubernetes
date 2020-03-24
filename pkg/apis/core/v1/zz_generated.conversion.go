@@ -3908,6 +3908,8 @@ func autoConvert_v1_Handler_To_core_Handler(in *v1.Handler, out *core.Handler, s
 	out.Exec = (*core.ExecAction)(unsafe.Pointer(in.Exec))
 	out.HTTPGet = (*core.HTTPGetAction)(unsafe.Pointer(in.HTTPGet))
 	out.TCPSocket = (*core.TCPSocketAction)(unsafe.Pointer(in.TCPSocket))
+	out.Name = (*string)(unsafe.Pointer(in.Name))
+	out.HookTimeoutSeconds = (*int32)(unsafe.Pointer(in.HookTimeoutSeconds))
 	return nil
 }
 
@@ -3920,6 +3922,8 @@ func autoConvert_core_Handler_To_v1_Handler(in *core.Handler, out *v1.Handler, s
 	out.Exec = (*v1.ExecAction)(unsafe.Pointer(in.Exec))
 	out.HTTPGet = (*v1.HTTPGetAction)(unsafe.Pointer(in.HTTPGet))
 	out.TCPSocket = (*v1.TCPSocketAction)(unsafe.Pointer(in.TCPSocket))
+	out.Name = (*string)(unsafe.Pointer(in.Name))
+	out.HookTimeoutSeconds = (*int32)(unsafe.Pointer(in.HookTimeoutSeconds))
 	return nil
 }
 
@@ -4079,6 +4083,8 @@ func Convert_core_KeyToPath_To_v1_KeyToPath(in *core.KeyToPath, out *v1.KeyToPat
 func autoConvert_v1_Lifecycle_To_core_Lifecycle(in *v1.Lifecycle, out *core.Lifecycle, s conversion.Scope) error {
 	out.PostStart = (*core.Handler)(unsafe.Pointer(in.PostStart))
 	out.PreStop = (*core.Handler)(unsafe.Pointer(in.PreStop))
+	out.Handlers = *(*[]core.Handler)(unsafe.Pointer(&in.Handlers))
+	out.HookNames = *(*[]string)(unsafe.Pointer(&in.HookNames))
 	return nil
 }
 
@@ -4090,6 +4096,8 @@ func Convert_v1_Lifecycle_To_core_Lifecycle(in *v1.Lifecycle, out *core.Lifecycl
 func autoConvert_core_Lifecycle_To_v1_Lifecycle(in *core.Lifecycle, out *v1.Lifecycle, s conversion.Scope) error {
 	out.PostStart = (*v1.Handler)(unsafe.Pointer(in.PostStart))
 	out.PreStop = (*v1.Handler)(unsafe.Pointer(in.PreStop))
+	out.Handlers = *(*[]v1.Handler)(unsafe.Pointer(&in.Handlers))
+	out.HookNames = *(*[]string)(unsafe.Pointer(&in.HookNames))
 	return nil
 }
 

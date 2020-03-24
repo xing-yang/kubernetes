@@ -1789,6 +1789,16 @@ func (in *Handler) DeepCopyInto(out *Handler) {
 		*out = new(TCPSocketAction)
 		**out = **in
 	}
+	if in.Name != nil {
+		in, out := &in.Name, &out.Name
+		*out = new(string)
+		**out = **in
+	}
+	if in.HookTimeoutSeconds != nil {
+		in, out := &in.HookTimeoutSeconds, &out.HookTimeoutSeconds
+		*out = new(int32)
+		**out = **in
+	}
 	return
 }
 
@@ -1939,6 +1949,18 @@ func (in *Lifecycle) DeepCopyInto(out *Lifecycle) {
 		in, out := &in.PreStop, &out.PreStop
 		*out = new(Handler)
 		(*in).DeepCopyInto(*out)
+	}
+	if in.Handlers != nil {
+		in, out := &in.Handlers, &out.Handlers
+		*out = make([]Handler, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	if in.HookNames != nil {
+		in, out := &in.HookNames, &out.HookNames
+		*out = make([]string, len(*in))
+		copy(*out, *in)
 	}
 	return
 }

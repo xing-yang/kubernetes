@@ -1730,6 +1730,13 @@ message Handler {
   // TODO: implement a realistic TCP lifecycle hook
   // +optional
   optional TCPSocketAction tcpSocket = 3;
+
+  // +optional
+  optional string name = 4;
+
+  // Default value is 300(for 5 min).
+  // +optional
+  optional int32 hookTimeoutSeconds = 5;
 }
 
 // HostAlias holds the mapping between IP and hostnames that will be injected as an entry in the
@@ -1911,6 +1918,12 @@ message Lifecycle {
   // More info: https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks
   // +optional
   optional Handler preStop = 2;
+
+  // +optional
+  repeated Handler handlers = 3;
+
+  // +optional
+  repeated string hookNames = 4;
 }
 
 // LimitRange sets resource usage limits for each kind of resource in a Namespace.

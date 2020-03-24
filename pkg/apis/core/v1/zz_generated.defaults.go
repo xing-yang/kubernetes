@@ -131,6 +131,12 @@ func SetObjectDefaults_EphemeralContainers(in *v1.EphemeralContainers) {
 					SetDefaults_HTTPGetAction(a.EphemeralContainerCommon.Lifecycle.PreStop.HTTPGet)
 				}
 			}
+			for j := range a.EphemeralContainerCommon.Lifecycle.Handlers {
+				b := &a.EphemeralContainerCommon.Lifecycle.Handlers[j]
+				if b.HTTPGet != nil {
+					SetDefaults_HTTPGetAction(b.HTTPGet)
+				}
+			}
 		}
 	}
 }
@@ -319,6 +325,12 @@ func SetObjectDefaults_Pod(in *v1.Pod) {
 					SetDefaults_HTTPGetAction(a.Lifecycle.PreStop.HTTPGet)
 				}
 			}
+			for j := range a.Lifecycle.Handlers {
+				b := &a.Lifecycle.Handlers[j]
+				if b.HTTPGet != nil {
+					SetDefaults_HTTPGetAction(b.HTTPGet)
+				}
+			}
 		}
 	}
 	for i := range in.Spec.Containers {
@@ -367,6 +379,12 @@ func SetObjectDefaults_Pod(in *v1.Pod) {
 					SetDefaults_HTTPGetAction(a.Lifecycle.PreStop.HTTPGet)
 				}
 			}
+			for j := range a.Lifecycle.Handlers {
+				b := &a.Lifecycle.Handlers[j]
+				if b.HTTPGet != nil {
+					SetDefaults_HTTPGetAction(b.HTTPGet)
+				}
+			}
 		}
 	}
 	for i := range in.Spec.EphemeralContainers {
@@ -412,6 +430,12 @@ func SetObjectDefaults_Pod(in *v1.Pod) {
 			if a.EphemeralContainerCommon.Lifecycle.PreStop != nil {
 				if a.EphemeralContainerCommon.Lifecycle.PreStop.HTTPGet != nil {
 					SetDefaults_HTTPGetAction(a.EphemeralContainerCommon.Lifecycle.PreStop.HTTPGet)
+				}
+			}
+			for j := range a.EphemeralContainerCommon.Lifecycle.Handlers {
+				b := &a.EphemeralContainerCommon.Lifecycle.Handlers[j]
+				if b.HTTPGet != nil {
+					SetDefaults_HTTPGetAction(b.HTTPGet)
 				}
 			}
 		}
@@ -525,6 +549,12 @@ func SetObjectDefaults_PodTemplate(in *v1.PodTemplate) {
 					SetDefaults_HTTPGetAction(a.Lifecycle.PreStop.HTTPGet)
 				}
 			}
+			for j := range a.Lifecycle.Handlers {
+				b := &a.Lifecycle.Handlers[j]
+				if b.HTTPGet != nil {
+					SetDefaults_HTTPGetAction(b.HTTPGet)
+				}
+			}
 		}
 	}
 	for i := range in.Template.Spec.Containers {
@@ -573,6 +603,12 @@ func SetObjectDefaults_PodTemplate(in *v1.PodTemplate) {
 					SetDefaults_HTTPGetAction(a.Lifecycle.PreStop.HTTPGet)
 				}
 			}
+			for j := range a.Lifecycle.Handlers {
+				b := &a.Lifecycle.Handlers[j]
+				if b.HTTPGet != nil {
+					SetDefaults_HTTPGetAction(b.HTTPGet)
+				}
+			}
 		}
 	}
 	for i := range in.Template.Spec.EphemeralContainers {
@@ -618,6 +654,12 @@ func SetObjectDefaults_PodTemplate(in *v1.PodTemplate) {
 			if a.EphemeralContainerCommon.Lifecycle.PreStop != nil {
 				if a.EphemeralContainerCommon.Lifecycle.PreStop.HTTPGet != nil {
 					SetDefaults_HTTPGetAction(a.EphemeralContainerCommon.Lifecycle.PreStop.HTTPGet)
+				}
+			}
+			for j := range a.EphemeralContainerCommon.Lifecycle.Handlers {
+				b := &a.EphemeralContainerCommon.Lifecycle.Handlers[j]
+				if b.HTTPGet != nil {
+					SetDefaults_HTTPGetAction(b.HTTPGet)
 				}
 			}
 		}
@@ -733,6 +775,12 @@ func SetObjectDefaults_ReplicationController(in *v1.ReplicationController) {
 						SetDefaults_HTTPGetAction(a.Lifecycle.PreStop.HTTPGet)
 					}
 				}
+				for j := range a.Lifecycle.Handlers {
+					b := &a.Lifecycle.Handlers[j]
+					if b.HTTPGet != nil {
+						SetDefaults_HTTPGetAction(b.HTTPGet)
+					}
+				}
 			}
 		}
 		for i := range in.Spec.Template.Spec.Containers {
@@ -781,6 +829,12 @@ func SetObjectDefaults_ReplicationController(in *v1.ReplicationController) {
 						SetDefaults_HTTPGetAction(a.Lifecycle.PreStop.HTTPGet)
 					}
 				}
+				for j := range a.Lifecycle.Handlers {
+					b := &a.Lifecycle.Handlers[j]
+					if b.HTTPGet != nil {
+						SetDefaults_HTTPGetAction(b.HTTPGet)
+					}
+				}
 			}
 		}
 		for i := range in.Spec.Template.Spec.EphemeralContainers {
@@ -826,6 +880,12 @@ func SetObjectDefaults_ReplicationController(in *v1.ReplicationController) {
 				if a.EphemeralContainerCommon.Lifecycle.PreStop != nil {
 					if a.EphemeralContainerCommon.Lifecycle.PreStop.HTTPGet != nil {
 						SetDefaults_HTTPGetAction(a.EphemeralContainerCommon.Lifecycle.PreStop.HTTPGet)
+					}
+				}
+				for j := range a.EphemeralContainerCommon.Lifecycle.Handlers {
+					b := &a.EphemeralContainerCommon.Lifecycle.Handlers[j]
+					if b.HTTPGet != nil {
+						SetDefaults_HTTPGetAction(b.HTTPGet)
 					}
 				}
 			}

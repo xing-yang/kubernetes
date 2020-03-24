@@ -136,6 +136,12 @@ func SetObjectDefaults_CronJob(in *v1beta1.CronJob) {
 					v1.SetDefaults_HTTPGetAction(a.Lifecycle.PreStop.HTTPGet)
 				}
 			}
+			for j := range a.Lifecycle.Handlers {
+				b := &a.Lifecycle.Handlers[j]
+				if b.HTTPGet != nil {
+					v1.SetDefaults_HTTPGetAction(b.HTTPGet)
+				}
+			}
 		}
 	}
 	for i := range in.Spec.JobTemplate.Spec.Template.Spec.Containers {
@@ -184,6 +190,12 @@ func SetObjectDefaults_CronJob(in *v1beta1.CronJob) {
 					v1.SetDefaults_HTTPGetAction(a.Lifecycle.PreStop.HTTPGet)
 				}
 			}
+			for j := range a.Lifecycle.Handlers {
+				b := &a.Lifecycle.Handlers[j]
+				if b.HTTPGet != nil {
+					v1.SetDefaults_HTTPGetAction(b.HTTPGet)
+				}
+			}
 		}
 	}
 	for i := range in.Spec.JobTemplate.Spec.Template.Spec.EphemeralContainers {
@@ -229,6 +241,12 @@ func SetObjectDefaults_CronJob(in *v1beta1.CronJob) {
 			if a.EphemeralContainerCommon.Lifecycle.PreStop != nil {
 				if a.EphemeralContainerCommon.Lifecycle.PreStop.HTTPGet != nil {
 					v1.SetDefaults_HTTPGetAction(a.EphemeralContainerCommon.Lifecycle.PreStop.HTTPGet)
+				}
+			}
+			for j := range a.EphemeralContainerCommon.Lifecycle.Handlers {
+				b := &a.EphemeralContainerCommon.Lifecycle.Handlers[j]
+				if b.HTTPGet != nil {
+					v1.SetDefaults_HTTPGetAction(b.HTTPGet)
 				}
 			}
 		}
@@ -342,6 +360,12 @@ func SetObjectDefaults_JobTemplate(in *v1beta1.JobTemplate) {
 					v1.SetDefaults_HTTPGetAction(a.Lifecycle.PreStop.HTTPGet)
 				}
 			}
+			for j := range a.Lifecycle.Handlers {
+				b := &a.Lifecycle.Handlers[j]
+				if b.HTTPGet != nil {
+					v1.SetDefaults_HTTPGetAction(b.HTTPGet)
+				}
+			}
 		}
 	}
 	for i := range in.Template.Spec.Template.Spec.Containers {
@@ -390,6 +414,12 @@ func SetObjectDefaults_JobTemplate(in *v1beta1.JobTemplate) {
 					v1.SetDefaults_HTTPGetAction(a.Lifecycle.PreStop.HTTPGet)
 				}
 			}
+			for j := range a.Lifecycle.Handlers {
+				b := &a.Lifecycle.Handlers[j]
+				if b.HTTPGet != nil {
+					v1.SetDefaults_HTTPGetAction(b.HTTPGet)
+				}
+			}
 		}
 	}
 	for i := range in.Template.Spec.Template.Spec.EphemeralContainers {
@@ -435,6 +465,12 @@ func SetObjectDefaults_JobTemplate(in *v1beta1.JobTemplate) {
 			if a.EphemeralContainerCommon.Lifecycle.PreStop != nil {
 				if a.EphemeralContainerCommon.Lifecycle.PreStop.HTTPGet != nil {
 					v1.SetDefaults_HTTPGetAction(a.EphemeralContainerCommon.Lifecycle.PreStop.HTTPGet)
+				}
+			}
+			for j := range a.EphemeralContainerCommon.Lifecycle.Handlers {
+				b := &a.EphemeralContainerCommon.Lifecycle.Handlers[j]
+				if b.HTTPGet != nil {
+					v1.SetDefaults_HTTPGetAction(b.HTTPGet)
 				}
 			}
 		}

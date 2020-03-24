@@ -2282,6 +2282,11 @@ type Handler struct {
 	// TODO: implement a realistic TCP lifecycle hook
 	// +optional
 	TCPSocket *TCPSocketAction `json:"tcpSocket,omitempty" protobuf:"bytes,3,opt,name=tcpSocket"`
+	// +optional
+	Name *string `json:"name,omitempty" protobuf:"bytes,4,opt,name=name"`
+	// Default value is 300(for 5 min).
+	// +optional
+	HookTimeoutSeconds *int32 `json:"hookTimeoutSeconds,omitempty" protobuf:"varint,5,opt,name=hookTimeoutSeconds"`
 }
 
 // Lifecycle describes actions that the management system should take in response to container lifecycle
@@ -2306,6 +2311,10 @@ type Lifecycle struct {
 	// More info: https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks
 	// +optional
 	PreStop *Handler `json:"preStop,omitempty" protobuf:"bytes,2,opt,name=preStop"`
+	// +optional
+	Handlers []Handler `json:"handlers,omitempty" protobuf:"bytes,3,rep,name=handlers"`
+	// +optional
+	HookNames []string `json:"hookNames,omitempty" protobuf:"bytes,4,rep,name=hookNames"`
 }
 
 type ConditionStatus string

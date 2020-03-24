@@ -99,3 +99,119 @@ type RuntimeClassList struct {
 	// Items is a list of schema objects.
 	Items []RuntimeClass
 }
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// ExecutionHook defines a specific action that should be taken with timeout
+type ExecutionHook struct {
+	metav1.TypeMeta
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+	// +optional
+	metav1.ObjectMeta
+
+	// Specification of the ExecutionHook
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+	Spec ExecutionHookSpec
+
+	// Status represents the current information about a hook
+	// +optional
+	Status ExecutionHookStatus
+}
+
+// ExecutionHook defines a specific action that should be taken with timeout
+type ExecutionHookSpec struct {
+	// Command to execute for a particular trigger
+	HookHandler core.Handler
+
+	// How long kubelet should wait for the hook to complete execution
+	// before giving up. Kubelet needs to succeed or fail within this
+	// timeout period, regardless of the retries. If not set, kubelet should
+	// set a default timeout.
+	// +optional
+	TimeoutSeconds *int64
+}
+
+type ExecutionHookConditionType string
+
+// These are valid conditions of ExecutionHooks
+const (
+	// Hook command is waiting to be triggered
+	ExecutionHookPending ExecutionHookConditionType = "HookPending"
+	// Hook command is being executed
+	ExecutionHookExecuting ExecutionHookConditionType = "HookExecuting"
+	// Hook command is completed
+	ExecutionHookCompleted ExecutionHookConditionType = "HookCompleted"
+)
+
+// ExecutionHookCondition represents the current condition of ExecutionHook
+type ExecutionHookCondition struct {
+	Type   ExecutionHookConditionType
+	Status core.ConditionStatus
+	// +optional
+	LastProbeTime *metav1.Time
+	// +optional
+	LastTransitionTime *metav1.Time
+	// +optional
+	Reason *string
+	// +optional
+	Message *string
+}
+
+type ExecutionHookStatus struct {
+	// If not set, it is nil, indicating Action has not started
+	// If set, it means Action has started at the specified time
+	// +optional
+	Timestamp *int64
+
+	// ActionSucceed is set to true when the action is executed in the container successfully.
+	// It will be set to false if the action cannot be executed successfully after ActionTimeoutSeconds passes.
+	// +optional
+	Succeed *bool
+
+	// The last error encountered when executing the action. The hook controller might update this field each time
+	// it retries the execution.
+	// +optional
+	Error *HookError
+	// +optional
+	Conditions []ExecutionHookCondition
+}
+
+type ErrorType string
+
+const (
+	// The execution hook times out
+	Timeout ErrorType = "Timeout"
+
+	// The execution hook fails with an error
+	Error ErrorType = "Error"
+)
+
+type HookError struct {
+	// Type of the error
+	// This is required
+	ErrorType ErrorType
+
+	// Error message
+	// +optional
+	Message *string
+
+	// More detailed reason why error happens
+	// +optional
+	Reason *string
+
+	// It indicates when the error occurred
+	// +optional
+	Timestamp *int64
+}
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// ExecutionHookList is a list of ExecutionHook objects.
+type ExecutionHookList struct {
+	metav1.TypeMeta
+	// +optional
+	metav1.ListMeta
+
+	// Items is a list of schema objects.
+	Items []ExecutionHook
+}
