@@ -206,7 +206,7 @@ const (
 	// CSISnapshotter image
 	CSISnapshotter
 	// CSIProvisioner image
-	//CSIProvisioner
+	CSIProvisioner
 )
 
 func initImageConfigs() map[int]Config {
@@ -252,7 +252,7 @@ func initImageConfigs() map[int]Config {
 	configs[VolumeRBDServer] = Config{e2eVolumeRegistry, "rbd", "1.0.1"}
 	configs[SnapshotController] = Config{dockerTestSnapshot, "snapshot-controller", "apiv1"}
 	configs[CSISnapshotter] = Config{dockerTestSnapshot, "csi-snapshotter", "apiv1"}
-	//configs[CSIProvisioner] = Config{dockerTestSnapshot, "csi-provisioner", "apiv1"}
+	configs[CSIProvisioner] = Config{dockerTestSnapshot, "csi-provisioner", "apiv1"}
 	return configs
 }
 
