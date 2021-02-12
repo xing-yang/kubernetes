@@ -325,7 +325,7 @@ func (adc *attachDetachController) Run(stopCh <-chan struct{}) {
 	defer runtime.HandleCrash()
 	defer adc.pvcQueue.ShutDown()
 
-	klog.Infof("Starting attach detach controller")
+	klog.Infof("XY Test Shutdown: Starting attach detach controller")
 	defer klog.Infof("Shutting down attach detach controller")
 
 	synced := []kcache.InformerSynced{adc.podsSynced, adc.nodesSynced, adc.pvcsSynced, adc.pvsSynced}

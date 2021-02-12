@@ -185,10 +185,13 @@ func (rc *reconciler) reconcile() {
 			}
 			// Check whether timeout has reached the maximum waiting time
 			timeout := elapsedTime > rc.maxWaitForUnmountDuration
+			// Test Shutdown
+			// TODO: Check CSIDriver SafeDetach
+			klog.Infof("XY Test Shutdown: Can detach volume? elapsed time [%v] max wait [%v]", elapsedTime, rc.maxWaitForUnmountDuration)
 			// Check whether volume is still mounted. Skip detach if it is still mounted unless timeout
 			if attachedVolume.MountedByNode && !timeout {
 				klog.V(5).Infof(attachedVolume.GenerateMsgDetailed("Cannot detach volume because it is still mounted", ""))
-				continue
+				//continue // Test Shutdown 
 			}
 
 			// Before triggering volume detach, mark volume as detached and update the node status

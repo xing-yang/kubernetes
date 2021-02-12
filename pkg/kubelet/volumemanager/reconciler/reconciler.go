@@ -272,6 +272,7 @@ func (rc *reconciler) mountAttachVolumes() {
 }
 
 func (rc *reconciler) unmountDetachDevices() {
+	// Test Shutdown: csi_attacher.go: UnmountDevice("/var/lib/kubelet/plugins/kubernetes.io/csi/pv/pvc-xxxx-xxxx-xxxxx-xxxxx/globalmount") for k8s-node-000
 	for _, attachedVolume := range rc.actualStateOfWorld.GetUnmountedVolumes() {
 		// Check IsOperationPending to avoid marking a volume as detached if it's in the process of mounting.
 		if !rc.desiredStateOfWorld.VolumeExists(attachedVolume.VolumeName) &&
