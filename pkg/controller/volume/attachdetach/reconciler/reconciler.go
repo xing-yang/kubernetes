@@ -194,10 +194,9 @@ func (rc *reconciler) reconcile() {
 			if err!=nil{
 				klog.Errorf("failed to get taint specs for node %s: %s",attachedVolume.NodeName,err.Error())
 			}
-			// Test Shutdown
 			// TODO: Check CSIDriver SafeDetach
-			klog.Infof("XY Test Shutdown: Can detach volume? elapsed time [%v] max wait [%v]", elapsedTime, rc.maxWaitForUnmountDuration)
 			// Check whether volume is still mounted. Skip detach if it is still mounted unless timeout
+			// or the node has `out-of-service` taint.
 			if attachedVolume.MountedByNode && !timeout && !hasOutOfServiceTaint {
 				klog.V(5).Infof(attachedVolume.GenerateMsgDetailed("Cannot detach volume because it is still mounted", ""))
 				continue

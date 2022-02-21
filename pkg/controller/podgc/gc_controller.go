@@ -85,8 +85,6 @@ func NewPodGC(ctx context.Context, kubeClient clientset.Interface, podInformer c
 
 func (gcc *PodGCController) Run(ctx context.Context) {
 	defer utilruntime.HandleCrash()
-
-	klog.Infof("XY Test Shutdown: Starting GC controller")
 	defer gcc.nodeQueue.ShutDown()
 	defer klog.Infof("Shutting down GC controller")
 
@@ -113,8 +111,7 @@ func (gcc *PodGCController) gc(ctx context.Context) {
 	if gcc.terminatedPodThreshold > 0 {
 		gcc.gcTerminated(pods)
 	}
-	klog.Infof("XY Test Shutdown: Before gcTerminating")
-	gcc.gcTerminating(pods) // Test Shutdown
+	gcc.gcTerminating(pods)
 	gcc.gcOrphaned(ctx, pods, nodes)
 	gcc.gcUnscheduledTerminating(pods)
 }
@@ -126,7 +123,7 @@ func isPodTerminated(pod *v1.Pod) bool {
 	return false
 }
 
-// Test Shutdown
+// isPodTerminating returns true if the pod is terminating.
 func isPodTerminating(pod *v1.Pod) bool {
 	if phase := pod.Status.Phase; phase != v1.PodPending && phase != v1.PodRunning && phase != v1.PodUnknown {
 		return true
@@ -138,9 +135,7 @@ func isPodTerminating(pod *v1.Pod) bool {
 	return false
 }
 
-// Test Shutdown
 func (gcc *PodGCController) gcTerminating(pods []*v1.Pod) {
-	klog.Infof("Test Shutdown: entering PodGCController:gcTerminating")
 	terminatedPods := []*v1.Pod{}
 	for _, pod := range pods {
 		if isPodTerminating(pod) {
@@ -153,12 +148,12 @@ func (gcc *PodGCController) gcTerminating(pods []*v1.Pod) {
 			// Add this pod to terminatedPods list only if the following conditions are met:
 			// 1. Node is not ready.
 			// 2. Node has `out-of-service` taint with `NoExecute` effect.
-			// 3. Pod tolerated the `out-of-service` taint with `NoExecute` effect.
+			// 3. Pod does not tolerate the `out-of-service` taint with `NoExecute` effect.
 			taintToMatch := &v1.Taint{
 				Key:    nodeutil.OutOfServiceTaint,
 				Effect: v1.TaintEffectNoExecute,
 			}
-			if !nodeutil.IsNodeReady(node) && hasMatchingTaint(taintToMatch, node) && isPodTolerate(taintToMatch, pod) {
+			if !nodeutil.IsNodeReady(node) && hasMatchingTaint(taintToMatch, node) && !isPodTolerate(taintToMatch, pod) {
 				terminatedPods = append(terminatedPods, pod)
 			}
 		}
@@ -171,7 +166,7 @@ func (gcc *PodGCController) gcTerminating(pods []*v1.Pod) {
 		return
 	}
 
-	klog.Infof("Test Shutdown: garbage collecting %v pods that are terminating", deleteCount)
+	klog.Infof("Garbage collecting %v pods that are terminating", deleteCount)
 	// sort only when necessary
 	sort.Sort(byCreationTimestamp(terminatedPods))
 	var wait sync.WaitGroup
@@ -306,7 +301,6 @@ func (gcc *PodGCController) checkIfNodeExists(ctx context.Context, name string) 
 
 // gcUnscheduledTerminating deletes pods that are terminating and haven't been scheduled to a particular node.
 func (gcc *PodGCController) gcUnscheduledTerminating(pods []*v1.Pod) {
-	klog.V(4).Infof("Test Shutdown: GC'ing unscheduled pods which are terminating.")
 
 	for _, pod := range pods {
 		if pod.DeletionTimestamp == nil || len(pod.Spec.NodeName) > 0 {
