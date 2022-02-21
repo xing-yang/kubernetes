@@ -35,8 +35,8 @@ import (
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/util/workqueue"
 	"k8s.io/component-base/metrics/prometheus/ratelimiter"
-
 	"k8s.io/klog/v2"
+	nodeutil "k8s.io/kubernetes/pkg/util/node"
 )
 
 const (
@@ -114,7 +114,7 @@ func (gcc *PodGCController) gc(ctx context.Context) {
 		gcc.gcTerminated(pods)
 	}
 	klog.Infof("XY Test Shutdown: Before gcTerminating")
-	gcc.gcTerminating(pods) // Test Shutdown 
+	gcc.gcTerminating(pods) // Test Shutdown
 	gcc.gcOrphaned(ctx, pods, nodes)
 	gcc.gcUnscheduledTerminating(pods)
 }
@@ -126,7 +126,7 @@ func isPodTerminated(pod *v1.Pod) bool {
 	return false
 }
 
-// Test Shutdown 
+// Test Shutdown
 func isPodTerminating(pod *v1.Pod) bool {
 	if phase := pod.Status.Phase; phase != v1.PodPending && phase != v1.PodRunning && phase != v1.PodUnknown {
 		return true
@@ -138,13 +138,29 @@ func isPodTerminating(pod *v1.Pod) bool {
 	return false
 }
 
-// Test Shutdown 
+// Test Shutdown
 func (gcc *PodGCController) gcTerminating(pods []*v1.Pod) {
 	klog.Infof("Test Shutdown: entering PodGCController:gcTerminating")
 	terminatedPods := []*v1.Pod{}
 	for _, pod := range pods {
 		if isPodTerminating(pod) {
-			terminatedPods = append(terminatedPods, pod)
+			node, err := gcc.nodeLister.Get(string(pod.Spec.NodeName))
+			if err != nil {
+				klog.Errorf("failed to get node:%s", err)
+				continue
+			}
+
+			// Add this pod to terminatedPods list only if the following conditions are met:
+			// 1. Node is not ready.
+			// 2. Node has `out-of-service` taint with `NoExecute` effect.
+			// 3. Pod tolerated the `out-of-service` taint with `NoExecute` effect.
+			taintToMatch := &v1.Taint{
+				Key:    nodeutil.OutOfServiceTaint,
+				Effect: v1.TaintEffectNoExecute,
+			}
+			if !nodeutil.IsNodeReady(node) && hasMatchingTaint(taintToMatch, node) && isPodTolerate(taintToMatch, pod) {
+				terminatedPods = append(terminatedPods, pod)
+			}
 		}
 	}
 
@@ -170,6 +186,27 @@ func (gcc *PodGCController) gcTerminating(pods []*v1.Pod) {
 		}(terminatedPods[i].Namespace, terminatedPods[i].Name)
 	}
 	wait.Wait()
+}
+
+// hasMatchingTaint returns true if the provided taint matches to one of the taint
+// present in the provided node.
+func hasMatchingTaint(taint *v1.Taint, node *v1.Node) bool {
+	for _, v := range node.Spec.Taints {
+		if taint.MatchTaint(&v) {
+			return true
+		}
+	}
+	return false
+}
+
+// isPodTolerate returns true if the pod tolerates the provided taint.
+func isPodTolerate(taint *v1.Taint, pod *v1.Pod) bool {
+	for _, toleration := range pod.Spec.Tolerations {
+		if toleration.ToleratesTaint(taint) {
+			return true
+		}
+	}
+	return false
 }
 
 func (gcc *PodGCController) gcTerminated(pods []*v1.Pod) {
