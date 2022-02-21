@@ -27,12 +27,14 @@ import (
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/wait"
+	utilfeature "k8s.io/apiserver/pkg/util/feature"
 	corelisters "k8s.io/client-go/listers/core/v1"
 	"k8s.io/client-go/tools/record"
 	"k8s.io/klog/v2"
 	"k8s.io/kubernetes/pkg/controller/volume/attachdetach/cache"
 	"k8s.io/kubernetes/pkg/controller/volume/attachdetach/metrics"
 	"k8s.io/kubernetes/pkg/controller/volume/attachdetach/statusupdater"
+	"k8s.io/kubernetes/pkg/features"
 	kevents "k8s.io/kubernetes/pkg/kubelet/events"
 	"k8s.io/kubernetes/pkg/util/goroutinemap/exponentialbackoff"
 	nodeutil "k8s.io/kubernetes/pkg/util/node"
@@ -190,10 +192,15 @@ func (rc *reconciler) reconcile() {
 			}
 			// Check whether timeout has reached the maximum waiting time
 			timeout := elapsedTime > rc.maxWaitForUnmountDuration
-			hasOutOfServiceTaint,err:=rc.hasOutOfServiceTaint(attachedVolume.NodeName)
-			if err!=nil{
-				klog.Errorf("failed to get taint specs for node %s: %s",attachedVolume.NodeName,err.Error())
+
+			hasOutOfServiceTaint := false
+			if utilfeature.DefaultFeatureGate.Enabled(features.NonGracefulFailover) {
+				hasOutOfServiceTaint, err = rc.hasOutOfServiceTaint(attachedVolume.NodeName)
+				if err != nil {
+					klog.Errorf("failed to get taint specs for node %s: %s", attachedVolume.NodeName, err.Error())
+				}
 			}
+
 			// TODO: Check CSIDriver SafeDetach
 			// Check whether volume is still mounted. Skip detach if it is still mounted unless timeout
 			// or the node has `out-of-service` taint.
@@ -397,11 +404,10 @@ func (rc *reconciler) reportMultiAttachError(volumeToAttach cache.VolumeToAttach
 }
 
 // hasOutOfServiceTaint returns true if the node has out of service taint present.
-func (rc *reconciler) hasOutOfServiceTaint(nodeName types.NodeName) (bool,error) {
-	node,err:=rc.nodeLister.Get(string(nodeName))
-	if err!=nil{
+func (rc *reconciler) hasOutOfServiceTaint(nodeName types.NodeName) (bool, error) {
+	node, err := rc.nodeLister.Get(string(nodeName))
+	if err != nil {
 		return false, err
 	}
-	return nodeutil.HasOutOfServiceTaint(*node),nil
+	return nodeutil.HasOutOfServiceTaint(*node), nil
 }
-

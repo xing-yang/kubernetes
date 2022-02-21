@@ -29,6 +29,7 @@ import (
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/wait"
+	utilfeature "k8s.io/apiserver/pkg/util/feature"
 	coreinformers "k8s.io/client-go/informers/core/v1"
 	clientset "k8s.io/client-go/kubernetes"
 	corelisters "k8s.io/client-go/listers/core/v1"
@@ -36,6 +37,7 @@ import (
 	"k8s.io/client-go/util/workqueue"
 	"k8s.io/component-base/metrics/prometheus/ratelimiter"
 	"k8s.io/klog/v2"
+	"k8s.io/kubernetes/pkg/features"
 	nodeutil "k8s.io/kubernetes/pkg/util/node"
 )
 
@@ -111,7 +113,9 @@ func (gcc *PodGCController) gc(ctx context.Context) {
 	if gcc.terminatedPodThreshold > 0 {
 		gcc.gcTerminated(pods)
 	}
-	gcc.gcTerminating(pods)
+	if utilfeature.DefaultFeatureGate.Enabled(features.NonGracefulFailover){
+		gcc.gcTerminating(pods)
+	}
 	gcc.gcOrphaned(ctx, pods, nodes)
 	gcc.gcUnscheduledTerminating(pods)
 }
