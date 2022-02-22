@@ -39,6 +39,7 @@ import (
 	"k8s.io/klog/v2"
 	"k8s.io/kubernetes/pkg/features"
 	nodeutil "k8s.io/kubernetes/pkg/util/node"
+	"k8s.io/kubernetes/pkg/util/taints"
 )
 
 const (
@@ -154,10 +155,11 @@ func (gcc *PodGCController) gcTerminating(pods []*v1.Pod) {
 			// 2. Node has `out-of-service` taint with `NoExecute` effect.
 			// 3. Pod does not tolerate the `out-of-service` taint with `NoExecute` effect.
 			taintToMatch := &v1.Taint{
-				Key:    nodeutil.OutOfServiceTaint,
+				Key:    taints.OutOfServiceTaint,
 				Effect: v1.TaintEffectNoExecute,
 			}
-			if !nodeutil.IsNodeReady(node) && hasMatchingTaint(taintToMatch, node) && !isPodTolerate(taintToMatch, pod) {
+			if !nodeutil.IsNodeReady(node) && taints.HasOutOfServiceTaintWithNoExecute(node.Spec.Taints) &&
+				!isPodTolerate(taintToMatch, pod) {
 				terminatedPods = append(terminatedPods, pod)
 			}
 		}
@@ -185,17 +187,6 @@ func (gcc *PodGCController) gcTerminating(pods []*v1.Pod) {
 		}(terminatedPods[i].Namespace, terminatedPods[i].Name)
 	}
 	wait.Wait()
-}
-
-// hasMatchingTaint returns true if the provided taint matches to one of the taint
-// present in the provided node.
-func hasMatchingTaint(taint *v1.Taint, node *v1.Node) bool {
-	for _, v := range node.Spec.Taints {
-		if taint.MatchTaint(&v) {
-			return true
-		}
-	}
-	return false
 }
 
 // isPodTolerate returns true if the pod tolerates the provided taint.

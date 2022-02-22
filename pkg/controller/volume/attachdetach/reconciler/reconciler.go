@@ -37,7 +37,7 @@ import (
 	"k8s.io/kubernetes/pkg/features"
 	kevents "k8s.io/kubernetes/pkg/kubelet/events"
 	"k8s.io/kubernetes/pkg/util/goroutinemap/exponentialbackoff"
-	nodeutil "k8s.io/kubernetes/pkg/util/node"
+	"k8s.io/kubernetes/pkg/util/taints"
 	"k8s.io/kubernetes/pkg/volume/util"
 	"k8s.io/kubernetes/pkg/volume/util/operationexecutor"
 )
@@ -201,7 +201,6 @@ func (rc *reconciler) reconcile() {
 				}
 			}
 
-			// TODO: Check CSIDriver SafeDetach
 			// Check whether volume is still mounted. Skip detach if it is still mounted unless timeout
 			// or the node has `out-of-service` taint.
 			if attachedVolume.MountedByNode && !timeout && !hasOutOfServiceTaint {
@@ -403,11 +402,12 @@ func (rc *reconciler) reportMultiAttachError(volumeToAttach cache.VolumeToAttach
 	klog.Warningf(detailedMsg)
 }
 
-// hasOutOfServiceTaint returns true if the node has out of service taint present.
+// hasOutOfServiceTaint returns true if the node has out of service taint present
+// with `NoExecute` effect.
 func (rc *reconciler) hasOutOfServiceTaint(nodeName types.NodeName) (bool, error) {
 	node, err := rc.nodeLister.Get(string(nodeName))
 	if err != nil {
 		return false, err
 	}
-	return nodeutil.HasOutOfServiceTaint(*node), nil
+	return taints.HasOutOfServiceTaintWithNoExecute(node.Spec.Taints),nil
 }

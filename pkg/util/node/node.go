@@ -42,10 +42,6 @@ const (
 	NodeUnreachablePodMessage = "Node %v which was running pod %v is unresponsive"
 )
 
-const (
-	OutOfServiceTaint = "out-of-service"
-)
-
 // GetHostname returns OS's hostname if 'hostnameOverride' is empty; otherwise, return 'hostnameOverride'.
 func GetHostname(hostnameOverride string) (string, error) {
 	hostName := hostnameOverride
@@ -167,21 +163,6 @@ func GetNodeIP(client clientset.Interface, name string) net.IP {
 		klog.Infof("Successfully retrieved node IP: %v", nodeIP)
 	}
 	return nodeIP
-}
-
-// HasTaintByKey returns true if the node has the taint by the key passed in the argument.
-func HasTaintByKey(taintKey string, node v1.Node) bool {
-	for _, v := range node.Spec.Taints {
-		if v.Key == taintKey {
-			return true
-		}
-	}
-	return false
-}
-
-// HasOutOfServiceTaint returns true if the node has out of service taint present.
-func HasOutOfServiceTaint(node v1.Node) bool {
-	return HasTaintByKey(OutOfServiceTaint, node)
 }
 
 // IsNodeReady returns true if a node is ready; false otherwise.
