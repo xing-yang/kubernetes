@@ -34,6 +34,10 @@ const (
 	UNTAINTED = "untainted"
 )
 
+const (
+	OutOfServiceTaint = "out-of-service"
+)
+
 // parseTaint parses a taint from a string, whose form must be either
 // '<key>=<value>:<effect>', '<key>:<effect>', or '<key>'.
 func parseTaint(st string) (v1.Taint, error) {
@@ -273,6 +277,15 @@ func TaintExists(taints []v1.Taint, taintToFind *v1.Taint) bool {
 		}
 	}
 	return false
+}
+
+// HasOutOfServiceTaintWithNoExecute returns true if taint with key `out-of-service` and effect `NoExecute` exists
+func HasOutOfServiceTaintWithNoExecute(taints []v1.Taint) bool {
+	taintToMatch := &v1.Taint{
+		Key:    OutOfServiceTaint,
+		Effect: v1.TaintEffectNoExecute,
+	}
+	return TaintExists(taints,taintToMatch)
 }
 
 func TaintSetDiff(t1, t2 []v1.Taint) (taintsToAdd []*v1.Taint, taintsToRemove []*v1.Taint) {

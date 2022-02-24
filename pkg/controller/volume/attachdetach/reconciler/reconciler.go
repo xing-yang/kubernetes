@@ -27,13 +27,17 @@ import (
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/wait"
+	utilfeature "k8s.io/apiserver/pkg/util/feature"
+	corelisters "k8s.io/client-go/listers/core/v1"
 	"k8s.io/client-go/tools/record"
 	"k8s.io/klog/v2"
 	"k8s.io/kubernetes/pkg/controller/volume/attachdetach/cache"
 	"k8s.io/kubernetes/pkg/controller/volume/attachdetach/metrics"
 	"k8s.io/kubernetes/pkg/controller/volume/attachdetach/statusupdater"
+	"k8s.io/kubernetes/pkg/features"
 	kevents "k8s.io/kubernetes/pkg/kubelet/events"
 	"k8s.io/kubernetes/pkg/util/goroutinemap/exponentialbackoff"
+	"k8s.io/kubernetes/pkg/util/taints"
 	"k8s.io/kubernetes/pkg/volume/util"
 	"k8s.io/kubernetes/pkg/volume/util/operationexecutor"
 )
@@ -69,6 +73,7 @@ func NewReconciler(
 	actualStateOfWorld cache.ActualStateOfWorld,
 	attacherDetacher operationexecutor.OperationExecutor,
 	nodeStatusUpdater statusupdater.NodeStatusUpdater,
+	nodeLister corelisters.NodeLister,
 	recorder record.EventRecorder) Reconciler {
 	return &reconciler{
 		loopPeriod:                loopPeriod,
@@ -79,6 +84,7 @@ func NewReconciler(
 		actualStateOfWorld:        actualStateOfWorld,
 		attacherDetacher:          attacherDetacher,
 		nodeStatusUpdater:         nodeStatusUpdater,
+		nodeLister:                nodeLister,
 		timeOfLastSync:            time.Now(),
 		recorder:                  recorder,
 	}
@@ -92,6 +98,7 @@ type reconciler struct {
 	actualStateOfWorld        cache.ActualStateOfWorld
 	attacherDetacher          operationexecutor.OperationExecutor
 	nodeStatusUpdater         statusupdater.NodeStatusUpdater
+	nodeLister                corelisters.NodeLister
 	timeOfLastSync            time.Time
 	disableReconciliationSync bool
 	recorder                  record.EventRecorder
@@ -185,13 +192,20 @@ func (rc *reconciler) reconcile() {
 			}
 			// Check whether timeout has reached the maximum waiting time
 			timeout := elapsedTime > rc.maxWaitForUnmountDuration
-			// Test Shutdown
-			// TODO: Check CSIDriver SafeDetach
-			klog.Infof("XY Test Shutdown: Can detach volume? elapsed time [%v] max wait [%v]", elapsedTime, rc.maxWaitForUnmountDuration)
+
+			hasOutOfServiceTaint := false
+			if utilfeature.DefaultFeatureGate.Enabled(features.NonGracefulFailover) {
+				hasOutOfServiceTaint, err = rc.hasOutOfServiceTaint(attachedVolume.NodeName)
+				if err != nil {
+					klog.Errorf("failed to get taint specs for node %s: %s", attachedVolume.NodeName, err.Error())
+				}
+			}
+
 			// Check whether volume is still mounted. Skip detach if it is still mounted unless timeout
-			if attachedVolume.MountedByNode && !timeout {
+			// or the node has `out-of-service` taint.
+			if attachedVolume.MountedByNode && !timeout && !hasOutOfServiceTaint {
 				klog.V(5).Infof(attachedVolume.GenerateMsgDetailed("Cannot detach volume because it is still mounted", ""))
-				//continue // Test Shutdown 
+				continue
 			}
 
 			// Before triggering volume detach, mark volume as detached and update the node status
@@ -386,4 +400,14 @@ func (rc *reconciler) reportMultiAttachError(volumeToAttach cache.VolumeToAttach
 	}
 	detailedMsg := volumeToAttach.GenerateMsgDetailed("Multi-Attach error", fmt.Sprintf("Volume is already used by pods %s on node %s", strings.Join(podNames, ", "), strings.Join(otherNodesStr, ", ")))
 	klog.Warningf(detailedMsg)
+}
+
+// hasOutOfServiceTaint returns true if the node has out of service taint present
+// with `NoExecute` effect.
+func (rc *reconciler) hasOutOfServiceTaint(nodeName types.NodeName) (bool, error) {
+	node, err := rc.nodeLister.Get(string(nodeName))
+	if err != nil {
+		return false, err
+	}
+	return taints.HasOutOfServiceTaintWithNoExecute(node.Spec.Taints),nil
 }

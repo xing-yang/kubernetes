@@ -29,14 +29,17 @@ import (
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/wait"
+	utilfeature "k8s.io/apiserver/pkg/util/feature"
 	coreinformers "k8s.io/client-go/informers/core/v1"
 	clientset "k8s.io/client-go/kubernetes"
 	corelisters "k8s.io/client-go/listers/core/v1"
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/util/workqueue"
 	"k8s.io/component-base/metrics/prometheus/ratelimiter"
-
 	"k8s.io/klog/v2"
+	"k8s.io/kubernetes/pkg/features"
+	nodeutil "k8s.io/kubernetes/pkg/util/node"
+	"k8s.io/kubernetes/pkg/util/taints"
 )
 
 const (
@@ -85,8 +88,6 @@ func NewPodGC(ctx context.Context, kubeClient clientset.Interface, podInformer c
 
 func (gcc *PodGCController) Run(ctx context.Context) {
 	defer utilruntime.HandleCrash()
-
-	klog.Infof("XY Test Shutdown: Starting GC controller")
 	defer gcc.nodeQueue.ShutDown()
 	defer klog.Infof("Shutting down GC controller")
 
@@ -113,8 +114,9 @@ func (gcc *PodGCController) gc(ctx context.Context) {
 	if gcc.terminatedPodThreshold > 0 {
 		gcc.gcTerminated(pods)
 	}
-	klog.Infof("XY Test Shutdown: Before gcTerminating")
-	gcc.gcTerminating(pods) // Test Shutdown 
+	if utilfeature.DefaultFeatureGate.Enabled(features.NonGracefulFailover){
+		gcc.gcTerminating(pods)
+	}
 	gcc.gcOrphaned(ctx, pods, nodes)
 	gcc.gcUnscheduledTerminating(pods)
 }
@@ -126,7 +128,7 @@ func isPodTerminated(pod *v1.Pod) bool {
 	return false
 }
 
-// Test Shutdown 
+// isPodTerminating returns true if the pod is terminating.
 func isPodTerminating(pod *v1.Pod) bool {
 	if phase := pod.Status.Phase; phase != v1.PodPending && phase != v1.PodRunning && phase != v1.PodUnknown {
 		return true
@@ -138,13 +140,28 @@ func isPodTerminating(pod *v1.Pod) bool {
 	return false
 }
 
-// Test Shutdown 
 func (gcc *PodGCController) gcTerminating(pods []*v1.Pod) {
-	klog.Infof("Test Shutdown: entering PodGCController:gcTerminating")
 	terminatedPods := []*v1.Pod{}
 	for _, pod := range pods {
 		if isPodTerminating(pod) {
-			terminatedPods = append(terminatedPods, pod)
+			node, err := gcc.nodeLister.Get(string(pod.Spec.NodeName))
+			if err != nil {
+				klog.Errorf("failed to get node:%s", err)
+				continue
+			}
+
+			// Add this pod to terminatedPods list only if the following conditions are met:
+			// 1. Node is not ready.
+			// 2. Node has `out-of-service` taint with `NoExecute` effect.
+			// 3. Pod does not tolerate the `out-of-service` taint with `NoExecute` effect.
+			taintToMatch := &v1.Taint{
+				Key:    taints.OutOfServiceTaint,
+				Effect: v1.TaintEffectNoExecute,
+			}
+			if !nodeutil.IsNodeReady(node) && taints.HasOutOfServiceTaintWithNoExecute(node.Spec.Taints) &&
+				!isPodTolerate(taintToMatch, pod) {
+				terminatedPods = append(terminatedPods, pod)
+			}
 		}
 	}
 
@@ -155,7 +172,7 @@ func (gcc *PodGCController) gcTerminating(pods []*v1.Pod) {
 		return
 	}
 
-	klog.Infof("Test Shutdown: garbage collecting %v pods that are terminating", deleteCount)
+	klog.Infof("Garbage collecting %v pods that are terminating", deleteCount)
 	// sort only when necessary
 	sort.Sort(byCreationTimestamp(terminatedPods))
 	var wait sync.WaitGroup
@@ -170,6 +187,16 @@ func (gcc *PodGCController) gcTerminating(pods []*v1.Pod) {
 		}(terminatedPods[i].Namespace, terminatedPods[i].Name)
 	}
 	wait.Wait()
+}
+
+// isPodTolerate returns true if the pod tolerates the provided taint.
+func isPodTolerate(taint *v1.Taint, pod *v1.Pod) bool {
+	for _, toleration := range pod.Spec.Tolerations {
+		if toleration.ToleratesTaint(taint) {
+			return true
+		}
+	}
+	return false
 }
 
 func (gcc *PodGCController) gcTerminated(pods []*v1.Pod) {
@@ -269,7 +296,6 @@ func (gcc *PodGCController) checkIfNodeExists(ctx context.Context, name string) 
 
 // gcUnscheduledTerminating deletes pods that are terminating and haven't been scheduled to a particular node.
 func (gcc *PodGCController) gcUnscheduledTerminating(pods []*v1.Pod) {
-	klog.V(4).Infof("Test Shutdown: GC'ing unscheduled pods which are terminating.")
 
 	for _, pod := range pods {
 		if pod.DeletionTimestamp == nil || len(pod.Spec.NodeName) > 0 {

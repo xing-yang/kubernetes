@@ -847,6 +847,14 @@ const (
 	//
 	// Enables GRPC probe method for {Liveness,Readiness,Startup}Probe.
 	GRPCContainerProbe featuregate.Feature = "GRPCContainerProbe"
+
+	// owner: @xing-yang
+	// kep: http://kep.k8s.io/2268
+	// alpha: v1.24
+	//
+	// Allow pods to failover to a different node in case of non graceful node shutdown
+	// before the 6 min timeour period
+	NonGracefulFailover featuregate.Feature = "NonGracefulFailover"
 )
 
 func init() {
@@ -971,7 +979,7 @@ var defaultKubernetesFeatureGates = map[featuregate.Feature]featuregate.FeatureS
 	HonorPVReclaimPolicy:                           {Default: false, PreRelease: featuregate.Alpha},
 	RecoverVolumeExpansionFailure:                  {Default: false, PreRelease: featuregate.Alpha},
 	GRPCContainerProbe:                             {Default: false, PreRelease: featuregate.Alpha},
-
+	NonGracefulFailover:                            {Default: false, PreRelease: featuregate.Alpha},
 	// inherited features from generic apiserver, relisted here to get a conflict if it is changed
 	// unintentionally on either side:
 	genericfeatures.StreamingProxyRedirects:             {Default: false, PreRelease: featuregate.Deprecated}, // remove in 1.24
